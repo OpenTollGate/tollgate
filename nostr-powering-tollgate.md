@@ -1,8 +1,8 @@
-This writeup details how nostr supercharges TollGate and how you can benefit from it as a developer. We will cover the benefits of using nostr to interact with devices that are behind a firewall, how nostr makes TollGate modular and the minimum requirements for turning 
-your device into a TollGate.
-
 ##  What is a TollGate?
 TollGate is a set of tools that enables WiFi routers to accept Bitcoin payments for internet access. This allows anyone with suitable hardware and an internet gateway to operate as an internet service provider.
+
+## What is nostr?
+[Nostr](https://github.com/nostr-protocol/nips/blob/master/01.md) (Notes and Other Stuff Transmitted by Relays) is a simple yet powerful decentralised protocol that enables seamless JSON based communication between public keys through relay servers. In the context of TollGate, nostr serves as the perfect foundation for handling WiFi access payments by eliminating the need for traditional captive portals and providing instant, reliable connections through websocket technology. The protocol's relay-based architecture reduces common firewall issues while offering standardised payment methods. Its flexible nature means components can be deployed almost anywhere with minimal configuration, making it ideal for TollGate operators to set up and developers to maintain their services.
 
 ### What are the hardware requirements?
 A TollGate must have at least two TCP/IP interfaces. One interface connects to an internet gateway, while the other interface acts as a WiFi access point for users or other TollGates. Each TollGate runs its own DHCP server with a unique address range to avoid collisions with its gateway or its clients - who could also be running a DHCP server. Hence, each TollGate is a stand-alone system from a networking perspective. Finally, each TollGate has gate-keeping logic that manages firewall rules for allowing clients to access the internet gateway once they have paid and to cut them off again when their session ends.
@@ -10,7 +10,7 @@ A TollGate must have at least two TCP/IP interfaces. One interface connects to a
 Currently we are targeting [GL-AR300m](https://www.gl-inet.com/products/gl-ar300m/), [GL-MT300](https://www.gl-inet.com/products/gl-mt3000/?utm_source=website&utm_medium=menubar) and [GL-MT600](https://www.gl-inet.com/products/gl-mt6000/) because they come with uboot and they support OpenWRT out of the box.
 
 ### TollGate's New Architecture
-Previously we used WiFi captive portals like [nodogsplash](https://github.com/nodogsplash/nodogsplash) and [OpenNDS](https://github.com/openNDS/openNDS) for managing access to the internet gateway. These captive portals allowed us to quickly build a proof of concept. However, both captive portals came with severe UX and maintainability limitations - see [limitations of captive portals](# Benefits of using crows nest over captive portal).
+Previously we used WiFi captive portals like [nodogsplash](https://github.com/nodogsplash/nodogsplash) and [OpenNDS](https://github.com/openNDS/openNDS) for managing access to the internet gateway. These captive portals allowed us to quickly build a proof of concept. However, both captive portals came with severe UX and maintainability limitations - see [limitations of captive portals](#benefits-of-using-crows-nest-over-captive-portal).
 
 A key benefit of building on `nostr` is that `services` can generate their own public key based identity (`npub`) in order to send and receive `json` content from other services as long as they have an outbound internet connection that can connect to public IP addresses. Nostr abstracts away the networking layer entirely, so developers don't need to think about things like firewalls, IP-addresses, ports and network boundaries.
 
@@ -51,46 +51,16 @@ Requiring that users own a router to get the full TollGate experience could hind
 ##### Valve
 Each TollGate needs to have a valve in order to manage access to the internet gateway. The valve must run on the router since that's currently our gate-keeping device. However, ndsctl seems to already have [debian support](https://manpages.debian.org/testing/opennds-daemon-common/ndsctl.1.en.html) so running a TollGate on an `x86` or `armhf` machine might just be a question of getting the network interfaces and configurations under control on debian. 
 
-Currently there isn't a clear line between ndsctl (which we rely on for gate-keeping) and the captive portal which brings a lot of complexity to TollGate. Hopefully the valve becomes more of a stand alone solution rather than a wrapper around part of a captive portal in future (see section [captive portal](#benefits-of-using-crows-nest-over-captive-portal)).
-##### Merchants
+> [!NOTE]
+> Currently there isn't a clear line between ndsctl (which we rely on for gate-keeping) and the captive portal which brings a lot of complexity to TollGate. Hopefully the valve becomes more of a stand alone solution rather than a wrapper around part of a captive portal in future (see section [captive portal](#benefits-of-using-crows-nest-over-captive-portal)).
 
+##### Merchants
 ##### Legacy Merchant
 The "legacy merchant" is what we have been using so far. Its just a shell script that runs on the router and submits incoming e-cash notes to a 3rd party API that redeems the notes over lightning and returns a HTTP response informing the TollGate whether the payment was redeemed successfully. This worked since day 1 of TollGate thanks to the robust and accessible cashu ecosystem and the fact that no cryptographic libraries or wallets need to run on the router. However, it meant that TollGate's feature set depended on the APIs of other projects whose developers were also busy.
 ##### Full Merchant
 Now that TollGate has full nostr support, operators can easily run their own e-cash wallet, lightning node and gateway selection business logic on an x86 machine and continue to interact with other components of TollGate as if this complex software bundle was running on the router. Clearly this model is more self sovereign and a faster route to building robust TollGates. We can still work on moving the merchant onto the router for more powerful routers or for `x86/armhf` based TollGates.
-	
-------------------------------------------------------------
 
-#### How you can turn your device into a TollGate
-
-* Minimal: Crows nest + merchant or valve + herald
-* Nice to have: fleet manager, merchant, relay - citrine?
-
-# Benefits of using nostr
-- Ability to Connect without captive portals
-- Fast, immediate responses out of the box (relay websocket connections)
-- *Little intro on what it is (maybe separate 'What is Nostr' heading)*
-- Less firewall friction because of relay
-- (Most) components can run anywhere with little to no configuration changes
-- Developer friendly, Very extendable
-- Standardized way for payments (across applications) 
-
-#### Interacting with  devices behind a firewall
-
-Nostr follows a "smart client, dumb server" principle. Every user has public key (npub) and a corresponding secret key (nsec). Users who want to interact with each other use `nostr clients` to create `nostr events`, which are standardized JSONs signed by their public keys. Any user who receives a nostr event signed by an npub that they follow can check the integrity of the event by verifying the signature - irrespective of how the event reaches the user's nostr client. Hence, DNS and TCP/IP are *not required by the nostr protocol*. 
-
-Each nostr user selects a set of relays that it wants to broadcast its events to and receive events from. Users can receive each other's events from the relays as long as they have an overlap in their relay lists. Nostr clients make *outbound connections* to publicly accessible relays, so they are not affected by firewalls that block inbound traffic.
-
-
-
-
-
-
-
-# Appendix: early mistakes to be avoided
-TollGate started off using an old `c` based captive portal called `nodogsplash` to send e-cash strings to a shell script that redeemed the payment using 
-
-https://github.com/openwrt/openwrt
+#### Build process & reproducability
 
 #### Benefits of using crows nest over captive portal
 * **Granularity:** 
@@ -105,5 +75,3 @@ Captive portals can still be useful to new users who neither have a TollGate nor
 - Shell scripts not scalable
 - ... - **@chandran** add stuff here...
 - Signer client
-
-
