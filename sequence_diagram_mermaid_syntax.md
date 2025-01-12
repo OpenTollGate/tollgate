@@ -10,7 +10,7 @@ sequenceDiagram
     CN->>R: Submit payment event
     M-->>R: Poll for new events
     
-    Note over M: Validate e-cash
+    Note over M: Redeem e-cash
     
     alt Payment Valid
         M->>R: Issue access grant event
