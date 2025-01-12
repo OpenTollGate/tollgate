@@ -51,7 +51,6 @@ Requiring that users own a router to get the full TollGate experience could hind
 ##### Valve
 Each TollGate needs to have a valve in order to manage access to the internet gateway. The valve must run on the router since that's currently our gate-keeping device. However, ndsctl seems to already have [debian support](https://manpages.debian.org/testing/opennds-daemon-common/ndsctl.1.en.html) so running a TollGate on an `x86` or `armhf` machine might just be a question of getting the network interfaces and configurations under control on debian. 
 
-> [!NOTE]
 > Currently there isn't a clear line between ndsctl (which we rely on for gate-keeping) and the captive portal which brings a lot of complexity to TollGate. Hopefully the valve becomes more of a stand alone solution rather than a wrapper around part of a captive portal in future (see section [captive portal](#benefits-of-using-crows-nest-over-captive-portal)).
 
 ##### Merchants
@@ -60,7 +59,7 @@ The "legacy merchant" is what we have been using so far. Its just a shell script
 ##### Full Merchant
 Now that TollGate has full nostr support, operators can easily run their own e-cash wallet, lightning node and gateway selection business logic on an x86 machine and continue to interact with other components of TollGate as if this complex software bundle was running on the router. Clearly this model is more self sovereign and a faster route to building robust TollGates. We can still work on moving the merchant onto the router for more powerful routers or for `x86/armhf` based TollGates.
 
-#### Build process & reproducability
+
 
 #### Benefits of using crows nest over captive portal
 * **Granularity:** 
