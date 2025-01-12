@@ -35,12 +35,39 @@ Now that merchants are controlling `valves` via nostr events, it is perfectly fi
 #### Order in which devices are being targeted
 The following table provides an overview of the order in which we hope to target various devices for each of TollGate's services:
 
-| Module          | Low hanging fruits | Mid term targets | Long term targets |
-| --------------- | ------------------ | ---------------- | ----------------- |
-| Crows Nest      | Router, Mobile     | x86, armhf       | IoT               |
-| Valve           | Router             | x86, armhf       | mobile            |
-| Full Merchant   | x86, armhf         | router           | mobile            |
-| Legacy Merchant | router             | -                | -                 |
+<table>
+  <tr>
+    <th>Module</th>
+    <th>Low hanging fruits</th>
+    <th>Mid term targets</th>
+    <th>Long term targets</th>
+  </tr>
+  <tr>
+    <td>Crows Nest</td>
+    <td>Router, Mobile</td>
+    <td>x86, armhf</td>
+    <td>IoT</td>
+  </tr>
+  <tr>
+    <td>Valve</td>
+    <td>Router</td>
+    <td>x86, armhf</td>
+    <td>mobile</td>
+  </tr>
+  <tr>
+    <td>Full Merchant</td>
+    <td>x86, armhf</td>
+    <td>router</td>
+    <td>mobile</td>
+  </tr>
+  <tr>
+    <td>Legacy Merchant</td>
+    <td>router</td>
+    <td>-</td>
+    <td>-</td>
+  </tr>
+</table>
+
 ##### Crows Nest
 Routers need the ability to buy from other routers so that the network can grow outwards from the gateway. Hence, routers need a crows nest for TollGate based networks to scale. Previously, users interacted with the WiFi captive portals manually and they still can if they like, but it isn't recommended (see section [crows nest vs captive portal](#benefits-of-using-crows-nest-over-captive-portal)). 
 
