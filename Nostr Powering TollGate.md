@@ -30,7 +30,7 @@ TollGate is now comprised of three main types of services:
 * **Merchant:** the merchant sets prices, redeems e-cash notes from `payment events` that customers issued and it issues events that the valve responds to. Merchants can be light weight and fit on the router if they outsource the e-cash redemption logic to third party APIs. However, thanks to nostr, the merchants don't need to run on the router.
 * **Relay:** it simplifies things for internet connected services if the relay has a public IP address - which is the case for most relays. However, it makes sense for each TollGate to have its own relay on the router or in the local network as well so that critical services that are physically located in the local network continue to function when the TollGate loses internet access.
 
-TODO: UML diagram
+![[tollgate-sequence-diagram.png]]
 
 ### What runs where?
 
