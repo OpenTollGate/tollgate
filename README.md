@@ -1,8 +1,8 @@
-# TollGate - Prior Work Documentation
+# TollGate
 
-This repository serves as documentation for approaches that have already been tried when building TollGate. The project is currently undergoing significant architectural improvements thanks to now possibilities that nostr brings to the table.
+This repository serves as documentation for approaches that have already been tried when building TollGate. 
 
-The current architecture of TollGate is presented [here](https://github.com/OpenTollGate/tollgate/blob/main/Nostr%20Powering%20TollGate.md) and there is an FAQ about TollGate's pre-nostr architecture (October/November 2024) [here](https://npub1suw0zfxerywd4zku4gjsjde22zhzye9dl2hsll6s3z2qap75p78s66lkhp.nsite.orangesync.tech).
+The project is currently undergoing significant architectural improvements thanks to now possibilities that nostr brings to the table. The new architecture of TollGate is presented [here](https://github.com/OpenTollGate/tollgate/blob/main/Nostr%20Powering%20TollGate.md) and there is an FAQ about TollGate's written before we had the improved architecture (October/November 2024) [here](https://npub1suw0zfxerywd4zku4gjsjde22zhzye9dl2hsll6s3z2qap75p78s66lkhp.nsite.orangesync.tech).
 
 ## Repositories
 ### Modules
@@ -55,8 +55,6 @@ The current architecture of TollGate is presented [here](https://github.com/Open
 - [ ] Product V2
 	- [ ] Android app to auto-purchase from tollgate
 	- [ ] ...
-
-
 
 ## Contributing
 
