@@ -1,0 +1,7 @@
+# Create a _config.yml file in your root directory with:
+remote_theme: pages-themes/primer
+plugins:
+  - jekyll-relative-links
+relative_links:
+  enabled: true
+  collections: true
