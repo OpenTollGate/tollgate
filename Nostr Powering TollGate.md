@@ -17,10 +17,10 @@ A key benefit of building on `nostr` is that `services` can generate their own p
 Thanks recent success that @origami74 had in running a nostr [relay](https://github.com/fiatjaf/khatru) and a [client](https://github.com/OpenTollGate/tollgate-module-valve-go) on the GL-AR300m, we are now able to build in ways that we could only have dreamt of before. 
 
 This figure illustrates the modules that TollGate is now comprised of:
-![[tollgate_modules.jpeg]]
+![TollGate Modules](./tollgate_modules.jpeg)
 
 And this sequence diagram illustrates the interaction between the services:
-![[tollgate-sequence-diagram.png]]
+![TollGate Sequence Diagram](./tollgate-sequence-diagram.png)
 
 
 TollGate is now comprised of three main types of services and a relay:
@@ -43,7 +43,7 @@ The following table provides an overview of the order in which we hope to target
 | Light Merchant | router             | -                | -                 |
 
 ##### Crows Nest
-Routers need the ability to buy from other routers so that the network can grow outwards from the gateway. Hence, routers need a crows nest for TollGate based networks to scale. Fortunately we already know how to work with OpenWRT routers, so this is becoming a well trodden path for us. Previously, users interated with the WiFi captive portals manually - they still can if they like (see section [[#### Benefits of using crows nest over captive portal]]). 
+Routers need the ability to buy from other routers so that the network can grow outwards from the gateway. Hence, routers need a crows nest for TollGate based networks to scale. Fortunately we already know how to work with OpenWRT routers, so this is becoming a well trodden path for us. Previously, users interacted with the WiFi captive portals manually - they still can if they like (see section [crows nest vs captive portal](#benefits-of-using-crows-nest-over-captive-portal)). 
 
 Users who own a TollGate can have the WiFi UX that they are already used to because they can connect to their own device using a WiFi password like they already do with their home router. They are not making any compromises since they are authenticating their devices on their own TollGate. The crows nest of their TollGate now purchases internet on their behalf and without their device needing to know anything about TollGate.
 
