@@ -64,4 +64,4 @@ Note: New FAQs will be added over time to reflect the latest developments in Tol
 
 ## Contributing
 
-We welcome contributions! If you've tried an approach that isn't documented here, please feel free to add it. Sequence diagrams and figures are most welcome.
+We welcome contributions!
