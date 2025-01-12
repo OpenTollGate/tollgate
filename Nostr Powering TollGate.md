@@ -32,14 +32,16 @@ TollGate is now comprised of three main types of services:
 
 TODO: UML diagram
 
-Now that merchants are controlling their `valves` via nostr events, it is perfectly fine for the merchant to be a more complex software bundle with an e-cash wallet and lightning support on an `x86 machine`. The merchant can just issue `nostr events` that control the valve irrespective of how the network connecting the the `x86 machine` and the `router` looks like. Now that we are able to shuffle services around between devices, TollGate can progress more quickly making use of whatever skill sets contributors are able to provide.
+### What runs where?
 
-| Module           | Currently targeted devices | Mid term targeted devices | Long term targets |
-| ---------------- | -------------------------- | ------------------------- | ----------------- |
-| Crows Nest       | Router, Mobile             | x86, armhf                | IoT               |
-| Valve            | Router                     | x86, armhf                | mobile            |
-| Merchant         | x86, armhf                 | router                    | mobile            |
-| Limited Merchant | router                     | -                         | -                 |
+Now that merchants are controlling their `valves` via nostr events, it is perfectly fine for the merchant to be a more complex software bundle with an e-cash wallet and lightning support on an `x86 machine`. The merchant can just issue `nostr events` that control the valve irrespective of how the network connecting the the `x86 machine` and the `router` looks. Now that we are able to shuffle services around between devices, TollGate can progress more quickly by making use of whatever skill sets contributors bring to the table.
+
+| Module           | Low hanging fruits | Mid term targets | Long term targets |
+| ---------------- | ------------------ | ---------------- | ----------------- |
+| Crows Nest       | Router, Mobile     | x86, armhf       | IoT               |
+| Valve            | Router             | x86, armhf       | mobile            |
+| Merchant         | x86, armhf         | router           | mobile            |
+| Limited Merchant | router             | -                | -                 |
 
 ### Reasoning for order in which devices are being targeted
 
