@@ -59,18 +59,12 @@ The "legacy merchant" is what we have been using so far. Its just a shell script
 ##### Full Merchant
 Now that TollGate has full nostr support, operators can easily run their own e-cash wallet, lightning node and gateway selection business logic on an x86 machine and continue to interact with other components of TollGate as if this complex software bundle was running on the router. Clearly this model is more self sovereign and a faster route to building robust TollGates. We can still work on moving the merchant onto the router for more powerful routers or for `x86/armhf` based TollGates.
 
-
-
 #### Benefits of using crows nest over captive portal
-* **Granularity:** 
-* **Control over UX:**
-* **Interoperability:**
+* **Granularity:** since the crows nest just a nostr client, we can program it to choose between various TollGates (with the merchant's help) and to make payments in the background without requiring the user to interact with it. The fact that the crows nest enables frequent granular payments means that 
+	* users can walk away from a TollGate and connect with a different TollGate without wasting a significant amount of money in the session that they are no longer using on their previous gateway. 
+	* users can change their identities (npub + MAC address) between sessions, thus making ISP data retention more difficult for the TollGates that they interact with. 
+	* TollGates have a limited ability to rug their users, because they don't owe the users much data and the user's crows nest won't make follow up purchase if the data from the previous purchase wasn't delivered.
+* **Control over UX:** client devices that interact with captive portals respond differently to captive portals depending on all sorts of factors including the operating system version that they are running, the browsers that they have also a whole host of configurations on the router and its network. Captive portal related UX issues occur frequently and they are often unique to the user. It is difficult to build a solution that we are proud of if the UX depends on business logic that we can't control. 
+* **Interoperability:** the fact that each crows nest has its own npub and the ability to generate standardised nostr events makes it very easy for new devices to interact with TollGate. Client devices that want to connect to a TollGate no longer need to scrape the captive portal that the router serves in order to insert an e-cash string and crows nests can purchase data from a TollGate over the internet before switching to this new TollGate.
 
-Captive portals can still be useful to new users who neither have a TollGate nor a crows nest on their devices. However, in its current form this isn't a solution that we are proud of, so we would like to make sure that TollGate doesn't depend on it. 
-
-
-
-- Slow Development cycle (recompiling) and limited use of available tooling
-- Shell scripts not scalable
-- ... - **@chandran** add stuff here...
-- Signer client
+We considered writing a [Lua based captive portal](https://github.com/OpenTollGate/tollbooth) that uses [client side rendering](https://github.com/OpenTollGate/tollgate-gui) to address some of these UX issues and to offload the heavy lifting from the router to the client device. A reliable captive portal may still be a valuable on-boarding tool for users who are new to TollGate, though it is much easier for us to deliver good UX and a solid solution with crows nest.

@@ -36,3 +36,10 @@ https://github.com/chGoodchild/nodogsplash/blob/increase_username_field/README.m
 
 
 #### Build process & reproducability
+
+
+
+- Slow Development cycle (recompiling) and limited use of available tooling
+- Shell scripts not scalable
+- ... - **@chandran** add stuff here...
+- Signer client
