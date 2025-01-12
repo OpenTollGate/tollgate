@@ -8,7 +8,7 @@ TollGate enables WiFi routers to accept Bitcoin payments for internet access. Th
 - [For Technical Bitcoiners](https://opentollgate.github.io/tollgate/markdown_faqs/12.01.2025_for_technical_bitcoiners) (last edited: January 12, 2025)
 - [Written before we had the improved architecture](https://npub1suw0zfxerywd4zku4gjsjde22zhzye9dl2hsll6s3z2qap75p78s66lkhp.nsite.orangesync.tech) (last edited: October/November 2024)
 
-Note: These FAQs are regularly updated to reflect the latest developments in TollGate. The date indicates when each guide was last modified to ensure you're reading the most current information.
+Note: New FAQs will be added over time to reflect the latest developments in TollGate. The date indicates when each guide was last modified to ensure you're reading the most current information.
 
 ## Repositories
 ### Modules
