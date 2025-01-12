@@ -10,7 +10,7 @@ A TollGate must have at least two TCP/IP interfaces. One interface connects to a
 Currently we are targeting [GL-AR300m](https://www.gl-inet.com/products/gl-ar300m/), [GL-MT300](https://www.gl-inet.com/products/gl-mt3000/?utm_source=website&utm_medium=menubar) and [GL-MT600](https://www.gl-inet.com/products/gl-mt6000/) because they come with uboot and they support OpenWRT out of the box.
 
 ### TollGate's New Architecture
-Previously we used WiFi captive portals like [nodogsplash](https://github.com/nodogsplash/nodogsplash) and [OpenNDS](https://github.com/openNDS/openNDS) for managing access to the internet gateway. These captive portals allowed us to quickly build a proof of concept. However, both captive portals came with severe UX and maintainability limitations - see [[#Appendix early mistakes to be avoided]].
+Previously we used WiFi captive portals like [nodogsplash](https://github.com/nodogsplash/nodogsplash) and [OpenNDS](https://github.com/openNDS/openNDS) for managing access to the internet gateway. These captive portals allowed us to quickly build a proof of concept. However, both captive portals came with severe UX and maintainability limitations - see [limitations of captive portals](# Benefits of using crows nest over captive portal).
 
 A key benefit of building on `nostr` is that `services` can generate their own public key based identity (`npub`) in order to send and receive `json` content from other services as long as they have an outbound internet connection that can connect to public IP addresses. Nostr abstracts away the networking layer entirely, so developers don't need to think about things like firewalls, IP-addresses, ports and network boundaries.
 
@@ -35,39 +35,31 @@ Now that merchants are controlling `valves` via nostr events, it is perfectly fi
 #### Reasoning for order in which devices are being targeted
 The following table provides an overview of the order in which we hope to target various devices for each of TollGate's services:
 
-| Module         | Low hanging fruits | Mid term targets | Long term targets |
-| -------------- | ------------------ | ---------------- | ----------------- |
-| Crows Nest     | Router, Mobile     | x86, armhf       | IoT               |
-| Valve          | Router             | x86, armhf       | mobile            |
-| Full Merchant  | x86, armhf         | router           | mobile            |
-| Light Merchant | router             | -                | -                 |
+| Module          | Low hanging fruits | Mid term targets | Long term targets |
+| --------------- | ------------------ | ---------------- | ----------------- |
+| Crows Nest      | Router, Mobile     | x86, armhf       | IoT               |
+| Valve           | Router             | x86, armhf       | mobile            |
+| Full Merchant   | x86, armhf         | router           | mobile            |
+| Legacy Merchant | router             | -                | -                 |
 
 ##### Crows Nest
-Routers need the ability to buy from other routers so that the network can grow outwards from the gateway. Hence, routers need a crows nest for TollGate based networks to scale. Fortunately we already know how to work with OpenWRT routers, so this is becoming a well trodden path for us. Previously, users interacted with the WiFi captive portals manually - they still can if they like (see section [crows nest vs captive portal](#benefits-of-using-crows-nest-over-captive-portal)). 
+Routers need the ability to buy from other routers so that the network can grow outwards from the gateway. Hence, routers need a crows nest for TollGate based networks to scale. Fortunately we already know how to work with OpenWRT routers, so this is becoming a well trodden path. Previously, users interacted with the WiFi captive portals manually and they still can if they like, but it isn't recommended (see section [crows nest vs captive portal](#benefits-of-using-crows-nest-over-captive-portal)). 
 
 Users who own a TollGate can have the WiFi UX that they are already used to because they can connect to their own device using a WiFi password like they already do with their home router. They are not making any compromises since they are authenticating their devices on their own TollGate. The crows nest of their TollGate now purchases internet on their behalf and without their device needing to know anything about TollGate.
 
-Requiring that users own a router to get the full TollGate experience could hinder adoption. Sure, they can paste e-cash into the captive portal manually or with a script, but the UX depends on their client device and they have all the down sides of not making granular payments.  Hence, users who want good UX without owning a TollGate would benefit from having a crows nest on their client devices for more granular and reliable data purchases.
+Requiring that users own a router to get the full TollGate experience could hinder adoption. Sure, they can paste e-cash into the captive portal manually or with a script, but the UX depends on their client device and they have all the down sides of not making granular payments.  Hence, users who want good UX without owning a TollGate would benefit from having a crows nest on their client devices (`mobile` and `x86`) for more granular and reliable data purchases.
 ##### Valve
-Each TollGate needs to have a valve in order to manage access to the internet gateway. The valve needs run on the router we are currently building TollGate on-top of OpenWRT routers. However, ndsctl seems to already have [debian support](https://manpages.debian.org/testing/opennds-daemon-common/ndsctl.1.en.html) so running a valve on an x86 or armhf machine might just be a question of getting the interfaces and network configurations under control. 
+Each TollGate needs to have a valve in order to manage access to the internet gateway. The valve must run on the router since that's currently our gate-keeping device. However, ndsctl seems to already have [debian support](https://manpages.debian.org/testing/opennds-daemon-common/ndsctl.1.en.html) so running a TollGate on an `x86` or `armhf` machine might just be a question of getting the network interfaces and configurations under control on debian. 
 
-Currently there isn't a clear line between ndsctl (which we rely on for gatekeeping) and the captive portal which brings a lot of complexity to TollGate. Hopefully the valve can be more a stand alone solution rather 
+Currently there isn't a clear line between ndsctl (which we rely on for gate-keeping) and the captive portal which brings a lot of complexity to TollGate. Hopefully the valve becomes more of a stand alone solution rather than a wrapper around part of a captive portal in future (see section [captive portal](#benefits-of-using-crows-nest-over-captive-portal)).
+##### Merchants
 
-## On-Device
-### 1) Valve
-### 2) Herald
-### 3) Crowsnest
-
-## Anywhere
-- Still recommend to run on device, but not required
-### 4) Relay
-### 5) Merchant
-### 6) Fleet Manager
-
-
-# Roadmap
-- Provide basic protocol, allow everyone to build
-- ...
+##### Legacy Merchant
+The "legacy merchant" is what we have been using so far. Its just a shell script that runs on the router and submits incoming e-cash notes to a 3rd party API that redeems the notes over lightning and returns a HTTP response informing the TollGate whether the payment was redeemed successfully. This worked since day 1 of TollGate thanks to the robust and accessible cashu ecosystem and the fact that no cryptographic libraries or wallets need to run on the router. However, it meant that TollGate's feature set depended on the APIs of other projects whose developers were also busy.
+##### Full Merchant
+Now that TollGate has full nostr support, operators can easily run their own e-cash wallet, lightning node and gateway selection business logic on an x86 machine and continue to interact with other components of TollGate as if this complex software bundle was running on the router. Clearly this model is more self sovereign and a faster route to building robust TollGates. We can still work on moving the merchant onto the router for more powerful routers or for `x86/armhf` based TollGates.
+	
+------------------------------------------------------------
 
 #### How you can turn your device into a TollGate
 
@@ -104,6 +96,8 @@ https://github.com/openwrt/openwrt
 * **Granularity:** 
 * **Control over UX:**
 * **Interoperability:**
+
+Captive portals can still be useful to new users who neither have a TollGate nor a crows nest on their devices. However, in its current form this isn't a solution that we are proud of, so we would like to make sure that TollGate doesn't depend on it. 
 
 
 
