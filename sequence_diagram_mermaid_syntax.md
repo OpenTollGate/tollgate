@@ -8,16 +8,15 @@ sequenceDiagram
     Note over CN: Rotates MAC & npub
     
     CN->>R: Submit payment event
-    M-->>R: Poll for new events
+    R->>M: Payment event
     
     Note over M: Redeem e-cash
     
     alt Payment Valid
         M->>R: Issue access grant event
-        V-->>R: Poll for new events
+        R->>V: Access grant event
         Note over V: Execute ndsctl to grant access
-        V-->>CN: Internet Access Granted
     else Payment Invalid
         M->>R: Issue rejection event
-        CN-->>R: Poll for new events
+        R->>CN: Rejection event
     end

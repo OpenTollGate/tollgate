@@ -34,6 +34,8 @@ https://github.com/openwrt/openwrt
 
 https://github.com/chGoodchild/nodogsplash/blob/increase_username_field/README.md
 
+[lua based captive portal](https://github.com/OpenTollGate/tollbooth) that uses [client side rendering](https://github.com/OpenTollGate/tollgate-gui) - perhaps we can still build on this approach for serving a crows nest to first time users who don't know anything about TollGate yet. However, the crows nest that we serve will need access to persistent storage in order to save their private keys.
+
 
 #### Build process & reproducability
 
