@@ -112,7 +112,7 @@ The "legacy merchant" is what we have been using so far. Its just a shell script
 Now that TollGate has full nostr support, operators can easily run their own e-cash wallet, lightning node and gateway selection business logic on an `x86 machine` and continue to interact with other components of TollGate as if this complex software bundle was running on the router. Clearly this model is more self sovereign and a faster route to building robust TollGates. We can still consider moving (part of) the merchant onto the router for more powerful routers or for `x86/armhf` based TollGates.
 
 #### Benefits of using crows nest over captive portal
-* **Real time:** crows nest takes less than a second to start WiFi sessions without the clicking associated with captive portals. Our `OpenNDS` based implementation on the other hand took more than three seconds to authenticate user sessions upon receiving the e-cash. As a nostr client, `crows nest` can handle payments and authentication in the background without any user interaction.
+* **Real time:** crows nest takes less than a second to start WiFi sessions without the clicking associated with captive portals. Our `OpenNDS` based implementation on the other hand took more than three seconds to authenticate user sessions upon receiving the e-cash. Being a nostr client, `crows nest` can handle payments and authentication in the background without any user interaction.
 * **Privacy & Flexibility:** the crows nest architecture enables:
 	* Switching between TollGates without wasting large amounts of prepaid data
 	* Identity (`npub` + `MAC` address) rotation between sessions making ISP data retention more challenging
