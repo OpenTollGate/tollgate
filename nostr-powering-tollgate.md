@@ -22,13 +22,13 @@ TollGate is a set of tools that enables WiFi routers to accept Bitcoin payments 
 - Allows smaller, more frequent payments
 - Service verification: reduces risk of rug-pulls from ISPs
 
-## Trade-offs
+## Drawbacks
 
-The main limitation requirement for specialized equipment or software:
-- Users must either own a TollGate device
-- Or install a `crows nest` client on their device
-- Client (`crows nest`) implementations need to manage identity (`npub` and `MAC`) carefully
-- Fewer developers who know about nostr compared to WiFi captive portals
+- **Specialised software required:** users must either own a TollGate or install a nostr client on their device if they want to benefit from `crows nest`.
+- Client (`crows nest`) implementations need to **manage identity (`npub` and `MAC`) carefully**
+- **Fewer developers who** know about nostr compared to WiFi captive portals
+- Smaller, more frequent payments lead to a **faster growth in the spent stack** on the e-cash mint. Mints currently don't transfer this cost to their users, but this issue needs to be addressed as TollGate gains adoption. 
+- Frequent purchases come with **network overhead**, which contributes to the cost of operating a TollGate - especially if events from the `crows nest` are sent to public relays.
 
 ### What are the hardware requirements to run a TollGate?
 A TollGate must have at least two network interfaces. One interface connects to an internet gateway, while the other interface acts as a WiFi access point for users or other TollGates. Each TollGate runs its own DHCP server with a unique address range to avoid collisions with its gateway or its clients (who could also be running a DHCP server). Hence, each TollGate is a stand-alone system from a networking perspective. Finally, each TollGate has gate-keeping logic that manages firewall rules for allowing clients to access the internet gateway once they have paid and to cut them off again when their session ends.
@@ -45,7 +45,7 @@ Thanks to recent success that @origami74 had in running a nostr [relay](https://
 This figure illustrates the modules that TollGate is now comprised of:
 ![TollGate Modules](https://opentollgate.github.io/tollgate/tollgate_modules.jpeg)
 
-		And this sequence diagram illustrates the interaction between the services:
+And this sequence diagram illustrates the interaction between the services:
 ![TollGate Sequence Diagram](https://opentollgate.github.io/tollgate/tollgate-sequence-diagram.png)
 
 
@@ -118,6 +118,7 @@ Now that TollGate has full nostr support, operators can easily run their own e-c
 	* Identity (`npub` + `MAC` address) rotation between sessions making ISP data retention more challenging
 	* Mitigation of abuse since payments are small and frequent, enabling automatic verification of service delivery
 * **Reliable & Consistent Experience:** captive portal detection is inconsistent across different devices, operating systems, and browsers. The crows nest provides a dependable experience by moving critical functionality to the client side, where we have full control over the implementation.
-* **Simplified Compatibility:** each crows nest comes with its own `npub` and produces nostr events, making it straightforward to add support for new devices. There's no need to deal with the complexity of scraping captive portals and devices can pre-purchase data before switching networks.
+* **Simplified Compatibility:** each `crows nest` comes with its own `npub` and produces nostr events, making it straightforward to add support for new devices. There's no need to deal with the complexity of scraping captive portals and devices can pre-purchase data before switching networks.
 
 While a captive portal remains valuable as an on-boarding tool for first-time users, the `crows nest` enables seamless WiFi access. We believe this approach will eventually make the traditional captive portal experience obsolete for regular users. More detailed information about the issues we faced with captive portals and the solutions we already considered can be found [here](https://opentollgate.github.io/tollgate/early-development-and-mistakes-to-be-avoided). 
+
