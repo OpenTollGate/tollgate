@@ -26,8 +26,8 @@ TollGate is a set of tools that enables WiFi routers to accept Bitcoin payments 
 
 - **Specialised software required:** users must either own a TollGate or install a nostr client on their device if they want to benefit from `crows nest`.
 - Client (`crows nest`) implementations need to **manage identity (`npub` and `MAC`) carefully**
-- **Fewer developers who** know about nostr compared to WiFi captive portals
-- Smaller, more frequent payments lead to a **faster growth in the spent stack** on the e-cash mint. Mints currently don't transfer this cost to their users, but this issue needs to be addressed as TollGate gains adoption. 
+- **Fewer developers** who know about nostr compared to WiFi captive portals
+- Smaller, more frequent payments lead to a **faster growth in the spent stack** on e-cash mints. Mints currently don't transfer this cost to their users, but this issue needs to be addressed as TollGate gains adoption. 
 - Frequent purchases come with **network overhead**, which contributes to the cost of operating a TollGate - especially if events from the `crows nest` are sent to public relays.
 
 ### What are the hardware requirements to run a TollGate?
