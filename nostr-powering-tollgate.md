@@ -4,7 +4,33 @@ TollGate is a set of tools that enables WiFi routers to accept Bitcoin payments 
 ## What is nostr?
 [Nostr](https://github.com/nostr-protocol/nips/blob/master/01.md) (Notes and Other Stuff Transmitted by Relays) is a simple yet powerful decentralised protocol that enables seamless JSON based communication between public keys through relay servers. In the context of TollGate, nostr serves as the perfect foundation for handling WiFi access payments by eliminating the need for traditional captive portals and providing instant, reliable connections through websocket technology. The protocol's relay-based architecture reduces common firewall issues while offering standardised payment methods. Its flexible nature means components can be deployed almost anywhere with minimal configuration, making it ideal for TollGate operators to set up and developers to maintain their services.
 
-### What are the hardware requirements?
+## Key Problems Solved by the Nostr Based Architecture
+
+### Network Architecture Issues
+- Eliminates traditional firewall/port configuration complexity
+- Removes network boundary management challenges 
+- Enables flexible deployment of components across different devices
+
+### Technical Limitations
+- Removes dependency on reliable captive portal detection
+- Eliminates manual user interaction requirements
+- Enables granular payment mechanisms
+- Provides better session management capabilities
+
+### Privacy & Security
+- Enables `MAC` address and `npub` rotation
+- Allows smaller, more frequent payments
+- Service verification: reduces risk of rug-pulls from ISPs
+
+## Trade-offs
+
+The main limitation requirement for specialized equipment or software:
+- Users must either own a TollGate device
+- Or install a `crows nest` client on their device
+- Client (`crows nest`) implementations need to manage identity (`npub` and `MAC`) carefully
+- Fewer developers who know about nostr compared to WiFi captive portals
+
+### What are the hardware requirements to run a TollGate?
 A TollGate must have at least two network interfaces. One interface connects to an internet gateway, while the other interface acts as a WiFi access point for users or other TollGates. Each TollGate runs its own DHCP server with a unique address range to avoid collisions with its gateway or its clients (who could also be running a DHCP server). Hence, each TollGate is a stand-alone system from a networking perspective. Finally, each TollGate has gate-keeping logic that manages firewall rules for allowing clients to access the internet gateway once they have paid and to cut them off again when their session ends.
 
 Currently we are targeting [GL-AR300m](https://www.gl-inet.com/products/gl-ar300m/), [GL-MT300](https://www.gl-inet.com/products/gl-mt3000/?utm_source=website&utm_medium=menubar) and [GL-MT600](https://www.gl-inet.com/products/gl-mt6000/) because they come with `uboot` for system recovery and they support OpenWRT out of the box.
@@ -17,10 +43,10 @@ A key benefit of building on `nostr` is that `services` can generate their own p
 Thanks to recent success that @origami74 had in running a nostr [relay](https://github.com/fiatjaf/khatru) and a [client](https://github.com/OpenTollGate/tollgate-module-valve-go) on the GL-AR300m, we are now able to build in ways that we could only have dreamt of before. 
 
 This figure illustrates the modules that TollGate is now comprised of:
-![TollGate Modules](./tollgate_modules.jpeg)
+![TollGate Modules](https://opentollgate.github.io/tollgate/tollgate_modules.jpeg)
 
-And this sequence diagram illustrates the interaction between the services:
-![TollGate Sequence Diagram](./tollgate-sequence-diagram.png)
+		And this sequence diagram illustrates the interaction between the services:
+![TollGate Sequence Diagram](https://opentollgate.github.io/tollgate/tollgate-sequence-diagram.png)
 
 
 TollGate is now comprised of three main types of services and a relay:
@@ -86,13 +112,12 @@ The "legacy merchant" is what we have been using so far. Its just a shell script
 Now that TollGate has full nostr support, operators can easily run their own e-cash wallet, lightning node and gateway selection business logic on an `x86 machine` and continue to interact with other components of TollGate as if this complex software bundle was running on the router. Clearly this model is more self sovereign and a faster route to building robust TollGates. We can still consider moving (part of) the merchant onto the router for more powerful routers or for `x86/armhf` based TollGates.
 
 #### Benefits of using crows nest over captive portal
-* **Lightning-Fast Connections:** crows nest eliminates the painful waiting and clicking associated with captive portals, enabling near-instant internet access. As a nostr client, it handles payments and authentication in the background without any user interaction.
-* **True Privacy & Flexibility:** the crows nest architecture enables:
-	* Seamless switching between TollGates without wasting large amounts of prepaid data
-	* Identity (npub + MAC address) rotation between sessions making ISP data retention more challenging
-	* Protection against potential abuse since payments are small and frequent, with automatic verification of service delivery
-* **Reliable & Consistent Experience:** captive portals are notoriously inconsistent across different devices, operating systems, and browsers. The crows nest provides a dependable experience by moving critical functionality to the client side, where we have full control over the implementation.
-* **Universal Compatibility:** each crows nest comes with its own npub and produces nostr events, making it straightforward to add support for new devices. There's no need to deal with the complexities of scraping captive portals - devices can even pre-purchase data before switching networks.
-* **Superior Performance:** our testing shows significantly faster session initialisation compared to traditional captive portal solutions, as we bypass the multi-second processing delays typically associated with router-based portals.
+* **Real time:** crows nest takes less than a second to start WiFi sessions without the clicking associated with captive portals. Our `OpenNDS` based implementation on the other hand took more than three seconds to authenticate user sessions upon receiving the e-cash. As a nostr client, `crows nest` can handle payments and authentication in the background without any user interaction.
+* **Privacy & Flexibility:** the crows nest architecture enables:
+	* Switching between TollGates without wasting large amounts of prepaid data
+	* Identity (`npub` + `MAC` address) rotation between sessions making ISP data retention more challenging
+	* Mitigation of abuse since payments are small and frequent, enabling automatic verification of service delivery
+* **Reliable & Consistent Experience:** captive portal detection is inconsistent across different devices, operating systems, and browsers. The crows nest provides a dependable experience by moving critical functionality to the client side, where we have full control over the implementation.
+* **Simplified Compatibility:** each crows nest comes with its own `npub` and produces nostr events, making it straightforward to add support for new devices. There's no need to deal with the complexity of scraping captive portals and devices can pre-purchase data before switching networks.
 
-While a captive portal remains valuable as an on-boarding tool for first-time users, the crows nest enables seamless WiFi access. We believe this approach will eventually make the traditional captive portal experience obsolete for regular users. More detailed information about the issues we faced with captive portals and the solutions we already considered can be found [here](https://opentollgate.github.io/tollgate/early-development-and-mistakes-to-be-avoided). 
+While a captive portal remains valuable as an on-boarding tool for first-time users, the `crows nest` enables seamless WiFi access. We believe this approach will eventually make the traditional captive portal experience obsolete for regular users. More detailed information about the issues we faced with captive portals and the solutions we already considered can be found [here](https://opentollgate.github.io/tollgate/early-development-and-mistakes-to-be-avoided). 
