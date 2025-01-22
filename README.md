@@ -15,6 +15,7 @@ Note: New FAQs will be added over time to reflect the latest developments in Tol
 - [Valve (go)](https://github.com/OpenTollGate/tollgate-module-valve-go), Opens/closes gate for customer
 - [Relay (go)](https://github.com/OpenTollGate/tollgate-module-relay-go), Nostr relay
 - [Crowsnest (go)](https://github.com/OpenTollGate/tollgate-module-crowsnest-go), Searches for upstream Tollgates
+- [Whoami (go)](https://github.com/OpenTollGate/tollgate-module-whoami-go), Service that allows mobile clients to fetch their own MAC address
 - Merchant (go), Handles finances, create sessions ##TODO
 - Herald (go), Creates announcements + Beacon Frames ##TODO
 
