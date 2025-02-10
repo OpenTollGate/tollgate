@@ -89,12 +89,14 @@ Feel free add events to the list via pull request if you plan to present TollGat
 * [Pizza Day](https://2025.pizzaday.cz/) - Prague - May 2025
 * [Battle Mesh](https://www.battlemesh.org/BattleMeshV17) - Sundhausen - June 2025
 * [Budapest Bitcoin](https://budapestbitcoin.com/) - Budapest - August 2025
-* [Nostr Hackday](https://primal.net/p/npub1w8lxsgc67y5jmvgfhjqrxtkj0gnxtrcsvrtzh97kpd66pw35e5gstn94qr) - Berlin - October 2025
+* [Nostr Hackday](https://primal.net/p/npub1w8lxsgc67y5jmvgfhjqrxtkj0gnxtrcsvrtzh97kpd66pw35e5gstn94qr) / [BTC++](https://btcplusplus.dev/) - Berlin - October 2025
 
 ### Past events
 * [SatsNFacts](https://satsnfacts.btc.pub/#agenda) - Chiang Mai - February 2025
 	* [Presentation](https://www.figma.com/deck/uws5VZOIJLSta91UqhoBlj/Untitled?node-id=1-578&t=vpFgI0GNI29BH3qf-0&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1) introducing TollGate
 
 ## Contributing
-
 We welcome contributions! Feel free to reach out on nostr or in person.. 
+
+### Endorsements
+* [On nostr](https://primal.net/e/nevent1qqspyv27cmc3j4dycyfypa2yxlr3qkqqumsnppk6mamxtx5njnyxmmqpp4mhxue69uhkummn9ekx7mqppamhxue69uhkummnw3ezumt0d5pzq6lwjq0mseqmr4lkt72jgqlemgcewuk0my8chwkuktmzjahfc5gdknd9qg): the TollGate echo chamber :)
