@@ -85,8 +85,9 @@ The project is currently undergoing significant architectural improvements thank
 
 ## Events
 Feel free add events to the list via pull request if you plan to present TollGate somewhere.
-### Upcoming events
+### Events TollGate contributors intend to visit
 * [Pizza Day](https://2025.pizzaday.cz/) - Prague - May 2025
+* [Battle Mesh](https://www.battlemesh.org/BattleMeshV17) - Sundhausen - June 2025
 * [Budapest Bitcoin](https://budapestbitcoin.com/) - Budapest - August 2025
 * [Nostr Hackday](https://primal.net/p/npub1w8lxsgc67y5jmvgfhjqrxtkj0gnxtrcsvrtzh97kpd66pw35e5gstn94qr) - Berlin - October 2025
 
