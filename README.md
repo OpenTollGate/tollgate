@@ -19,6 +19,7 @@ Effect on legacy internet service providers:
 
 ## Frequently Asked Questions
 
+- [Thoughts academic paper about paying for internet access](markdown_faqs/10.02.2025_paper_thoughts/thoughts_on_paper_10.02.2025.md) (last edited: February 11, 2025)
 - [TollGate android client works!](https://njump.me/nevent1qqsv7s9h4y0aklk5rfy28d3d6wgua0pafuaesjuewt6tfrq3lnuxh9cpzemhxue69uhk7unpdenk2umede3juar9vd5z7q3qzzt0d0s2f4lsanpd7nkjep5r79p7ljq7aw37eek64hf0ef6v0mxqxpqqqqqqz64slvx) (last edited: January 31, 2025)
 - [Building TollGate Image](https://primal.net/e/nevent1qqsrkfkdwy8q693vtrs789t7gf0vt86avkp7ufcmn5j0rhuvpr35zsqpp4mhxue69uhkummn9ekx7mqzyze7y04hydanvkk2n8ya9rc8pgc56cdgxlnm6r7tkrcrjnwuld3psge2xzv) (last edited: January 28, 2025)
 - [For Non-Technical Bitcoiners](https://opentollgate.github.io/tollgate/markdown_faqs/12.01.2025_for_non_technical_bitcoiners) (last edited: January 12, 2025)
@@ -87,6 +88,7 @@ The project is currently undergoing significant architectural improvements thank
 Feel free add events to the list via pull request if you plan to present TollGate somewhere.
 ### Events TollGate contributors intend to visit
 * [Pizza Day](https://2025.pizzaday.cz/) - Prague - May 2025
+* [Freedom Forum](https://archive.hrf.org/apply-to-attend-the-2025-oslo-freedom-forum/) - Oslo - May 2025
 * [Battle Mesh](https://www.battlemesh.org/BattleMeshV17) - Sundhausen - June 2025
 * [Budapest Bitcoin](https://budapestbitcoin.com/) - Budapest - August 2025
 * [Nostr Hackday](https://primal.net/p/npub1w8lxsgc67y5jmvgfhjqrxtkj0gnxtrcsvrtzh97kpd66pw35e5gstn94qr) / [BTC++](https://btcplusplus.dev/) - Berlin - October 2025
