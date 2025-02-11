@@ -1,0 +1,19 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0" version="26.0.5">
+  <diagram name="Page-1" id="YpB2XjolvBQqZWjEklNo">
+    <mxGraphModel dx="954" dy="549" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="V2MnZFKj58iYENA5ibVo-2" value="&lt;div align=&quot;left&quot;&gt;&lt;b&gt;&lt;u&gt;On chain payment&lt;/u&gt;&lt;br&gt;&lt;/b&gt;&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;Properties: costly, public, slow, non custodial&lt;br&gt;Miners require time and energy to finalize the transactions. The overhead of a transaction is the same regardless of whether the transaction is small or large&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="280" y="200" width="360" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="V2MnZFKj58iYENA5ibVo-3" value="&lt;div align=&quot;left&quot;&gt;&lt;b&gt;&lt;u&gt;Payment Channel (lightning for instance)&lt;/u&gt;&lt;/b&gt;&lt;br&gt;&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;Properties: fast, more private, less reliable, non custodial&lt;br&gt;&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;On-chain transaction required to establish a lightning channel. Channel balance can be moved back and forth at negligible cost. Sender needs to know recipient&#39;s public key.&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="280" y="100" width="360" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="V2MnZFKj58iYENA5ibVo-4" value="&lt;div align=&quot;left&quot;&gt;&lt;u&gt;&lt;b&gt;e-cash (cashu for instance)&lt;/b&gt;&lt;/u&gt;&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;Properties: bearer asset, private, trusted mints required&lt;br&gt;&lt;/div&gt;&lt;div&gt;Lightning (or on-chain) transaction required to deposit funds with a mint and receive e-cash. This is a bearer asset that can be used without counter parties knowing each other&#39;s identities. The payer doesn&#39;t need to be online, but the payee needs to communicate with the mint if the e-cash isn&#39;t encumbered.&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="280" width="360" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
