@@ -82,7 +82,46 @@ Effect on legacy internet service providers:
 	- [ ] ...
 
 
-## Frequently Asked Questions
+## FAQ
+
+
+### General
+#### What is an ISP?
+ISP stands for Internet Service Provider. ISP's are companies that provide your home with internet access and charge a monthly fee for it. For example: Comcast, Verizon and AT&T ar all ISP's.
+
+#### Can I share my internet plan with my neighbors?
+Yes, if you operate a TollGate, your neighbour can connect to your TollGate instead of their own ISP's access-point.
+
+### Risks
+#### Is TollGate safe to use?
+TollGate networks are public/open WiFi networks, like the ones you find in hotels and airports. These kind of networks have risks associated to it and we recommend always using a VPN when using public networks.
+Additionally, TollGate development is still in very early stages and the project still changes a lot. We cannot make any promises about security and privacy at this point in time.
+
+### Using TollGate
+#### Is TollGate free?
+The software we publish is free and open-source, meaning you will not be charged for the use of TollGate software. However, the independent TollGate operators (the people providing the access-points) will charge you as the user for their services. The price they set it not controlled by the TollGate open-source project.
+
+
+### Operating a TollGate
+
+#### What is TollGateOS?
+TollGateOS is a version of OpenWRT that has all software included that is needed to turn a router into a TollGate.
+
+#### How can I operate a TollGate?
+We provide TollGateOS images which you can install on our supported routers. Other routers may work but we do not currently test for those.
+
+#### Which hardware is supported?
+Currently TollGateOS is compatible with:
+- GL.iNet MT-3000
+
+TollGate's long-term aim is to support many OpenWRT compatible routers.
+
+#### Is it legal to operate a TollGate?
+This depends a lot on the jurisdiction you are operating the TollGate in. In some countries/regions you might take liability for the traffic that runs through your TollGate, be sure to check your local rules and regulations. Additionally, check your ISP's Terms & Conditions for any rules around reselling internet access.
+
+It is your own responsibility to handle local rules and regulations, we cannot assist you with that.
+
+## Additional reading
 
 - [Thoughts academic paper about paying for internet access](markdown_faqs/10.02.2025_paper_thoughts/thoughts_on_paper_10.02.2025.md) (last edited: February 11, 2025)
 - [TollGate android client works!](https://njump.me/nevent1qqsv7s9h4y0aklk5rfy28d3d6wgua0pafuaesjuewt6tfrq3lnuxh9cpzemhxue69uhk7unpdenk2umede3juar9vd5z7q3qzzt0d0s2f4lsanpd7nkjep5r79p7ljq7aw37eek64hf0ef6v0mxqxpqqqqqqz64slvx) (last edited: January 31, 2025)
@@ -91,7 +130,7 @@ Effect on legacy internet service providers:
 - [For Technical Bitcoiners](https://opentollgate.github.io/tollgate/markdown_faqs/12.01.2025_for_technical_bitcoiners) (last edited: January 12, 2025)
 - [Written before we had the improved architecture](https://npub1suw0zfxerywd4zku4gjsjde22zhzye9dl2hsll6s3z2qap75p78s66lkhp.nsite.orangesync.tech) (last edited: October/November 2024)
 
-Note: New FAQs will be added over time to reflect the latest developments in TollGate. The date indicates when each guide was last modified to ensure you're reading the most current information.
+Note: New articles will be added over time to reflect the latest developments in TollGate. The date indicates when each guide was last modified to ensure you're reading the most current information.
 
 
 ## Events
