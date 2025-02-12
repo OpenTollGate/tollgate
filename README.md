@@ -10,14 +10,14 @@ The image above shows what a network built out of independently operated TollGat
 ![](https://cdn.satellite.earth/62630eb4f8f2c9c8f088e397e6fd12dbb3c406125b3703ffa9e2f0bf331dffbd.png)
 TollGate software is not just one app or component, but is made up out of several services that each handle their own specialized task. Together it forms the TollGate ecosystem. The communication between some of these components will be the TollGate protocol, but it's still to early to solidify it.
 
-### TollGate App
+### 📱TollGate App
 
 The TollGate app is a cross-platform (Tauri) web-app. It's a universal app for consumer-devices to auto-connect to TollGates and handle the payments all in the background.
 Effectively, the app performs the tasks of the Crowsnest and Merchant module, but just as a consumer-only setup.
 
 The Repository can be [found here](https://github.com/OpenTollGate/tollgate-app). The current priority is to support Android and after that support desktop.
 
-### On-device Modules
+### 🛜On-device Modules
 This is a list of the modules that run **on** the router
 - [Valve (go)](https://github.com/OpenTollGate/tollgate-module-valve-go), Opens/closes gate for customer
 - [Relay (go)](https://github.com/OpenTollGate/tollgate-module-relay-go), Nostr relay
