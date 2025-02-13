@@ -25,8 +25,7 @@ This is a list of the modules that run **on** the router
 - [Whoami (go)](https://github.com/OpenTollGate/tollgate-module-whoami-go), Service that allows mobile clients to fetch their own MAC address
 - [Merchant (go)](https://github.com/OpenTollGate/tollgate-module-merchant-go), Handles finances, create sessions
 
-The project is currently undergoing significant architectural improvements thanks to new possibilities that nostr brings to the table. The new architecture of TollGate is introduced [here](https://opentollgate.github.io/tollgate/nostr-powering-tollgate).
-
+The project is currently undergoing significant architectural improvements thanks to new possibilities that nostr brings to the table. The new architecture of TollGate is introduced [here](https://opentollgate.github.io/tollgate/nostr-powering-tollgate). When you modify one of the above modules, the module is package by an [SDK](https://github.com/OpenTollGate/tollgate-sdk) and pushed to blossom in a github action. You can later use the [imagae builder](https://github.com/OpenTollGate/tollgate-image-builder) to generate an OpenWRT image for the actions.
 
 ## Benefits
 Benefits for users:
@@ -43,7 +42,6 @@ Effect on legacy internet service providers:
 - **Fewer contracts sold:** since multiple users share a single contract legacy ISPs can expect to see a drop in sales and a rise in data usage from the contracts that remain.
 - **Increased competition for users:** many Bitcoin miners run at a loss, because there is nothing stopping a miner who sees opportunity from participating in the market for hash-rate. Our goal is to ensure that nothing can stop TollGate operators from participating in the market for connectivity, thus delivering a close to optimal outcome for the user.
 - **Decreased competition for limited spectrum:** since users can access their neighbour's routers, they no longer need to operate their own in areas where the spectrum is congested. This enables everyone to get a better throughput, because less can be more on a shared medium.
-
 
 ## Roadmap (December 2024)
 - [ ] Switch to GoLang
