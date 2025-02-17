@@ -18,7 +18,7 @@ The combination of multiple users with lightning channels results in a payment c
 ### Prior work on payment channels in mesh networks
 * [LNMesh: Who Said You need Internet to send Bitcoin? Offline Lightning Network Payments using Community Wireless Mesh Networks](https://arxiv.org/abs/2304.14559)
 	* This paper investigates the limitations of making payments locally when access to an internet gateway has been lost
-* [LOT49](https://github.com/global-mesh-labs)
+* [LOT49](https://global-mesh-labs.gitbook.io/lot49)
 	* This research project investigated the limitations of reducing the overhead in lightning transactions over mesh networks so that they could be conducted with limited bandwidth.
 
 ### E-cash
