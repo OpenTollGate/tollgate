@@ -152,5 +152,5 @@ We welcome contributions! Feel free to reach out on nostr or in person..
 ### Endorsements
 * [On nostr](https://primal.net/e/nevent1qqspyv27cmc3j4dycyfypa2yxlr3qkqqumsnppk6mamxtx5njnyxmmqpp4mhxue69uhkummn9ekx7mqppamhxue69uhkummnw3ezumt0d5pzq6lwjq0mseqmr4lkt72jgqlemgcewuk0my8chwkuktmzjahfc5gdknd9qg): the TollGate echo chamber :)
 
-## License
-This project is licensed under the GNU General Public License v3.0 - see the [UNLICENSE](UNLICENSE) file for details.
+## UNLICENSE
+This is free and unencumbered software - see the [UNLICENSE](UNLICENSE) file for details.
