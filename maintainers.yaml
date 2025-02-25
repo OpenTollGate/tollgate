@@ -1,7 +1,9 @@
-identifier: TollDocs
+identifier: tollgate
 maintainers:
-- npub1vfl7v8fgwxnv88u6n5t3pwsmzqg7xajclmtlfqncpaf2crefqr9qu2kruy
+- npub1hw6amg8p24ne08c9gdq8hhpqx0t0pwanpae9z25crn7m9uy7yarse465gr
+- npub1c03rad0r6q833vh57kyd3ndu2jry30nkr0wepqfpsm05vq7he25slryrnw
 relays:
-- wss://orangesync.tech/
-- wss://nostr.chaima.info/
-- wss://relay.damus.io/
+- wss://nos.lol
+- wss://relay.damus.io
+- wss://relay.nostr.band
+- wss://relay.primal.net
