@@ -149,6 +149,24 @@ Feel free add events to the list via pull request if you plan to present TollGat
 ## Contributing
 We welcome contributions! Feel free to reach out [on nostr](https://nostrudel.ninja/#/t/tollgate), [on signal](https://signal.group/#CjQKIFUj7wFVxIbHjujYAWGTKeMIvi1DdVYk2Zem3uNlmIwWEhAiFlw7arUvnitB1V0_cTaA) or in person.. [Endorsements on nostr](https://primal.net/e/nevent1qqspyv27cmc3j4dycyfypa2yxlr3qkqqumsnppk6mamxtx5njnyxmmqpp4mhxue69uhkummn9ekx7mqppamhxue69uhkummnw3ezumt0d5pzq6lwjq0mseqmr4lkt72jgqlemgcewuk0my8chwkuktmzjahfc5gdknd9qg), the TollGate echo chamber :)
 
+### TollGate Repositories
+The following repositories are currently part of TollGate:
+
+* [TollGate documentation](https://vnext.gitworkshop.dev/npub1c03rad0r6q833vh57kyd3ndu2jry30nkr0wepqfpsm05vq7he25slryrnw/tollgate) repository
+
+#### Actions
+* TollGate [blossom upload action](https://vnext.gitworkshop.dev/npub1c03rad0r6q833vh57kyd3ndu2jry30nkr0wepqfpsm05vq7he25slryrnw/upload-blossom-action)
+* TollGate [SDK action](https://vnext.gitworkshop.dev/npub1c03rad0r6q833vh57kyd3ndu2jry30nkr0wepqfpsm05vq7he25slryrnw/tollgate-sdk)
+* TollGate [image builder](https://vnext.gitworkshop.dev/npub1c03rad0r6q833vh57kyd3ndu2jry30nkr0wepqfpsm05vq7he25slryrnw/tollgate-image-builder)
+* Nostr file [metadata publishing action](https://vnext.gitworkshop.dev/npub1c03rad0r6q833vh57kyd3ndu2jry30nkr0wepqfpsm05vq7he25slryrnw/nostr-publish-file-metadata-action)
+
+#### Modules
+* TollGate [relay module](https://vnext.gitworkshop.dev/npub1c03rad0r6q833vh57kyd3ndu2jry30nkr0wepqfpsm05vq7he25slryrnw/tollgate-module-relay-go)
+* TollGate [valve module](https://vnext.gitworkshop.dev/npub1c03rad0r6q833vh57kyd3ndu2jry30nkr0wepqfpsm05vq7he25slryrnw/upload-blossom-action)
+
+#### Decomissioned
+* [Custom nostr feed](https://vnext.gitworkshop.dev/npub1c03rad0r6q833vh57kyd3ndu2jry30nkr0wepqfpsm05vq7he25slryrnw/custom-nostr-feed-decomissioned) for packaging with the OpenWRT SDK
+
 
 ## UNLICENSE
 This is free and unencumbered software - see the [UNLICENSE](UNLICENSE) file for details.
