@@ -2,6 +2,9 @@
 
 [TollGate](https://tollgate.me/) enables WiFi routers to accept Bitcoin payments for internet access. This allows users with a router and an internet connection to operate as internet service providers. One of the reasons mesh networks haven't been widely adopted is that infrastructure operators didn't have a simple _permission-less way to transfer the operating cost of the infrastructure to its users_. Thanks to Bitcoin + e-cash, TollGate operators can transfer the cost of their internet gateway to the users of their access point in a granular manner.
 
+## TollGate Protocol
+You can find a draft of the TollGate protocol (split up in multiple TollGate Implementation Possibilities) [here](protocol/README.md)
+
 ## TollGate network
 ![](https://cdn.satellite.earth/fdbdf6be3d7f73612501ad39f23647a3dfda56563fe68f10b886da5fd6d94cb1.png)
 The image above shows what a network built out of independently operated TollGates looks like. The is be somebody that connects a TollGate to their a ISP and then the TollGate starts reselling that connection. Other TollGates can buy access and extend the network without having to ask for permission or know who the initial operator is. This can continue as many levels deep as the market will find to be efficient. Anywhere in the network, consumers can do the same thing to purchase internet access on their personal devices. The only difference between the consumer app and another TollGate is that the consumer device most likely won't resell the connection.
