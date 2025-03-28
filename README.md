@@ -139,11 +139,16 @@ Note: New articles will be added over time to reflect the latest developments in
 ## Events
 Feel free add events to the list via pull request if you plan to present TollGate somewhere.
 ### Events TollGate contributors intend to visit
-* [Pizza Day](https://2025.pizzaday.cz/) - Prague - May 2025
-* [Freedom Forum](https://archive.hrf.org/apply-to-attend-the-2025-oslo-freedom-forum/) - Oslo - May 2025
-* [Battle Mesh](https://www.battlemesh.org/BattleMeshV17) - Sundhausen - June 2025
-* [Budapest Bitcoin](https://budapestbitcoin.com/) - Budapest - August 2025
-* [Nostr Hackday](https://primal.net/p/npub1w8lxsgc67y5jmvgfhjqrxtkj0gnxtrcsvrtzh97kpd66pw35e5gstn94qr) / [BTC++](https://btcplusplus.dev/) - Berlin - October 2025
+* [Pizza Day](https://2025.pizzaday.cz/) - Prague, `17.05.2025 - 18.05.2025`
+* [Freedom Forum](https://archive.hrf.org/apply-to-attend-the-2025-oslo-freedom-forum/) - Oslo, `26.05.2025 - 28.05.2025`
+* [Zitadelle](https://pay.einundzwanzig.space/apps/4DtdvBYv6JpyvKtsGRUAjfSLmtKp/pos) - Wasserburg Heldrungen, `24.07.2025 - 27.07.2025`
+* [Nostr Hackday](https://primal.net/p/npub1w8lxsgc67y5jmvgfhjqrxtkj0gnxtrcsvrtzh97kpd66pw35e5gstn94qr) - Berlin, `before BTC++`
+* [BTC++ Berlin](https://btcplusplus.dev/conf/berlin25) - Berlin, `02.10.2025 - 04.10.2025`
+
+#### Unconfirmed events
+* [Battle Mesh](https://www.battlemesh.org/BattleMeshV17) - Sundhausen, `10.06.2025 - 16.06.2025`
+* [BTC++ Riga](https://btcplusplus.dev/conf/riga) - Riga, `07.08.2025 - 08.08.2025`
+* [Baltic Honey Badger](https://baltichoneybadger.com/buy-tickets) - Riga, `09.08.2025 - 10.08.2025`
 
 ### Past events
 * [SatsNFacts](https://satsnfacts.btc.pub/#agenda) - Chiang Mai - February 2025
