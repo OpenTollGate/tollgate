@@ -149,6 +149,7 @@ Feel free add events to the list via pull request if you plan to present TollGat
 * [Battle Mesh](https://www.battlemesh.org/BattleMeshV17) - Sundhausen, `10.06.2025 - 16.06.2025`
 * [BTC++ Riga](https://btcplusplus.dev/conf/riga) - Riga, `07.08.2025 - 08.08.2025`
 * [Baltic Honey Badger](https://baltichoneybadger.com/buy-tickets) - Riga, `09.08.2025 - 10.08.2025`
+* [Nostr World]([https://baltichoneybadger.com/buy-tickets](https://nostr.world/)) - Buenos Aires, `Q4 2025`
 
 ### Past events
 * [SatsNFacts](https://satsnfacts.btc.pub/#agenda) - Chiang Mai - February 2025
