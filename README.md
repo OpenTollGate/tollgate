@@ -1,4 +1,5 @@
-# TollGate
+
+![tollgate-logo](TollGate_Logo-C-black.png)
 
 [TollGate](https://tollgate.me/) enables WiFi routers to accept Bitcoin payments for internet access. This allows users with a router and an internet connection to operate as internet service providers. One of the reasons mesh networks haven't been widely adopted is that infrastructure operators didn't have a simple _permission-less way to transfer the operating cost of the infrastructure to its users_. Thanks to Bitcoin + e-cash, TollGate operators can transfer the cost of their internet gateway to the users of their access point in a granular manner.
 
@@ -13,20 +14,16 @@ The image above shows what a network built out of independently operated TollGat
 ![](https://cdn.satellite.earth/62630eb4f8f2c9c8f088e397e6fd12dbb3c406125b3703ffa9e2f0bf331dffbd.png)
 TollGate software is not just one app or component, but is made up out of several services that each handle their own specialized task. Together it forms the TollGate ecosystem. The communication between some of these components will be the TollGate protocol, but it's still to early to solidify it.
 
-### 📱TollGate App
+### TollGate Repositories
+The TollGate ecosystem consists of four main projects:
 
-The TollGate app is a cross-platform (Tauri) web-app. It's a universal app for consumer-devices to auto-connect to TollGates and handle the payments all in the background.
-Effectively, the app performs the tasks of the Crowsnest and Merchant module, but just as a consumer-only setup.
-
-The Repository can be [found here](https://github.com/OpenTollGate/tollgate-app). The current priority is to support Android and after that support desktop.
-
-### 🛜On-device Modules
-This is a list of the modules that run **on** the router
-- [Valve (go)](https://github.com/OpenTollGate/tollgate-module-valve-go), Opens/closes gate for customer
-- [Relay (go)](https://github.com/OpenTollGate/tollgate-module-relay-go), Nostr relay
-- [Crowsnest (go)](https://github.com/OpenTollGate/tollgate-module-crowsnest-go), Interaction with router's radio: Scanning for tollgates, Configuring (upstream) network, Broadcasting pricing
-- [Whoami (go)](https://github.com/OpenTollGate/tollgate-module-whoami-go), Service that allows mobile clients to fetch their own MAC address
-- [Merchant (go)](https://github.com/OpenTollGate/tollgate-module-merchant-go), Handles finances, create sessions
+- **tollgate-protocol**: The open protocol definition that standardizes how TollGate components communicate. Currently housed in this repository under the 'protocol' directory, but will be moved to its own dedicated repository.
+  
+- **tollgate-core**: The reference implementation of the TollGate protocol specifically designed for OpenWRT routers. Currently referred to as tollgate-module-basic-go, this component contains the core functionality needed to implement the TollGate protocol.
+  
+- **tollgate-os**: A ready-made OpenWRT image with all necessary components pre-installed. This allows you to transform supported routers into fully functional TollGates without much manual configuration.
+  
+- **tollgate-installer**: A tool made to simplify the process of flashing TollGateOS onto new routers, making deployment accessible for users of varying technical backgrounds.
 
 The project is currently undergoing significant architectural improvements thanks to new possibilities that nostr brings to the table. The new architecture of TollGate is introduced [here](https://opentollgate.github.io/tollgate/nostr-powering-tollgate). When you modify one of the above modules, the module is package by an [SDK](https://github.com/OpenTollGate/tollgate-sdk) and pushed to blossom in a github action. You can later use the [imagae builder](https://github.com/OpenTollGate/tollgate-image-builder) to generate an OpenWRT image for the actions.
 
@@ -47,46 +44,29 @@ Effect on legacy internet service providers:
 - **Increased competition for users:** many Bitcoin miners run at a loss, because there is nothing stopping a miner who sees opportunity from participating in the market for hash-rate. Our goal is to ensure that nothing can stop TollGate operators from participating in the market for connectivity, thus delivering a close to optimal outcome for the user.
 - **Decreased competition for limited spectrum:** since users can access their neighbour's routers, they no longer need to operate their own in areas where the spectrum is congested. This enables everyone to get a better throughput, because less can be more on a shared medium.
 
+## Project Timeline
 
-## Roadmap (December 2024)
-- [ ] Switch to GoLang
-	- [x] Get golang binary running on GL-AR300M
-	- [x] Get go-nostr library running on GL-AR300M
-	- [ ] Create OPKG package
-- [ ] Whitelist relay for unauthenticated users
-	- [x] Public relay
-	- [ ] Relay within network
-	- [x] Relay on-device (router)
-- [ ] Router support:
-	- [x] Low-tier: GL-AR300M
-	- [ ] Mid-tier: GL-MT3000
-	- [ ] High-tier GL-MT6000
-- [ ] POC
-	- [ ] Machine-to-machine purchasing
-		- [x] Build Valve component (open/close gate)
-		- [ ] Build Herald component (announcements)
-			- [ ] Add pubkey to Beacon frames
-		- [ ] Build Crowsnest component (scanning)
-		- [ ] Build Merchant component (decision-making)
-	- [ ] Human-to-machine purchasing
-		- [ ] Captive portal
-			- [ ] Serve JS-Compatible portal
-			- [ ] Portal can display/access MAC address
-			- [ ] Portal can display/access router IP
-- [ ] Nostr based MVP
-	- [ ] Strict authorization between components
-	- [ ] Encrypt internal Nostr messages
-- [ ] Product V1
-	- [ ] Automatic updates (+ verify binaries)
-	- [ ] Dashboard to mange Tollgates
-	- [ ] ...
-- [ ] Product V2
-	- [ ] Android app to auto-purchase from tollgate
-	- [ ] ...
+<table>
+  <tr>
+    <td align="center">📅 <strong>2012</strong></td>
+    <td>💡 Initial idea of paying neighbouring routers for higher bandwidth via multi-wan</td>
+  </tr>
+  <tr>
+    <td align="center">📅 <strong>Mid 2024</strong></td>
+    <td>🧪 Early proof of concept by pasting ecash in captive portal password field</td>
+  </tr>
+  <tr>
+    <td align="center">📅 <strong>Late 2024</strong></td>
+    <td>🔄 Introduced golang / nostr to the routers</td>
+  </tr>
+  <tr>
+    <td align="center">📅 <strong>April 2025</strong></td>
+    <td>📝 First protocol draft</td>
+  </tr>
+</table>
 
 
 ## FAQ
-
 
 ### General
 #### What is an ISP?
@@ -139,19 +119,19 @@ Note: New articles will be added over time to reflect the latest developments in
 ## Events
 Feel free add events to the list via pull request if you plan to present TollGate somewhere.
 ### Events TollGate contributors intend to visit
-* [Pizza Day](https://2025.pizzaday.cz/) - Prague, `17.05.2025 - 18.05.2025`
-* [Freedom Forum](https://archive.hrf.org/apply-to-attend-the-2025-oslo-freedom-forum/) - Oslo, `26.05.2025 - 28.05.2025`
 * [Zitadelle](https://pay.einundzwanzig.space/apps/4DtdvBYv6JpyvKtsGRUAjfSLmtKp/pos) - Wasserburg Heldrungen, `24.07.2025 - 27.07.2025`
 * [Nostr Hackday](https://primal.net/p/npub1w8lxsgc67y5jmvgfhjqrxtkj0gnxtrcsvrtzh97kpd66pw35e5gstn94qr) - Berlin, `before BTC++`
+* [Battle Mesh](https://www.battlemesh.org/BattleMeshV17) - Sundhausen, `10.06.2025 - 16.06.2025` (presentation)
+* [Baltic Honey Badger](https://baltichoneybadger.com/buy-tickets) - Riga, `09.08.2025 - 10.08.2025`
 * [BTC++ Berlin](https://btcplusplus.dev/conf/berlin25) - Berlin, `02.10.2025 - 04.10.2025`
 
 #### Unconfirmed events
-* [Battle Mesh](https://www.battlemesh.org/BattleMeshV17) - Sundhausen, `10.06.2025 - 16.06.2025`
 * [BTC++ Riga](https://btcplusplus.dev/conf/riga) - Riga, `07.08.2025 - 08.08.2025`
-* [Baltic Honey Badger](https://baltichoneybadger.com/buy-tickets) - Riga, `09.08.2025 - 10.08.2025`
 * [Nostr World]([https://baltichoneybadger.com/buy-tickets](https://nostr.world/)) - Buenos Aires, `Q4 2025`
 
 ### Past events
+* [Pizza Day](https://2025.pizzaday.cz/) - Prague, `17.05.2025 - 18.05.2025`
+* [Freedom Forum](https://archive.hrf.org/apply-to-attend-the-2025-oslo-freedom-forum/) - Oslo, `26.05.2025 - 28.05.2025`
 * [SatsNFacts](https://satsnfacts.btc.pub/#agenda) - Chiang Mai - February 2025
 	* [Presentation](https://www.figma.com/deck/uws5VZOIJLSta91UqhoBlj/Untitled?node-id=1-578&t=vpFgI0GNI29BH3qf-0&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1) introducing TollGate
 
