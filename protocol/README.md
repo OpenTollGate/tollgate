@@ -17,6 +17,7 @@ They exist to document what may be implemented by TollGate compatible devices.
 - [TIP-02: Cashu payments](02.md)
 - [TIP-03: Http server](03.md)
 - [TIP-04: Restrictive OS compatibility](04.md)
+- [TIP-04: Encrypted events](04.md)
 - [TIP-10: Beacon Frame Advertisement](10.md)
 
 ## Breaking changes
