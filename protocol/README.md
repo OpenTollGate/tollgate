@@ -19,6 +19,11 @@ They exist to document what may be implemented by TollGate compatible devices.
 - [TIP-04: Restrictive OS compatibility](04.md)
 - [TIP-10: Beacon Frame Advertisement](10.md)
 
+## Breaking changes
+| When | What |
+|------|------|
+| June 2025 | Cashu payments mint now is added to `<price_per_step>` tag, removing `<mint>` tag |
+
 ## License
 
 All TIPs are public domain.
