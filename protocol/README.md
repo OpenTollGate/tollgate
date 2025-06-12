@@ -24,6 +24,7 @@ They exist to document what may be implemented by TollGate compatible devices.
 | When | What |
 |------|------|
 | June 2025 | Cashu payments mint now is added to `<price_per_step>` tag, removing `<mint>` tag |
+| June 2025 | Changed Discovery to no longer be ephemeral |
 
 ## License
 
