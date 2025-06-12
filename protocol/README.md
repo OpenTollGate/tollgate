@@ -18,6 +18,7 @@ They exist to document what may be implemented by TollGate compatible devices.
 - [TIP-03: Http server](03.md)
 - [TIP-04: Restrictive OS compatibility](04.md)
 - [TIP-05: Encrypted events](05.md)
+- [TIP-06: Nostr relay](06.md)
 - [TIP-10: Beacon Frame Advertisement](10.md)
 
 ## Breaking changes
