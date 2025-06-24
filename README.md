@@ -127,7 +127,8 @@ Feel free add events to the list via pull request if you plan to present TollGat
 * [Africa Bitcoin Conference](https://afrobitcoin.org/speakers/) - Caudan Arts Centre in Port Louis, Mauritius, `3.12.2025 - 5.12.2025`
 
 #### Unconfirmed events
-* [Nostr World]([https://baltichoneybadger.com/buy-tickets](https://nostr.world/)) - Buenos Aires, `Q4 2025`
+* [SatsNFacts Korea](Not announced yet) - South Korea, `Q4 2025`
+* [Nostr World](Not announced yet) - Buenos Aires, `Q4 2025`
 
 ### Past events
 * [Battle Mesh](https://www.battlemesh.org/BattleMeshV17) - Sundhausen, `10.06.2025 - 16.06.2025` (presentation)
