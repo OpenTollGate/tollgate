@@ -128,7 +128,7 @@ Feel free add events to the list via pull request if you plan to present TollGat
 * [Nostr World](Not announced yet) - Buenos Aires, `Q4 2025`
 
 ### Past events
-* [Battle Mesh](https://www.battlemesh.org/BattleMeshV17) - Sundhausen, `10.06.2025 - 16.06.2025` (presentation)
+* [Battle Mesh](https://www.battlemesh.org/BattleMeshV17) - Sundhausen, `10.06.2025 - 16.06.2025` (nostr presentation)
 * [Freedom Forum](https://archive.hrf.org/apply-to-attend-the-2025-oslo-freedom-forum/) - Oslo, `26.05.2025 - 28.05.2025`
 * [Pizza Day](https://2025.pizzaday.cz/) - Prague, `17.05.2025 - 18.05.2025`
 * [SatsNFacts](https://satsnfacts.btc.pub/#agenda) - Chiang Mai - February 2025
