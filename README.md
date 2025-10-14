@@ -119,8 +119,6 @@ Note: New articles will be added over time to reflect the latest developments in
 ## Events
 Feel free add events to the list via pull request if you plan to present TollGate somewhere.
 ### Events TollGates will be operated at
-* [Dark Prague](https://secondculture.cz/cs/events/dp25/) - 475/43, Dělnická, 170 00 Praha 7, Tschechien, `03.10.2025-05.10.2025`
-* [Nostr Hackday](https://nostrhackday.orangesync.tech) - Holzmarktstraße 25, 10243 Berlin, `05.10.2025`
 * [Bitcoin Amsterdam](https://www.bitcoin.amsterdam/) - Sugar Factory, `13.11.2025 - 14.11.2025`
 * [Adopting Bitcoin El-Salvador](https://adoptingbitcoin.org/) - Carretera Huizucar, Nuevo Cuscatlán, El Salvador, `14.11.2025-15.11.2025`
 * [Africa Bitcoin Conference](https://afrobitcoin.org/) - Caudan Arts Centre in Port Louis, Mauritius, `3.12.2025 - 5.12.2025`
@@ -139,6 +137,8 @@ Feel free add events to the list via pull request if you plan to present TollGat
 * [BTC++ Riga](https://btcplusplus.dev/conf/riga) - Riga, `07.08.2025 - 08.08.2025`
 * [Baltic Honey Badger](https://baltichoneybadger.com/buy-tickets) - Riga, `09.08.2025 - 10.08.2025`
 * [BTC++ Berlin](https://btcplusplus.dev/conf/berlin25) - Berlin, `02.10.2025 - 04.10.2025`
+* [Dark Prague](https://secondculture.cz/cs/events/dp25/) - 475/43, Dělnická, 170 00 Praha 7, Tschechien, `03.10.2025-05.10.2025`
+* [Nostr Hackday](https://nostrhackday.orangesync.tech) - Holzmarktstraße 25, 10243 Berlin, `05.10.2025`
 
 ## Contributing
 We welcome contributions! Feel free to reach out [on nostr](https://nostrudel.ninja/#/t/tollgate), [on signal](https://signal.group/#CjQKIFUj7wFVxIbHjujYAWGTKeMIvi1DdVYk2Zem3uNlmIwWEhAiFlw7arUvnitB1V0_cTaA) or in person.. [Endorsements on nostr](https://primal.net/e/nevent1qqspyv27cmc3j4dycyfypa2yxlr3qkqqumsnppk6mamxtx5njnyxmmqpp4mhxue69uhkummn9ekx7mqppamhxue69uhkummnw3ezumt0d5pzq6lwjq0mseqmr4lkt72jgqlemgcewuk0my8chwkuktmzjahfc5gdknd9qg), the TollGate echo chamber :)
