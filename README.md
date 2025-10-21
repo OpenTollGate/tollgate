@@ -119,13 +119,15 @@ Note: New articles will be added over time to reflect the latest developments in
 ## Events
 Feel free add events to the list via pull request if you plan to present TollGate somewhere.
 ### Events TollGates will be operated at
+* [Bitcoin Builders Meetup Berlin](https://meetu.ps/e/Ps9mB/TVMWr/i) - Möckernstrasse 120 · Berlin, `28.10.2025`
 * [Bitcoin Amsterdam](https://www.bitcoin.amsterdam/) - Sugar Factory, `13.11.2025 - 14.11.2025`
+* [Bitfest Manchester](https://bitfest.uk/) - Pendulum Hotel, Manchester, UK, `21-23 November 2025`
 * [Adopting Bitcoin El-Salvador](https://adoptingbitcoin.org/) - Carretera Huizucar, Nuevo Cuscatlán, El Salvador, `14.11.2025-15.11.2025`
-* [Africa Bitcoin Conference](https://afrobitcoin.org/) - Caudan Arts Centre in Port Louis, Mauritius, `3.12.2025 - 5.12.2025`
 
 #### Unconfirmed events
 * [SatsNFacts Korea](Not announced yet) - South Korea, `Q4 2025`
 * [Nostr World](Not announced yet) - Buenos Aires, `Q4 2025`
+* [Africa Bitcoin Conference](https://afrobitcoin.org/) - Caudan Arts Centre in Port Louis, Mauritius, `3.12.2025 - 5.12.2025`
 
 ### Past events
 * [Battle Mesh](https://www.battlemesh.org/BattleMeshV17) - Sundhausen, `10.06.2025 - 16.06.2025` (nostr presentation)
