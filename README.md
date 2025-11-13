@@ -121,9 +121,8 @@ Feel free add events to the list via pull request if you plan to present TollGat
 ### Events TollGates will be operated at
 * [Mining Disrupt](https://miningdisrupt.com/) - Dallas, Texas, `11.11.2025 - 13.11.2025`
 * [Bitcoin Amsterdam](https://www.bitcoin.amsterdam/) - Sugar Factory, Amsterdam, `13.11.2025 - 14.11.2025`
-* [Adopting Bitcoin](https://sv25.adoptingbitcoin.org/) - San Salvador, `14.11.2025 - 15.11.2025`
-* [Bitfest Manchester](https://bitfest.uk/) - Pendulum Hotel, Manchester, UK, `21-23 November 2025`
-* [Adopting Bitcoin El-Salvador](https://adoptingbitcoin.org/) - Carretera Huizucar, Nuevo Cuscatlán, El Salvador, `14.11.2025-15.11.2025`
+* [Adopting Bitcoin](https://sv25.adoptingbitcoin.org/) - Carretera Huizucar, Nuevo Cuscatlán, El Salvador, `14.11.2025 - 15.11.2025`
+* [Bitfest Manchester](https://bitfest.uk/) - Pendulum Hotel, Manchester, UK, `21.11.2025 - 23.11.2025`
 
 #### Unconfirmed events
 * [SatsNFacts Korea](Not announced yet) - South Korea, `Q4 2025`
