@@ -119,10 +119,7 @@ Note: New articles will be added over time to reflect the latest developments in
 ## Events
 Feel free add events to the list via pull request if you plan to present TollGate somewhere.
 ### Events TollGates will be operated at
-* [Mining Disrupt](https://miningdisrupt.com/) - Dallas, Texas, `11.11.2025 - 13.11.2025`
-* [Bitcoin Amsterdam](https://www.bitcoin.amsterdam/) - Sugar Factory, Amsterdam, `13.11.2025 - 14.11.2025`
-* [Adopting Bitcoin](https://sv25.adoptingbitcoin.org/) - Carretera Huizucar, Nuevo Cuscatlán, El Salvador, `14.11.2025 - 15.11.2025`
-* [Bitfest Manchester](https://bitfest.uk/) - Pendulum Hotel, Manchester, UK, `21.11.2025 - 23.11.2025`
+* [bitcoin++ Sovereignity Edition](https://btcplusplus.dev/conf/taipei) - No. 13號, Section 2, Nangang Rd, Nangang District, Taipei City, Taiwan 115, `15.12.2025-17.12.2025`
 
 #### Unconfirmed events
 * [SatsNFacts Korea](Not announced yet) - South Korea, `Q4 2025`
@@ -143,6 +140,10 @@ Feel free add events to the list via pull request if you plan to present TollGat
 * [Nostr Hackday](https://nostrhackday.orangesync.tech) - Holzmarktstraße 25, 10243 Berlin, `05.10.2025`
 * [The Canadian Bitcoin Conference](https://canadianbitcoinconf.com/) - Rialto Theatre, Montreal, QC, `16.10.2025-18.10.2025`
 * [Bitcoin Builders Meetup Berlin](https://meetu.ps/e/Ps9mB/TVMWr/i) - Möckernstrasse 120 · Berlin, `28.10.2025`
+* [Mining Disrupt](https://miningdisrupt.com/) - Dallas, Texas, `11.11.2025 - 13.11.2025`
+* [Bitcoin Amsterdam](https://www.bitcoin.amsterdam/) - Sugar Factory, `13.11.2025 - 14.11.2025`
+* [Bitfest Manchester](https://bitfest.uk/) - Pendulum Hotel, Manchester, UK, `21-23 November 2025`
+* [Adopting Bitcoin El-Salvador](https://adoptingbitcoin.org/) - Carretera Huizucar, Nuevo Cuscatlán, El Salvador, `14.11.2025-15.11.2025`
 
 ## Contributing
 We welcome contributions! Feel free to reach out [on nostr](https://nostrudel.ninja/#/t/tollgate), [on signal](https://signal.group/#CjQKIFUj7wFVxIbHjujYAWGTKeMIvi1DdVYk2Zem3uNlmIwWEhAiFlw7arUvnitB1V0_cTaA) or in person.. [Endorsements on nostr](https://primal.net/e/nevent1qqspyv27cmc3j4dycyfypa2yxlr3qkqqumsnppk6mamxtx5njnyxmmqpp4mhxue69uhkummn9ekx7mqppamhxue69uhkummnw3ezumt0d5pzq6lwjq0mseqmr4lkt72jgqlemgcewuk0my8chwkuktmzjahfc5gdknd9qg), the TollGate echo chamber :)
