@@ -121,12 +121,34 @@ Feel free add events to the list via pull request if you plan to present TollGat
 ### Events TollGates will be operated at
 * [bitcoin++ Sovereignity Edition](https://btcplusplus.dev/conf/taipei) - No. 13號, Section 2, Nangang Rd, Nangang District, Taipei City, Taiwan 115, `15.12.2025-17.12.2025`
 
-#### Unconfirmed events
-* [SatsNFacts Korea](Not announced yet) - South Korea, `Q4 2025`
-* [Nostr World](Not announced yet) - Buenos Aires, `Q4 2025`
-* [Africa Bitcoin Conference](https://afrobitcoin.org/) - Caudan Arts Centre in Port Louis, Mauritius, `3.12.2025 - 5.12.2025`
+### Planned TollGate Deployments
 
-### Past events
+* Cafe in Canada
+* Kakuma Camp
+* Madeira
+* El-Zonte
+
+
+### Events that have TollGates in 2026
+
+* [FOSDEM](https://fosdem.org/2026/) - `31.01.2026 – 02.02.2026`, ULB Campus Solbosch, Avenue Franklin D. Roosevelt 50, 1050 Brussels, Belgium
+* [TechFurMeet](https://www.techfurmeet.org/en/schedule) - `12.02.2026 – 16.02.2026`, 538 25 Horní Bradlo-Nasavrky, Tschechien
+* [Handycon](https://2026.handycon.xyz/) - `04.03.2026 – 06.03.2026`, Remote
+* [Madeira Bitcoin Meetup](https://www.satlantis.io/events/1692/FREE-Madeira-Bitcoin-Meetup) - `25.03.2026`, Cowork Funchal, R. das Mercês 41, 9000-224 Funchal, Portugal
+* [Wireless Community Weekend](https://forum.freifunk.net/t/wireless-community-weekend-2026/24552) - `15.05.2026 – 17.05.2026`, c-base, Rungestr. 20, 10179 Berlin
+* [btc++ Nairobi](https://btcplusplus.dev/) - `17.06.2026 – 20.06.2026`, Pride Inn Azure, Nairobi, Kenya
+* [Adopting Bitcoin Nairobi](https://x.com/AdoptingBTC/status/2017621046598226329#:~:text=Just%20announced!%20Adopting%20Bitcoin%20Nairobi%20June%2023%2D24%202026%20@JosefTetek%20@BrindonMwiine%20@AfribitKibera.) - `23.06.2026 - 24.06.2026`, Near Afribe Kbera - a place with lots of Bitcoin adoption
+* [DWeb Berlin](https://dwebcamp.org/) - `08.07.2026 - 12.07.2026`, Kluckstraße 25, Berlin
+* [btc++ Berlin](https://btcplusplus.dev/) - `01.10.2026 – 03.10.2026`, w3 hub, Berlin, Germany
+* [Nostr Hackday](https://primal.net/e/nevent1qqsgq3dyyea83am64u736lw0mm3fkm8jhctlqkr2au9rvf8sw5cn5hq3nkv4p) - `04.10.2026`, Probably c-base
+* [Dark Prague](https://darkprague.com/) - `02.10.2026 – 04.10.2026`, Stará čistírna odpadních vod 1906 Praha - Bubeneč
+* [Battlemesh v18](https://battlemesh.org/BattleMeshV18/) - `07.09.2026 – 13.09.2026`, Rural Lika region, Croatia (LikaNet project area)
+
+#### Unconfirmed
+* [OsmoDevCon](https://osmocom.org/projects/osmo-dev-con/wiki/OsmoDevCon), Lehrter Str. 53, 10557 Berlin
+
+
+### Events that had TollGate deployments in 2025
 * [Battle Mesh](https://www.battlemesh.org/BattleMeshV17) - Sundhausen, `10.06.2025 - 16.06.2025` (nostr presentation)
 * [Freedom Forum](https://archive.hrf.org/apply-to-attend-the-2025-oslo-freedom-forum/) - Oslo, `26.05.2025 - 28.05.2025`
 * [Pizza Day](https://2025.pizzaday.cz/) - Prague, `17.05.2025 - 18.05.2025`
@@ -144,6 +166,8 @@ Feel free add events to the list via pull request if you plan to present TollGat
 * [Bitcoin Amsterdam](https://www.bitcoin.amsterdam/) - Sugar Factory, `13.11.2025 - 14.11.2025`
 * [Bitfest Manchester](https://bitfest.uk/) - Pendulum Hotel, Manchester, UK, `21-23 November 2025`
 * [Adopting Bitcoin El-Salvador](https://adoptingbitcoin.org/) - Carretera Huizucar, Nuevo Cuscatlán, El Salvador, `14.11.2025-15.11.2025`
+* [BTC++ Taipei](https://btcplusplus.dev/conf/taipei) - `No. 13號, Section 2, Nangang Rd, Nangang District, Taipei City, Taiwan 115`, `15.12.2025 - 17.12.2025`
+
 
 ## Contributing
 We welcome contributions! Feel free to reach out [on nostr](https://nostrudel.ninja/#/t/tollgate), [on signal](https://signal.group/#CjQKIFUj7wFVxIbHjujYAWGTKeMIvi1DdVYk2Zem3uNlmIwWEhAiFlw7arUvnitB1V0_cTaA) or in person.. [Endorsements on nostr](https://primal.net/e/nevent1qqspyv27cmc3j4dycyfypa2yxlr3qkqqumsnppk6mamxtx5njnyxmmqpp4mhxue69uhkummn9ekx7mqppamhxue69uhkummnw3ezumt0d5pzq6lwjq0mseqmr4lkt72jgqlemgcewuk0my8chwkuktmzjahfc5gdknd9qg), the TollGate echo chamber :)
