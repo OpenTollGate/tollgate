@@ -119,7 +119,10 @@ Note: New articles will be added over time to reflect the latest developments in
 ## Events
 Feel free add events to the list via pull request if you plan to present TollGate somewhere.
 ### Events TollGates will be operated at
-* [bitcoin++ Sovereignity Edition](https://btcplusplus.dev/conf/taipei) - No. 13號, Section 2, Nangang Rd, Nangang District, Taipei City, Taiwan 115, `15.12.2025-17.12.2025`
+
+### Fixed TollGate Deployments
+
+* Village in Austria
 
 ### Planned TollGate Deployments
 
@@ -127,7 +130,6 @@ Feel free add events to the list via pull request if you plan to present TollGat
 * Kakuma Camp
 * Madeira
 * El-Zonte
-
 
 ### Events that have TollGates in 2026
 
