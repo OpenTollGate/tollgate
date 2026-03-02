@@ -118,7 +118,6 @@ Note: New articles will be added over time to reflect the latest developments in
 
 ## Events
 Feel free add events to the list via pull request if you plan to present TollGate somewhere.
-### Events TollGates will be operated at
 
 ### Fixed TollGate Deployments
 
