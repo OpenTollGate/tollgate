@@ -1,8 +1,7 @@
 # TIP-01 - Base Events
-`draft` `mandatory` `kind=10021` `kind=21000` `kind=1022`
 
 ---
-## TollGate Discovery
+## TollGate Details / Advertisment
 Tollgate Details / Advertisement is expressed through the following Nostr event
 ```json
 {
@@ -36,26 +35,6 @@ Tags:
     ]
 }
 ```
-
-## Payment
-```json
-{
-	"kind": 21000,
-	"pubkey": "63gy...9xvq", // Customer Identity, Can be randomly generated
-	// ...
-	"tags": [
-		["p", "24d6...3662"], // TollGate identity (pubkey)
-		["device-identifier", "<type>", "<value>"],
-		["payment", "<bearer_asset>"]
-	]
-}
-```
-
-Tags:
-- `p`: pubkey of the TollGate (from the TollGate Details event) who takes the payment
-- `device-identifier`: (hardware) identifier of the customer's device. Second argument specifies type of identifier, third argument is the identifier value. `["device-identifier", "mac", "00:1A:2B:3C:4D:5E"]`
-- `payment`: Bearer asset, such as Cashu token `["payment", "cashuB..."]`
-
 
 ## Session
 ```json

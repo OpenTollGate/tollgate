@@ -1,5 +1,4 @@
-# TIP-10 - Beacon Frame Advertisement
-`draft` `optional`
+# WIFI-01 - Beacon Frame Advertisement
 
 ---
 - RESERVED: advertise tollgate in WIFI beaconframe

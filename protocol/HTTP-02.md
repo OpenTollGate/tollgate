@@ -1,12 +1,11 @@
-# TIP-04 - Restrictive OS compatibility
-`draft` `optional` `kind=21000`
+# HTTP-02 - Restrictive OS compatibility
 
 ---
 
 ## GET /whoami
 A `GET` request on the `/whoami` endpoint MUST return http status `200 OK` with the body containing the customer's `<device-identifier>` that the customer MUST include in their payment event.
 
-http port MUST be the same as [TIP-03](./03.md)
+http port MUST be the same as [HTTP-01](./HTTP-01.md)
 
 Formatted as `[type]=[value]`
 

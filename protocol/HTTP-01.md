@@ -1,26 +1,23 @@
-# TIP-03 - Http server
-`draft` `optional` `kind=21000` `kind=1022` `kind=10021`
+# HTTP-01 - Http server
 
 ---
 
 Minimal setup for allowing payments on LAN networks. Default port `2121`
 
 ## POST /
-The Server MUST take a http `POST` request containing a valid [Payment](#payment) event in the request body.
+The Server MUST take a http `POST` request containing a bearer asset token directly in the request body.
+
+The TollGate derives the customer's device identifier (e.g. MAC address) from the request's network context.
 
 If the TollGate accepts the provided payment it MUST return http `200 OK` response where the body is a `kind=1022` TollGate Session event.
 
-If the payment is invalid, it MAY return a http `402 Payment Required` status.
+If the payment is invalid, it SHOULD return a `kind=21023` Notice event with an appropriate error code, and MAY use http `402 Payment Required` or `400 Bad Request` status.
 
 ### CURL Request Example (Successful Payment):
 
 ```bash
-curl -X POST http://192.168.1.1:2121/ # TollGate IP
-  -H "Content-Type: application/json" \
-  -d '{
-    "kind": 21000,
-    ...
-  }'
+curl -X POST http://192.168.1.1:2121/ \
+  -d 'cashuB...'
 ```
 
 ### Response Example (Successful Payment):
@@ -28,7 +25,6 @@ curl -X POST http://192.168.1.1:2121/ # TollGate IP
 ```
 HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 456
 
 {
   "kind": 1022,
@@ -39,11 +35,13 @@ Content-Length: 456
 ### Response Example (Invalid Payment):
 
 ```
-HTTP/1.1 402 Payment Required
-Content-Type: text/plain
-Content-Length: 15
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
 
-This mint is not accepted
+{
+  "kind": 21023,
+  ...
+}
 ```
 
 ## GET /

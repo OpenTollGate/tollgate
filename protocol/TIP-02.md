@@ -1,5 +1,4 @@
 # TIP-02 - Cashu payments
-`draft` `mandatory` `kind=10021` `kind=21000` `kind=1022`
 
 ---
 
@@ -47,18 +46,8 @@ Tags:
 
 ## Payment
 
-When the customer pays an exact multiple of `<price_per_step>` and adds `<mint_fee>`. The TolGate MUST allot at least that amount of steps to the customer.
+The customer sends a Cashu token directly over the TollGate's supported transport(s). The allotment the customer receives is relative to the value of the token sent.
 
-```json
-{
-	"kind": 21000,
-	// ...
-	"tags": [
-		// <TIP-01 tags>
-		["payment", "cashuB..."]
-	]
-}
 ```
-
-Tags:
-- `payment`: Cashu Token
+cashuB...
+```

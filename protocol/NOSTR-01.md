@@ -1,5 +1,4 @@
-# TIP-06 - Nostr Relay
-`draft` `optional`
+# NOSTR-01 - Nostr Relay
 
 ---
 
