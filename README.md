@@ -1,196 +1,103 @@
+<p align="center">
+  <img src="images/TollGate_Logo-C-black.png" alt="TollGate" width="480">
+</p>
 
-![tollgate-logo](TollGate_Logo-C-black.png)
+# TollGate Protocol
 
-[TollGate](https://tollgate.me/) enables WiFi routers to accept Bitcoin payments for internet access. This allows users with a router and an internet connection to operate as internet service providers. One of the reasons mesh networks haven't been widely adopted is that infrastructure operators didn't have a simple _permission-less way to transfer the operating cost of the infrastructure to its users_. Thanks to Bitcoin + e-cash, TollGate operators can transfer the cost of their internet gateway to the users of their access point in a granular manner.
+## What is TollGate?
 
-## TollGate Protocol
-You can find a draft of the TollGate protocol (split up in multiple TollGate Implementation Possibilities) [here](protocol/README.md)
+TollGate is a protocol for selling network access in exchange for small, frequent bearer asset payments — streaming sats for connectivity. Any device that can gate connectivity — a WiFi router, an Ethernet switch, a Bluetooth tether — can act as a TollGate. Customers pay with ecash tokens for exactly what they use: a few minutes online, a handful of megabytes, no more. No accounts, no subscriptions, no sign-ups, no KYC — just pay-as-you-go internet access on open networks.
 
-## TollGate network
-![](https://cdn.satellite.earth/fdbdf6be3d7f73612501ad39f23647a3dfda56563fe68f10b886da5fd6d94cb1.png)
-The image above shows what a network built out of independently operated TollGates looks like. The is be somebody that connects a TollGate to their a ISP and then the TollGate starts reselling that connection. Other TollGates can buy access and extend the network without having to ask for permission or know who the initial operator is. This can continue as many levels deep as the market will find to be efficient. Anywhere in the network, consumers can do the same thing to purchase internet access on their personal devices. The only difference between the consumer app and another TollGate is that the consumer device most likely won't resell the connection.
+The protocol is designed to work across any combination of physical media and negotiation interfaces. A TollGate advertises its pricing, accepts payments, and manages sessions using a common data model regardless of whether the customer connects over WiFi, Ethernet, Bluetooth, or something else entirely.
 
-## Components that make up TollGate
-![](https://cdn.satellite.earth/62630eb4f8f2c9c8f088e397e6fd12dbb3c406125b3703ffa9e2f0bf331dffbd.png)
-TollGate software is not just one app or component, but is made up out of several services that each handle their own specialized task. Together it forms the TollGate ecosystem. The communication between some of these components will be the TollGate protocol, but it's still to early to solidify it.
+## Why TollGate?
 
-### TollGate Repositories
-The TollGate ecosystem consists of four main projects:
+**Permissionless**: No accounts, no persistent identites, no registration.
 
-- **tollgate-protocol**: The open protocol definition that standardizes how TollGate components communicate. Currently housed in this repository under the 'protocol' directory, but will be moved to its own dedicated repository.
-  
-- **tollgate-core**: The reference implementation of the TollGate protocol specifically designed for OpenWRT routers. Currently referred to as tollgate-module-basic-go, this component contains the core functionality needed to implement the TollGate protocol.
-  
-- **tollgate-os**: A ready-made OpenWRT image with all necessary components pre-installed. This allows you to transform supported routers into fully functional TollGates without much manual configuration.
-  
-- **tollgate-installer**: A tool made to simplify the process of flashing TollGateOS onto new routers, making deployment accessible for users of varying technical backgrounds.
+**Granular metering**: Sessions are measured in small increments (time or data). Customers pay for what they use, not a fixed subscription.
 
-The project is currently undergoing significant architectural improvements thanks to new possibilities that nostr brings to the table. The new architecture of TollGate is introduced [here](https://opentollgate.github.io/tollgate/nostr-powering-tollgate). When you modify one of the above modules, the module is package by an [SDK](https://github.com/OpenTollGate/tollgate-sdk) and pushed to blossom in a github action. You can later use the [imagae builder](https://github.com/OpenTollGate/tollgate-image-builder) to generate an OpenWRT image for the actions.
+**Bearer asset payments**: The customer does not need to be online to pay. A bearer asset token (e.g. ecash) is sufficient on its own to purchase connectivity — no prior internet connection, no account, no interactive payment protocol required.
 
+**Decentralized**: Each TollGate operates independently. Every TollGate sets its own pricing and accepted mints independently.
 
-## Benefits
-Benefits for users:
-- **Sharing Costs:** Communities can share the cost of running internet infrastructure. TollGates that resell access to this gateway expand the network geographically outwards from the gateway - thus increasing the purchasing power that the network can present to it.
-- **Reliability and bandwidth:** users and/or TollGate operators who are concerned about the reliability of multi-hop internet connections can use multi-WAN to create redundancy for themselves and their users. Multi-WAN also allows TollGates to aggregate bandwidth from multiple gateways, thus giving them the ability to deliver faster internet than individual legacy ISPs provide.
-- **Privacy:** Internet service provision typically involves certain regulatory compliance requirements regarding user data collection and retention. TollGate's distributed architecture naturally shifts operational responsibilities to individual network participants. The ability to process micro-payments through e-cash enables granular service delivery without requiring identity verification. This architecture, combined with frequent small transactions, can help preserve user privacy while maintaining network functionality.
+**Multi-hop**: TollGates can buy connectivity from each other, extending reach beyond a single operator.
 
-Opportunity for TollGate operators:
-- **Arbitrage:** a TollGate that succeeds in connecting the non KYC network to a cheaper gateway benefits from an arbitrage opportunity and further lowers the price of internet access on the non KYC network.
-- **Global services:** TollGate operators can sell access to the local network globally, thus enabling a market for IP addresses that otherwise wouldn't be available on the traditional VPN market.
+## Protocol Architecture
 
-Effect on legacy internet service providers:
-- **Loss of moat:** ISPs that offer fiat/KYC contracts for unlimited data would need to adjust their offering to a per GB based model in order to remain competitive and to throttle the growth of TollGate based ISPs.
-- **Fewer contracts sold:** since multiple users share a single contract legacy ISPs can expect to see a drop in sales and a rise in data usage from the contracts that remain.
-- **Increased competition for users:** many Bitcoin miners run at a loss, because there is nothing stopping a miner who sees opportunity from participating in the market for hash-rate. Our goal is to ensure that nothing can stop TollGate operators from participating in the market for connectivity, thus delivering a close to optimal outcome for the user.
-- **Decreased competition for limited spectrum:** since users can access their neighbour's routers, they no longer need to operate their own in areas where the spectrum is congested. This enables everyone to get a better throughput, because less can be more on a shared medium.
+The TollGate protocol is organized into three layers. A working TollGate combines specs from each layer — a protocol spec defines the interaction between customer and service provider, an interface spec defines how events are exchanged, and a medium spec may add capabilities specific to the physical link. Some specs depend on others (e.g. HTTP-02 extends HTTP-01), and the [Recipes](#recipes) section shows possible combinations.
 
-## Project Timeline
+```
+┌─────────────────────────────────────────────┐
+│  Protocol                                   │
+│  Data model, events, payment assets         │
+├─────────────────────────────────────────────┤
+│  Interface                                  │
+│  How messages are sent/received             │
+├─────────────────────────────────────────────┤
+│  Medium                                     │
+│  What physical link carries the sold data   │
+└─────────────────────────────────────────────┘
+```
 
-<table>
-  <tr>
-    <td align="center">📅 <strong>2012</strong></td>
-    <td>💡 Initial idea of paying neighbouring routers for higher bandwidth via multi-wan</td>
-  </tr>
-  <tr>
-    <td align="center">📅 <strong>Mid 2024</strong></td>
-    <td>🧪 Early proof of concept by pasting ecash in captive portal password field</td>
-  </tr>
-  <tr>
-    <td align="center">📅 <strong>Late 2024</strong></td>
-    <td>🔄 Introduced golang / nostr to the routers</td>
-  </tr>
-  <tr>
-    <td align="center">📅 <strong>April 2025</strong></td>
-    <td>📝 First protocol draft</td>
-  </tr>
-</table>
+### Protocol — *what* is the data?
 
+The abstract data model. Event kinds, tag structures, payment asset definitions, session semantics. Protocol specs never mention how messages are delivered — only what they contain.
 
-## FAQ
+| # | Description |
+|---|-------------|
+| [TIP-01](TIP-01.md) | Base Events (Advertisement, Session, Notice) |
+| [TIP-02](TIP-02.md) | Cashu payments |
 
-### General
-#### What is an ISP?
-ISP stands for Internet Service Provider. ISP's are companies that provide your home with internet access and charge a monthly fee for it. For example: Comcast, Verizon and AT&T ar all ISP's.
+### Interface — *how* do customer and TollGate talk?
 
-#### Can I share my internet plan with my neighbors?
-Yes, if you operate a TollGate, your neighbour can connect to your TollGate instead of their own ISP's access-point.
+The communication method used for negotiation (advertisement, payment, session management) between customer and TollGate. An interface runs over a medium, but the relationship is not 1:1. A single medium can support multiple interfaces — an Ethernet link can carry HTTP requests, Nostr relay messages, or raw UDP packets. And a single interface (like HTTP) can run over different media.
 
-### Risks
-#### Is TollGate safe to use?
-TollGate networks are public/open WiFi networks, like the ones you find in hotels and airports. These kind of networks have risks associated to it and we recommend always using a VPN when using public networks.
-Additionally, TollGate development is still in very early stages and the project still changes a lot. We cannot make any promises about security and privacy at this point in time.
+| # | Description |
+|---|-------------|
+| [HTTP-01](HTTP-01.md) | HTTP server |
+| [HTTP-02](HTTP-02.md) | Restrictive OS compatibility |
+| [HTTP-03](HTTP-03.md) | Usage endpoint |
+| [NOSTR-01](NOSTR-01.md) | Nostr relay |
 
-### Using TollGate
-#### Is TollGate free?
-The software we publish is free and open-source, meaning you will not be charged for the use of TollGate software. However, the independent TollGate operators (the people providing the access-points) will charge you as the user for their services. The price they set it not controlled by the TollGate open-source project.
+### Medium — *what physical link* carries the sold data?
+
+The physical or link-layer technology over which the TollGate sells connectivity. A medium may constrain which interfaces are available, but the medium itself is not the interface.
+
+| # | Description |
+|---|-------------|
+| [WIFI-01](WIFI-01.md) | Discovery through Beacon Frames |
+
+---
 
 
-### Operating a TollGate
+# Recipes
 
-#### What is TollGateOS?
-TollGateOS is a version of OpenWRT that has all software included that is needed to turn a router into a TollGate.
+Example combinations of Protocol + Interface + Medium specs.
 
-#### How can I operate a TollGate?
-We provide TollGateOS images which you can install on our supported routers. Other routers may work but we do not currently test for those.
-
-#### Which hardware is supported?
-Currently TollGateOS is compatible with:
-- GL.iNet MT-3000
-
-TollGate's long-term aim is to support many OpenWRT compatible routers.
-
-#### Is it legal to operate a TollGate?
-This depends a lot on the jurisdiction you are operating the TollGate in. In some countries/regions you might take liability for the traffic that runs through your TollGate, be sure to check your local rules and regulations. Additionally, check your ISP's Terms & Conditions for any rules around reselling internet access.
-
-It is your own responsibility to handle local rules and regulations, we cannot assist you with that.
-
-## Additional reading
-
-- [Thoughts academic paper about paying for internet access](markdown_faqs/10.02.2025_paper_thoughts/thoughts_on_paper_10.02.2025.md) (last edited: February 11, 2025)
-- [TollGate android client works!](https://njump.me/nevent1qqsv7s9h4y0aklk5rfy28d3d6wgua0pafuaesjuewt6tfrq3lnuxh9cpzemhxue69uhk7unpdenk2umede3juar9vd5z7q3qzzt0d0s2f4lsanpd7nkjep5r79p7ljq7aw37eek64hf0ef6v0mxqxpqqqqqqz64slvx) (last edited: January 31, 2025)
-- [Building TollGate Image](https://primal.net/e/nevent1qqsrkfkdwy8q693vtrs789t7gf0vt86avkp7ufcmn5j0rhuvpr35zsqpp4mhxue69uhkummn9ekx7mqzyze7y04hydanvkk2n8ya9rc8pgc56cdgxlnm6r7tkrcrjnwuld3psge2xzv) (last edited: January 28, 2025)
-- [For Non-Technical Bitcoiners](https://opentollgate.github.io/tollgate/markdown_faqs/12.01.2025_for_non_technical_bitcoiners) (last edited: January 12, 2025)
-- [For Technical Bitcoiners](https://opentollgate.github.io/tollgate/markdown_faqs/12.01.2025_for_technical_bitcoiners) (last edited: January 12, 2025)
-- [Written before we had the improved architecture](https://npub1suw0zfxerywd4zku4gjsjde22zhzye9dl2hsll6s3z2qap75p78s66lkhp.nsite.orangesync.tech) (last edited: October/November 2024)
-
-Note: New articles will be added over time to reflect the latest developments in TollGate. The date indicates when each guide was last modified to ensure you're reading the most current information.
+| Name | Protocol | Interface | Medium | Description |
+|------|----------|-----------|--------|-------------|
+| WiFi hotspot (full) | TIP-01, TIP-02 | HTTP-01, HTTP-02 | WIFI-01 | Adds `/whoami` for restrictive OS support and beacon frame discovery. |
+| WiFi hotspot (basic) | TIP-01, TIP-02 | HTTP-01 | — | Captive portal with HTTP payment. Device ID from MAC. |
+| WiFi hotspot (stealth) | TIP-01, TIP-02 | HTTP-01 | — | No Captive portal, No beacon frame advertisement, no `/whoami`. Only customers who know the network can pay. |
+| Ethernet port | TIP-01, TIP-02 | HTTP-01 | — | Wired access sold via HTTP. Same as WiFi hotspot but over Ethernet. |
+| WiFi + Nostr relay | TIP-01, TIP-02 | HTTP-01, NOSTR-01 | WIFI-01 | HTTP for in-band payments, Nostr relay for out-of-band or remote management. |
+| Nostr-only | TIP-01, TIP-02 | NOSTR-01 | — | Fully out-of-band. Customer pays via relay, device identity via pubkey/tags. |
+| BLE tethering | TIP-01, TIP-02 | *(future BLE-01)* | — | Bluetooth internet sharing. Payment over GATT characteristics. |
 
 
-## Events
-Feel free add events to the list via pull request if you plan to present TollGate somewhere.
+## Implementations
 
-### Fixed TollGate Deployments
+- [tollgate-module-basic-go](https://github.com/OpenTollGate/tollgate-module-basic-go) — reference implementation for OpenWRT routers.
+- [tollgate-os](https://github.com/OpenTollGate/tollgate-os) — ready-made OpenWRT image with TollGate pre-installed.
 
-* Village in Austria
+## (Breaking) changes
 
-### Planned TollGate Deployments
+| When | What |
+|------|------|
+| June 2025 | Cashu payments mint now is added to `<price_per_step>` tag, removing `<mint>` tag |
+| June 2025 | Changed Discovery to no longer be ephemeral |
+| March 2026 | Payment accepts pure bearer asset tokens instead of `kind=21000` Nostr event wrapper. Specs restructured into Protocol (TIP), Interface (HTTP, NOSTR), and Medium (WIFI) categories. |
 
-* Cafe in Canada
-* Kakuma Camp
-* Madeira
-* El-Zonte
+## License
 
-### Events that have TollGates in 2026
-
-* [FOSDEM](https://fosdem.org/2026/) - `31.01.2026 – 02.02.2026`, ULB Campus Solbosch, Avenue Franklin D. Roosevelt 50, 1050 Brussels, Belgium
-* [TechFurMeet](https://www.techfurmeet.org/en/schedule) - `12.02.2026 – 16.02.2026`, 538 25 Horní Bradlo-Nasavrky, Tschechien
-* [Handycon](https://2026.handycon.xyz/) - `04.03.2026 – 06.03.2026`, Remote
-* [Madeira Bitcoin Meetup](https://www.satlantis.io/events/1692/FREE-Madeira-Bitcoin-Meetup) - `25.03.2026`, Cowork Funchal, R. das Mercês 41, 9000-224 Funchal, Portugal
-* [Wireless Community Weekend](https://forum.freifunk.net/t/wireless-community-weekend-2026/24552) - `15.05.2026 – 17.05.2026`, c-base, Rungestr. 20, 10179 Berlin
-* [btc++ Nairobi](https://btcplusplus.dev/) - `17.06.2026 – 20.06.2026`, Pride Inn Azure, Nairobi, Kenya
-* [Adopting Bitcoin Nairobi](https://x.com/AdoptingBTC/status/2017621046598226329#:~:text=Just%20announced!%20Adopting%20Bitcoin%20Nairobi%20June%2023%2D24%202026%20@JosefTetek%20@BrindonMwiine%20@AfribitKibera.) - `23.06.2026 - 24.06.2026`, Near Afribe Kbera - a place with lots of Bitcoin adoption
-* [DWeb Berlin](https://dwebcamp.org/) - `08.07.2026 - 12.07.2026`, Kluckstraße 25, Berlin
-* [btc++ Berlin](https://btcplusplus.dev/) - `01.10.2026 – 03.10.2026`, w3 hub, Berlin, Germany
-* [Nostr Hackday](https://primal.net/e/nevent1qqsgq3dyyea83am64u736lw0mm3fkm8jhctlqkr2au9rvf8sw5cn5hq3nkv4p) - `04.10.2026`, Probably c-base
-* [Dark Prague](https://darkprague.com/) - `02.10.2026 – 04.10.2026`, Stará čistírna odpadních vod 1906 Praha - Bubeneč
-* [Battlemesh v18](https://battlemesh.org/BattleMeshV18/) - `07.09.2026 – 13.09.2026`, Rural Lika region, Croatia (LikaNet project area)
-
-#### Unconfirmed
-* [OsmoDevCon](https://osmocom.org/projects/osmo-dev-con/wiki/OsmoDevCon), Lehrter Str. 53, 10557 Berlin
-
-
-### Events that had TollGate deployments in 2025
-* [Battle Mesh](https://www.battlemesh.org/BattleMeshV17) - Sundhausen, `10.06.2025 - 16.06.2025` (nostr presentation)
-* [Freedom Forum](https://archive.hrf.org/apply-to-attend-the-2025-oslo-freedom-forum/) - Oslo, `26.05.2025 - 28.05.2025`
-* [Pizza Day](https://2025.pizzaday.cz/) - Prague, `17.05.2025 - 18.05.2025`
-* [SatsNFacts](https://satsnfacts.btc.pub/#agenda) - Chiang Mai - February 2025
-	* [Presentation](https://www.figma.com/deck/uws5VZOIJLSta91UqhoBlj/Untitled?node-id=1-578&t=vpFgI0GNI29BH3qf-0&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1) introducing TollGate
-* [Zitadelle](https://pay.einundzwanzig.space/apps/4DtdvBYv6JpyvKtsGRUAjfSLmtKp/pos) - Wasserburg Heldrungen, `24.07.2025 - 27.07.2025`
-* [BTC++ Riga](https://btcplusplus.dev/conf/riga) - Riga, `07.08.2025 - 08.08.2025`
-* [Baltic Honey Badger](https://baltichoneybadger.com/buy-tickets) - Riga, `09.08.2025 - 10.08.2025`
-* [BTC++ Berlin](https://btcplusplus.dev/conf/berlin25) - Berlin, `02.10.2025 - 04.10.2025`
-* [Dark Prague](https://secondculture.cz/cs/events/dp25/) - 475/43, Dělnická, 170 00 Praha 7, Tschechien, `03.10.2025-05.10.2025`
-* [Nostr Hackday](https://nostrhackday.orangesync.tech) - Holzmarktstraße 25, 10243 Berlin, `05.10.2025`
-* [The Canadian Bitcoin Conference](https://canadianbitcoinconf.com/) - Rialto Theatre, Montreal, QC, `16.10.2025-18.10.2025`
-* [Bitcoin Builders Meetup Berlin](https://meetu.ps/e/Ps9mB/TVMWr/i) - Möckernstrasse 120 · Berlin, `28.10.2025`
-* [Mining Disrupt](https://miningdisrupt.com/) - Dallas, Texas, `11.11.2025 - 13.11.2025`
-* [Bitcoin Amsterdam](https://www.bitcoin.amsterdam/) - Sugar Factory, `13.11.2025 - 14.11.2025`
-* [Bitfest Manchester](https://bitfest.uk/) - Pendulum Hotel, Manchester, UK, `21-23 November 2025`
-* [Adopting Bitcoin El-Salvador](https://adoptingbitcoin.org/) - Carretera Huizucar, Nuevo Cuscatlán, El Salvador, `14.11.2025-15.11.2025`
-* [BTC++ Taipei](https://btcplusplus.dev/conf/taipei) - `No. 13號, Section 2, Nangang Rd, Nangang District, Taipei City, Taiwan 115`, `15.12.2025 - 17.12.2025`
-
-
-## Contributing
-We welcome contributions! Feel free to reach out [on nostr](https://nostrudel.ninja/#/t/tollgate), [on signal](https://signal.group/#CjQKIFUj7wFVxIbHjujYAWGTKeMIvi1DdVYk2Zem3uNlmIwWEhAiFlw7arUvnitB1V0_cTaA) or in person.. [Endorsements on nostr](https://primal.net/e/nevent1qqspyv27cmc3j4dycyfypa2yxlr3qkqqumsnppk6mamxtx5njnyxmmqpp4mhxue69uhkummn9ekx7mqppamhxue69uhkummnw3ezumt0d5pzq6lwjq0mseqmr4lkt72jgqlemgcewuk0my8chwkuktmzjahfc5gdknd9qg), the TollGate echo chamber :)
-
-### TollGate Repositories
-The following repositories are currently part of TollGate:
-
-* [TollGate documentation](https://vnext.gitworkshop.dev/npub1c03rad0r6q833vh57kyd3ndu2jry30nkr0wepqfpsm05vq7he25slryrnw/tollgate) repository
-
-#### Actions
-* TollGate [blossom upload action](https://vnext.gitworkshop.dev/npub1c03rad0r6q833vh57kyd3ndu2jry30nkr0wepqfpsm05vq7he25slryrnw/upload-blossom-action)
-* TollGate [SDK action](https://vnext.gitworkshop.dev/npub1c03rad0r6q833vh57kyd3ndu2jry30nkr0wepqfpsm05vq7he25slryrnw/tollgate-sdk)
-* TollGate [image builder](https://vnext.gitworkshop.dev/npub1c03rad0r6q833vh57kyd3ndu2jry30nkr0wepqfpsm05vq7he25slryrnw/tollgate-image-builder)
-* Nostr file [metadata publishing action](https://vnext.gitworkshop.dev/npub1c03rad0r6q833vh57kyd3ndu2jry30nkr0wepqfpsm05vq7he25slryrnw/nostr-publish-file-metadata-action)
-
-#### Modules
-* TollGate [relay module](https://vnext.gitworkshop.dev/npub1c03rad0r6q833vh57kyd3ndu2jry30nkr0wepqfpsm05vq7he25slryrnw/tollgate-module-relay-go)
-* TollGate [valve module](https://vnext.gitworkshop.dev/npub1c03rad0r6q833vh57kyd3ndu2jry30nkr0wepqfpsm05vq7he25slryrnw/upload-blossom-action)
-
-#### Decomissioned
-* [Custom nostr feed](https://vnext.gitworkshop.dev/npub1c03rad0r6q833vh57kyd3ndu2jry30nkr0wepqfpsm05vq7he25slryrnw/custom-nostr-feed-decomissioned) for packaging with the OpenWRT SDK
-
-
-## UNLICENSE
-This is free and unencumbered software - see the [UNLICENSE](UNLICENSE) file for details.
+Licensed under the [MIT License](LICENSE).
