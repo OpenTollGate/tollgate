@@ -121,6 +121,112 @@ Example combinations of Protocol + Interface + Medium specs.
 | April 2025 | First protocol draft |
 | March 2026 | Protocol restructured into Protocol (TIP) / Interface (HTTP, NOSTR) / Medium (WIFI) layers |
 
+## Roadmap
+
+### Near Term (H2 2026)
+- **Protocol Enhancements**: Complete TIP-03 (Multi-hop Routing) specification and reference implementation
+- **Mobile Client**: Release alpha Android client with seamless payment integration
+- **Hardware Compatibility**: Expand support beyond GL.iNet to include more OpenWrt-compatible routers
+- **Testing Framework**: Establish automated testing pipeline for all implementations
+
+### Mid Term (2027)
+- **Enterprise Features**: Support for multiple simultaneous sessions, bandwidth pooling, and advanced QoS
+- **Lightning Network Integration**: Native Lightning payments alongside Cashu for instant settlement
+- **Hardware Acceleration**: GPU/CPU acceleration for cryptographic operations on supported devices
+- **Standardization**: Begin IETF draft standardization process for core protocol
+
+### Long Term (2028+)
+- **Mesh Networking**: Full mesh support with automatic route discovery and optimization
+- **Cross-Protocol Compatibility**: Bridge to other network monetization protocols (e.g., Althea, LibreRouter)
+- **FIPS 140-2 Compliance**: Full FIPS validation for government and enterprise deployments
+- **Satellite Integration**: Support for satellite-based TollGates in remote areas
+
+---
+
+## TollGate Review Club
+
+The TollGate Review Club is a structured testing program inspired by Bitcoin Core Review Club, designed to validate alpha releases with real-world testing before official launch.
+
+### Purpose
+- **Quality Assurance**: Catch bugs and edge cases that automated testing misses
+- **Community Building**: Onboard new contributors through hands-on experience
+- **Feedback Collection**: Gather UX insights and identify missing features
+
+### How It Works
+- **Sessions**: 1-2 hour guided testing sessions with 3-5 participants
+- **Format**: Remote participation using own hardware (GL.iNet routers)
+- **Process**: Guided testing → free exploration → structured feedback
+- **Current Focus**: Alpha-3 (v0.5.0-alpha.3) validation
+
+### Participation
+- **Requirements**: GL.iNet MT3000 or OpenWrt 24.10+ router, Cashu wallet
+- **Communication**: Signal group for coordination and support
+- **Documentation**: Testing manuals, session guides, and feedback templates
+- **Repository**: [tollgate-review-club](https://github.com/OpenTollGate/tollgate-review-club)
+
+### Benefits
+- **Early Access**: Test new features before public release
+- **Direct Impact**: Shape development through actionable feedback
+- **Community**: Connect with other TollGate enthusiasts and developers
+- **Recognition**: Contributors acknowledged in release notes
+
+---
+
+## FIPS Integration Direction
+
+### Overview
+FIPS 140-2 compliance enables TollGate deployment in government, enterprise, and regulated environments where validated cryptographic modules are required. This initiative ensures TollGate meets strict security standards while maintaining its open-source and permissionless ethos.
+
+### Approach
+Our FIPS integration strategy follows a **phased implementation** that balances regulatory requirements with the project's decentralized values:
+
+#### Phase 1: FIPS Mode (Q3 2026)
+- **Dual Crypto Stack**: Implement selectable FIPS/non-FIPS cryptographic operations
+- **Module Validation**: Begin validation process for core cryptographic modules
+- **Documentation**: Create FIPS compliance documentation and deployment guides
+- **Testing**: Establish FIPS-specific test suite and validation procedures
+
+#### Phase 2: Partial Validation (Q1 2027)
+- **Core Module FIPS**: Complete FIPS 140-2 validation for essential cryptographic operations
+- **Hardware Integration**: Partner with FIPS-validated hardware manufacturers
+- **Enterprise Features**: Add enterprise-specific management and monitoring capabilities
+- **Compliance Tools**: Develop compliance verification and reporting tools
+
+#### Phase 3: Full Compliance (Q4 2027)
+- **Complete Validation**: Full FIPS 140-2 validation for all cryptographic modules
+- **Government Ready**: Deployment packages tailored for government procurement
+- **Third-Party Audit**: Independent security audit and compliance verification
+- **Ongoing Maintenance**: Established processes for maintaining FIPS compliance
+
+### Technical Considerations
+
+#### Cryptographic Modules
+- **Cashu Integration**: FIPS-validated Cashu mint operations and token handling
+- **Nostr Events**: FIPS-compliant event signing and verification
+- **TLS/SSL**: FIPS-validated TLS implementations for secure communications
+- **Key Management**: Secure key generation, storage, and destruction procedures
+
+#### Deployment Models
+- **FIPS-Only Mode**: Strict FIPS compliance for regulated environments
+- **Hybrid Mode**: FIPS compliance where required, standard crypto elsewhere
+- **Cloud FIPS**: FIPS-validated cloud deployments for hosted TollGate services
+- **On-Premises**: FIPS-compliant on-premises deployments with air-gapped options
+
+#### Compatibility
+- **Backward Compatibility**: Non-FIPS systems continue to work seamlessly
+- **Protocol Compatibility**: FIPS mode maintains full protocol compatibility
+- **Upgrade Path**: Clear migration path from non-FIPS to FIPS deployments
+- **Community Support**: Open-source tools and documentation for community validation
+
+### Implementation Principles
+1. **No Forced FIPS**: FIPS compliance remains optional; TollGate's permissionless nature is preserved
+2. **Open Process**: FIPS validation process and results are publicly documented
+3. **Modular Design**: FIPS components are optional modules that can be excluded
+4. **Community Involvement**: Community can participate in validation and testing
+5. **Transparency**: All FIPS-related code and processes remain open-source and auditable
+
+---
+
 ## Additional reading
 
 | Title | Last edited |
