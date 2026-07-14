@@ -17,11 +17,14 @@ Tollgate Details / Advertisement is expressed through the following Nostr event
 ```
 
 Tags:
-- `metric`: `milliseconds` or `bytes`
+- `metric`: `milliseconds` and/or `bytes`. Multiple `metric` tags MAY be present, allowing a TollGate to meter and charge for multiple dimensions simultaneously (e.g. both time and data transfer).
+- `step_size`: Size of one step for a given metric. When multiple metrics are advertised, each `step_size` includes the metric as its second value: `["step_size", "60000", "milliseconds"]`. When only a single metric is advertised, the metric qualifier MAY be omitted for backwards compatibility.
 - `min_steps`: (Optional) positive whole number. Defines a minimum amount of steps a customer must purchase at a time.
 - `tips`: List of implemented TollGate TIP's represented as numbers
 
 ### Example
+
+#### Single metric (time only)
 ```json
 {
     "kind": 10021,
@@ -31,6 +34,22 @@ Tags:
         ["metric", "milliseconds"],
         ["step_size", "60000"], // 1 minute step size
         ["step_purchase_limits", "1", "0"], // Min 1 minute, max infinite minutes
+        ["tips", "1", "2", "5", "..."]
+    ]
+}
+```
+
+#### Multiple metrics (time + data)
+```json
+{
+    "kind": 10021,
+    "pubkey": "24d6...3662",
+    // ...
+    "tags": [
+        ["metric", "milliseconds"],
+        ["metric", "bytes"],
+        ["step_size", "60000", "milliseconds"], // 1 minute
+        ["step_size", "1048576", "bytes"], // 1 MiB
         ["tips", "1", "2", "5", "..."]
     ]
 }
@@ -54,8 +73,8 @@ Tags:
 Tags:
 - `p`: pubkey of the TollCustomer Gate (from the Customer's Payment event)
 - `device-identifier`: (hardware) identifier of the customer's device.
-- `allotment`: Amount of `<metric>` allotted to customer after payment.
-- `metric`: The purchased metric
+- `allotment`: Amount allotted to customer after payment. Each `allotment` tag includes the metric as its second value: `["allotment", "<amount>", "<metric>"]`. When only a single metric was purchased, the metric qualifier MAY be omitted.
+- `metric`: The purchased metric(s). Echoes the advertisement when multiple metrics were involved.
 
 ## Notice Events
 

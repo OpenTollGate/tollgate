@@ -110,6 +110,7 @@ Example combinations of Protocol + Interface + Medium specs.
 | June 2025 | Cashu payments mint now is added to `<price_per_step>` tag, removing `<mint>` tag |
 | June 2025 | Changed Discovery to no longer be ephemeral |
 | March 2026 | Payment accepts pure bearer asset tokens instead of `kind=21000` Nostr event wrapper. Specs restructured into Protocol (TIP), Interface (HTTP, NOSTR), and Medium (WIFI) categories. |
+| July 2026 | TIP-01: Multiple `metric` tags allowed — TollGates can charge for time AND data simultaneously. `step_size` gains optional metric qualifier. TIP-02: `price_per_step` gains optional `<metric>` field. Session `allotment` gains optional metric qualifier. |
 
 ## Project Timeline
 
