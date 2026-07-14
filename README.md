@@ -110,6 +110,7 @@ Example combinations of Protocol + Interface + Medium specs.
 | June 2025 | Cashu payments mint now is added to `<price_per_step>` tag, removing `<mint>` tag |
 | June 2025 | Changed Discovery to no longer be ephemeral |
 | March 2026 | Payment accepts pure bearer asset tokens instead of `kind=21000` Nostr event wrapper. Specs restructured into Protocol (TIP), Interface (HTTP, NOSTR), and Medium (WIFI) categories. |
+| July 2026 | TIP-02: Added Relay Mode for multi-hop bootstrap chains. TollGates without direct mint access can verify tokens (NUT-07) and forward them upstream. Terminal hop redeems; relays earn margin by delivering less than purchased upstream. |
 
 ## Project Timeline
 
