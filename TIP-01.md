@@ -18,7 +18,7 @@ Tollgate Details / Advertisement is expressed through the following Nostr event
 
 Tags:
 - `metric`: `milliseconds` or `bytes`
-- `min_steps`: (Optional) positive whole number. Defines a minimum amount of steps a customer must purchase at a time.
+- `step_size`: Positive whole number defining the granularity of metering, in units of the metric. This is the smallest unit of access the TollGate sells — a customer cannot purchase less than one step.
 - `tips`: List of implemented TollGate TIP's represented as numbers
 
 ### Example
@@ -30,7 +30,6 @@ Tags:
     "tags": [
         ["metric", "milliseconds"],
         ["step_size", "60000"], // 1 minute step size
-        ["step_purchase_limits", "1", "0"], // Min 1 minute, max infinite minutes
         ["tips", "1", "2", "5", "..."]
     ]
 }
