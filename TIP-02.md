@@ -14,8 +14,8 @@ A TollGate that accepts Cashu tokens as payment may advertise its pricing using 
     // ...
     "tags": [
         // <TIP-01 tags>
-        ["price_per_step", "<bearer_asset_type>", "<price>", "<unit>", "<mint_url>", "<min_steps>"],
-        ["price_per_step", "...", "...", "...", "...", "..."],
+        ["price_per_step", "<bearer_asset_type>", "<price>", "<unit>", "<mint_url>", "<min_steps>", "<metric>"],
+        ["price_per_step", "...", "...", "...", "...", "...", "..."],
     ]
 }
 ```
@@ -27,10 +27,13 @@ Tags:
 	- `<unit>` unit or currency.
 	- `<mint_url>` Accepted mint. Example: 210 sats per minute (60000ms)
 	- `<min_steps>` Minimum amount of steps to purchase using this mint. Positive whole number, default 0 ⚠️ TENTATIVE: Strucuture of incorporation of fees/min purchases is not final
+	- `<metric>` (Optional) Which metric this price applies to. MUST be present when the TollGate advertises multiple metrics (see TIP-01). Defaults to the sole declared metric when only one is advertised.
 
-- The value of `<price>` MUST be the same across all occurrences of the same `<unit>` value.
+- The value of `<price>` MUST be the same across all occurrences of the same `<unit>` value within the same metric.
 
 ### Example
+
+#### Single metric
 ```json
 {
     "kind": 10021,
@@ -40,6 +43,21 @@ Tags:
         ["price_per_step", "cashu", "210", "sat", "https://mint.domain.net", 1],
         ["price_per_step", "cashu", "210", "sat", "https://other.mint.net", 1],
         ["price_per_step", "cashu", "500", "eur", "https://mint.thirddomain.eu", 3],
+    ]
+}
+```
+
+#### Multiple metrics (time + data)
+```json
+{
+    "kind": 10021,
+    // ...
+    "tags": [
+        // <TIP-01 tags>
+        ["price_per_step", "cashu", "210", "sat", "https://mint.domain.net", 1, "milliseconds"],
+        ["price_per_step", "cashu", "50", "sat", "https://mint.domain.net", 1, "bytes"],
+        ["price_per_step", "cashu", "210", "sat", "https://other.mint.net", 1, "milliseconds"],
+        ["price_per_step", "cashu", "50", "sat", "https://other.mint.net", 1, "bytes"],
     ]
 }
 ```
