@@ -60,6 +60,7 @@ The abstract data model. Event kinds, tag structures, payment asset definitions,
 |---|-------------|
 | [TIP-01](TIP-01.md) | Base Events (Advertisement, Session, Notice) |
 | [TIP-02](TIP-02.md) | Cashu payments |
+| [TIP-03](TIP-03.md) | Economic invariants & threat model (draft) |
 
 ### Interface — *how* do customer and TollGate talk?
 
