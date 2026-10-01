@@ -474,7 +474,7 @@
 - location: docs/lr2021-research/errata/raw/radiolib/code-master-head-commit.json
 - url: https://api.github.com/repos/jgromes/RadioLib/commits/master
 - http_status: 200
-- revision_or_publication_date: 2325a38a89dd…
+- revision_or_publication_date: 2325a38a89dd0f0e402c19f67fe910111da1e246
 - retrieved_utc: 2026-10-01T05:09:28Z
 - bytes: 7793
 - sha256: cc4f4997fe56622539e7853576e422500d4ae1c5e91f56627e2f8b93edfac431
@@ -483,7 +483,7 @@
 - location: docs/lr2021-research/errata/raw/radiolib/code-LR2021.json
 - url: https://api.github.com/search/code?q=LR2021+repo:jgromes/RadioLib&per_page=100
 - http_status: 200
-- revision_or_publication_date: 2325a38a89dd
+- revision_or_publication_date: 2325a38a89dd0f0e402c19f67fe910111da1e246
 - retrieved_utc: 2026-10-01T05:09:30Z
 - bytes: 188899
 - sha256: 0ba4220b30919e2a0bcd28517ef66a8bb2295fff259cee9677549feca525e5cd
@@ -888,4 +888,4 @@
 
 - distinct API queries attempted: 9 (must be >= 4)
 - of those, repo-scoped (repo:jgromes/RadioLib qualifier): 7 (must be >= 3)
-- per-file raw fetches (raw.githubusercontent.com): 42, itemised in the stream query logs
+- per-file raw fetches (raw.githubusercontent.com): 42 attempted — 41 itemised as the url: fields of the Code/docs blocks above, 1 MISS (CHANGELOG.md, http 404) listed in this section
