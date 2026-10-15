@@ -1,0 +1,137 @@
+{
+  "sha": "2325a38a89dd0f0e402c19f67fe910111da1e246",
+  "node_id": "C_kwDOB2M8q9oAKDIzMjVhMzhhODlkZDBmMGU0MDJjMTlmNjdmZTkxMDExMWRhMWUyNDY",
+  "commit": {
+    "author": {
+      "name": "jgromes",
+      "email": "jan.gromes@gmail.com",
+      "date": "2026-09-28T12:59:24Z"
+    },
+    "committer": {
+      "name": "jgromes",
+      "email": "jan.gromes@gmail.com",
+      "date": "2026-09-28T12:59:24Z"
+    },
+    "message": "Bump version to 7.8.1",
+    "tree": {
+      "sha": "53faa2bf265392604d2d176526f42b6183662518",
+      "url": "https://api.github.com/repos/jgromes/RadioLib/git/trees/53faa2bf265392604d2d176526f42b6183662518"
+    },
+    "url": "https://api.github.com/repos/jgromes/RadioLib/git/commits/2325a38a89dd0f0e402c19f67fe910111da1e246",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/jgromes/RadioLib/commits/2325a38a89dd0f0e402c19f67fe910111da1e246",
+  "html_url": "https://github.com/jgromes/RadioLib/commit/2325a38a89dd0f0e402c19f67fe910111da1e246",
+  "comments_url": "https://api.github.com/repos/jgromes/RadioLib/commits/2325a38a89dd0f0e402c19f67fe910111da1e246/comments",
+  "author": {
+    "login": "jgromes",
+    "id": 3407192,
+    "node_id": "MDQ6VXNlcjM0MDcxOTI=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/3407192?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/jgromes",
+    "html_url": "https://github.com/jgromes",
+    "followers_url": "https://api.github.com/users/jgromes/followers",
+    "following_url": "https://api.github.com/users/jgromes/following{/other_user}",
+    "gists_url": "https://api.github.com/users/jgromes/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/jgromes/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/jgromes/subscriptions",
+    "organizations_url": "https://api.github.com/users/jgromes/orgs",
+    "repos_url": "https://api.github.com/users/jgromes/repos",
+    "events_url": "https://api.github.com/users/jgromes/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/jgromes/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "committer": {
+    "login": "jgromes",
+    "id": 3407192,
+    "node_id": "MDQ6VXNlcjM0MDcxOTI=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/3407192?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/jgromes",
+    "html_url": "https://github.com/jgromes",
+    "followers_url": "https://api.github.com/users/jgromes/followers",
+    "following_url": "https://api.github.com/users/jgromes/following{/other_user}",
+    "gists_url": "https://api.github.com/users/jgromes/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/jgromes/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/jgromes/subscriptions",
+    "organizations_url": "https://api.github.com/users/jgromes/orgs",
+    "repos_url": "https://api.github.com/users/jgromes/repos",
+    "events_url": "https://api.github.com/users/jgromes/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/jgromes/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "parents": [
+    {
+      "sha": "8b0eeb837bbcd40a3fed25f34767054f023a8b8b",
+      "url": "https://api.github.com/repos/jgromes/RadioLib/commits/8b0eeb837bbcd40a3fed25f34767054f023a8b8b",
+      "html_url": "https://github.com/jgromes/RadioLib/commit/8b0eeb837bbcd40a3fed25f34767054f023a8b8b"
+    }
+  ],
+  "stats": {
+    "total": 8,
+    "additions": 4,
+    "deletions": 4
+  },
+  "files": [
+    {
+      "sha": "9cad4d6692c90ebf33da7ae00dadf32c2f136f96",
+      "filename": "idf_component.yml",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/jgromes/RadioLib/blob/2325a38a89dd0f0e402c19f67fe910111da1e246/idf_component.yml",
+      "raw_url": "https://github.com/jgromes/RadioLib/raw/2325a38a89dd0f0e402c19f67fe910111da1e246/idf_component.yml",
+      "contents_url": "https://api.github.com/repos/jgromes/RadioLib/contents/idf_component.yml?ref=2325a38a89dd0f0e402c19f67fe910111da1e246",
+      "patch": "@@ -1,4 +1,4 @@\n-version: \"7.8.0\"\n+version: \"7.8.1\"\n description: \"Universal wireless communication library. User-friendly library for sub-GHz radio modules (SX1278, RF69, CC1101, SX1268, and many others), as well as ham radio digital modes (RTTY, SSTV, AX.25 etc.) and other protocols (Pagers, LoRaWAN).\"\n tags:\n   - radio"
+    },
+    {
+      "sha": "9b1d098c87d7489156bb07e58e50d29b4f9b2153",
+      "filename": "library.json",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/jgromes/RadioLib/blob/2325a38a89dd0f0e402c19f67fe910111da1e246/library.json",
+      "raw_url": "https://github.com/jgromes/RadioLib/raw/2325a38a89dd0f0e402c19f67fe910111da1e246/library.json",
+      "contents_url": "https://api.github.com/repos/jgromes/RadioLib/contents/library.json?ref=2325a38a89dd0f0e402c19f67fe910111da1e246",
+      "patch": "@@ -1,6 +1,6 @@\n {\n     \"name\": \"RadioLib\",\n-    \"version\": \"7.8.0\",\n+    \"version\": \"7.8.1\",\n     \"description\": \"Universal wireless communication library. User-friendly library for sub-GHz radio modules (SX1278, RF69, CC1101, SX1268, and many others), as well as ham radio digital modes (RTTY, SSTV, AX.25 etc.) and other protocols (Pagers, LoRaWAN).\",\n     \"keywords\": \"radio, communication, morse, cc1101, aprs, sx1276, sx1278, sx1272, rtty, ax25, afsk, nrf24, rf69, sx1231, rfm96, rfm98, sstv, sx1280, sx1281, sx1282, sx1261, sx1262, sx1268, si4432, rfm22, llcc68, pager, pocsag, lorawan, lr1110, lr1120, lr1121, lr2021, adsb\",\n     \"homepage\": \"https://github.com/jgromes/RadioLib\","
+    },
+    {
+      "sha": "77846ceb95a339bd76bcdfebba7c49b07d3a3eaf",
+      "filename": "library.properties",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/jgromes/RadioLib/blob/2325a38a89dd0f0e402c19f67fe910111da1e246/library.properties",
+      "raw_url": "https://github.com/jgromes/RadioLib/raw/2325a38a89dd0f0e402c19f67fe910111da1e246/library.properties",
+      "contents_url": "https://api.github.com/repos/jgromes/RadioLib/contents/library.properties?ref=2325a38a89dd0f0e402c19f67fe910111da1e246",
+      "patch": "@@ -1,5 +1,5 @@\n name=RadioLib\n-version=7.8.0\n+version=7.8.1\n author=Jan Gromes <gromes.jan@gmail.com>\n maintainer=Jan Gromes <gromes.jan@gmail.com>\n sentence=Universal wireless communication library"
+    },
+    {
+      "sha": "ab95548ebc0f6941718d8b85c169ef47f753fa32",
+      "filename": "src/BuildOpt.h",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/jgromes/RadioLib/blob/2325a38a89dd0f0e402c19f67fe910111da1e246/src%2FBuildOpt.h",
+      "raw_url": "https://github.com/jgromes/RadioLib/raw/2325a38a89dd0f0e402c19f67fe910111da1e246/src%2FBuildOpt.h",
+      "contents_url": "https://api.github.com/repos/jgromes/RadioLib/contents/src%2FBuildOpt.h?ref=2325a38a89dd0f0e402c19f67fe910111da1e246",
+      "patch": "@@ -691,7 +691,7 @@\n // version definitions\n #define RADIOLIB_VERSION_MAJOR  7\n #define RADIOLIB_VERSION_MINOR  8\n-#define RADIOLIB_VERSION_PATCH  0\n+#define RADIOLIB_VERSION_PATCH  1\n #define RADIOLIB_VERSION_EXTRA  0\n \n #define RADIOLIB_VERSION (((RADIOLIB_VERSION_MAJOR) << 24) | ((RADIOLIB_VERSION_MINOR) << 16) | ((RADIOLIB_VERSION_PATCH) << 8) | (RADIOLIB_VERSION_EXTRA))"
+    }
+  ]
+}
