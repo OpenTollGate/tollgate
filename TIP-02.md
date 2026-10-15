@@ -26,7 +26,7 @@ Tags:
 	- `<price>` price for purchasing 1 time the `step_size`.
 	- `<unit>` unit or currency.
 	- `<mint_url>` Accepted mint. Example: 210 sats per minute (60000ms)
-	- `<min_steps>` Minimum amount of steps to purchase using this mint. Positive whole number, default 0 ⚠️ TENTATIVE: Strucuture of incorporation of fees/min purchases is not final
+	- `<min_steps>` Minimum amount of steps to purchase using this mint. Positive whole number, default 1: an absent value or `0` MUST be treated as `1`. (Known clients reject advertisements carrying `min_steps=0`, so flooring keeps such advertisements purchasable.)
 
 - The value of `<price>` MUST be the same across all occurrences of the same `<unit>` value.
 
@@ -37,9 +37,9 @@ Tags:
     // ...
     "tags": [
         // <TIP-01 tags>
-        ["price_per_step", "cashu", "210", "sat", "https://mint.domain.net", 1],
-        ["price_per_step", "cashu", "210", "sat", "https://other.mint.net", 1],
-        ["price_per_step", "cashu", "500", "eur", "https://mint.thirddomain.eu", 3],
+        ["price_per_step", "cashu", "210", "sat", "https://mint.domain.net", "1"],
+        ["price_per_step", "cashu", "210", "sat", "https://other.mint.net", "1"],
+        ["price_per_step", "cashu", "500", "eur", "https://mint.thirddomain.eu", "3"]
     ]
 }
 ```

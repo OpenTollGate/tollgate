@@ -11,14 +11,14 @@ Tollgate Details / Advertisement is expressed through the following Nostr event
     "tags": [
         ["metric", "<value>"],
         ["step_size", "<value>"],
-        ["tips", "1", "2", "5", "..."]
+        ["tips", "1", "2", "5"]
     ]
 }
 ```
 
 Tags:
 - `metric`: `milliseconds` or `bytes`
-- `min_steps`: (Optional) positive whole number. Defines a minimum amount of steps a customer must purchase at a time.
+- `min_steps`: (Optional) positive whole number. Defines a minimum amount of steps a customer must purchase at a time. Where a `price_per_step` entry (TIP-02) carries its own `<min_steps>`, that per-mint value takes precedence for that pricing option; the advertisement-level `min_steps` applies only to pricing options that do not carry one.
 - `tips`: List of implemented TollGate TIP's represented as numbers
 
 ### Example
@@ -30,8 +30,7 @@ Tags:
     "tags": [
         ["metric", "milliseconds"],
         ["step_size", "60000"], // 1 minute step size
-        ["step_purchase_limits", "1", "0"], // Min 1 minute, max infinite minutes
-        ["tips", "1", "2", "5", "..."]
+        ["tips", "1", "2", "5"]
     ]
 }
 ```
@@ -45,7 +44,7 @@ Tags:
 	"tags": [
 		["p", "6hjq...1fi6"], // Customer identity (pubkey)
 		["device-identifier", "<type>", "<value>"],
-		["allotment", "<amount>"]
+		["allotment", "<amount>"],
 		["metric", "<metric>"]
 	]
 }
