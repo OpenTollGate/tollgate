@@ -1,0 +1,71 @@
+{
+  "event": "kind 21023 TollGate Notice event",
+  "transport": "HTTP-01 POST / and GET / response bodies (JSON-serialized signed Nostr events); wherever a Session or Discovery event would normally arrive",
+  "spec_refs": ["TIP-01#Notice Events", "tollgate#26 (pubkey-only p rule, same clause as Session events)", "tollgate#27 (docs/tip01-degraded-mode: service-unavailable, no-reachable-mints)"],
+  "grammar": {
+    "kind": 21023,
+    "pubkey": {"matcher": "nostr-pubkey", "meaning": "TollGate identity"},
+    "signed": true,
+    "content": "human-readable, user-friendly, actionable where possible",
+    "tags": {
+      "level": {"required": true, "value": "one of error, warning, info, debug"},
+      "code": {"required": true, "value": "machine-readable text code (catalogue below)"},
+      "p": {
+        "required": false,
+        "rule": "customer pubkey when addressing a specific customer; omitted for general notices. MUST be a Nostr pubkey when present — never a device identifier or MAC (same clause as Session events; see tollgate-module-basic-go#950 for the live violation class)."
+      }
+    }
+  },
+  "code_catalogue": {
+    "spec_examples": ["session-error", "upstream-error-not-connected", "payment-error-mint-not-accepted", "payment-error-token-spent", "service-unavailable", "no-reachable-mints"],
+    "reference_implementation_full_set": {
+      "source": "tollgate-module-basic-go origin/main @ 27baf22, src/merchant/merchant.go + src/main.go",
+      "payment_path": ["payment-error-invalid-token", "payment-error-below-swap-fee", "payment-error-token-spent", "payment-error-keyset-expired", "payment-error-mint-unreachable", "payment-outcome-unknown", "payment-received-grant-pending", "payment-duplicate-inflight", "mint-rate-limited", "payment-processing-failed"],
+      "session_path": ["session-error", "client-not-registered"],
+      "transport_path": ["invalid-event", "invalid-request", "device-unresolved", "invalid-mac-address"],
+      "degraded_path": ["service-unavailable", "no-reachable-mints"],
+      "internal": ["internal-error"]
+    },
+    "divergence_note": "The spec example list and the implementation set differ (e.g. the spec names payment-error-mint-not-accepted, which the reference does not emit; the reference emits client-not-registered and payment-error-keyset-expired, which the spec does not name). Consumers must treat `code` as an open set and key UX off `level` plus known codes."
+  },
+  "vectors": [
+    {
+      "id": "event-21023/general-notice",
+      "input": "any notice not addressed to a specific customer (e.g. the degraded-mode discovery slot)",
+      "assert": {"kind": 21023, "signed": true, "tags_include": [["level", {"matcher": "one-of", "values": ["error", "warning", "info", "debug"]}], ["code", {"matcher": "nonempty"}]], "tags_omit": ["p"]},
+      "evidence": [
+        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "GET / degraded notice: level=warning, code=no-reachable-mints, no p tag"},
+        {"kind": "spec", "ref": "TIP-01 Optional Tags: p omitted for general notices"}
+      ]
+    },
+    {
+      "id": "event-21023/addressed-notice",
+      "input": "a notice addressing a specific customer with a Nostr identity",
+      "assert": {"kind": 21023, "tags_include": [["p", {"matcher": "nostr-pubkey"}], ["level", "error"], ["code", {"matcher": "nonempty"}]]},
+      "evidence": [
+        {"kind": "spec", "ref": "TIP-01: p present only when addressing a specific customer; pubkey-shaped"}
+      ]
+    },
+    {
+      "id": "event-21023/mac-in-p-tag-forbidden",
+      "input": "a notice carrying [\"p\", \"aa:bb:cc:dd:ee:ff\"] — the shape the reference's payment-error and degraded-refusal paths emit today",
+      "assert": {"valid": false, "reason": "p holds a device MAC, not a Nostr pubkey; breaks #p filtering for every consumer of session/notice events"},
+      "evidence": [
+        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "POST / in degraded mode: tags [[\"level\",\"error\"],[\"code\",\"service-unavailable\"],[\"p\",\"82:49:5a:95:5e:53\"]] — the client MAC in p"},
+        {"kind": "reported", "ref": "tollgate-module-basic-go#950: createNoticeEvent call sites pass macAddress as customerPubkey on error paths"}
+      ],
+      "divergences": [
+        {"consumer": "tollgate-module-basic-go", "verdict": "divergent-until-fixed", "ref": "tollgate-module-basic-go#950", "detail": "Every addressed notice on origin/main carries the MAC in p (observed live for service-unavailable; source-confirmed across the payment-error set)."}
+      ]
+    },
+    {
+      "id": "event-21023/degraded-payment-refusal",
+      "input": "POST / with any body while the gateway has no reachable mints",
+      "assert": {"kind": 21023, "tags_include": [["level", "error"], ["code", "service-unavailable"]], "content_theme": "temporarily unavailable, retry shortly; the bearer token is not consumed"},
+      "evidence": [
+        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "content 'TollGate is initializing. No reachable mints. Please try again in a few minutes.'"},
+        {"kind": "spec", "ref": "tollgate#27: refusal precedes token processing; token spendable elsewhere; recovery automatic with no protocol message"}
+      ]
+    }
+  ]
+}

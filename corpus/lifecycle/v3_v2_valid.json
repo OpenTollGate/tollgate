@@ -1,0 +1,139 @@
+{
+  "id": "lifecycle/v3_v2_valid",
+  "fixture": "../tokens/v3_v2_valid.cashu",
+  "shape": {
+    "token_version": 3,
+    "prefix": "cashuA",
+    "encoding": "JSON in base64url",
+    "keyset_id_format": "v3-short-16hex (native cdk V3 serialization: version byte + 7-byte prefix of the canonical V2 id)",
+    "keyset_id": "01e73e75a0809604",
+    "keyset_version": 2,
+    "c_encoding": "hex (compressed point; NUT-00 native per cdk ProofV3 serde)",
+    "dleq": "present (NUT-12)",
+    "proofs": 2,
+    "amounts": [
+      2,
+      2
+    ],
+    "unit": "sat",
+    "mint": "http://192.168.13.221:8383",
+    "canonical_keyset_id": "01e73e75a0809604372487732ee917e8f881cc4c882ccd9fbac094fbfd3e3a42e6"
+  },
+  "stages": {
+    "decode": {
+      "verdicts": {
+        "cdk-cli@0.18.0": "decoded-v3",
+        "tollgate-module-basic-go@rc": "decoded-v3",
+        "tollgate-captive-portal@pin": "decoded-v3",
+        "nutshell@0.21.0": "decoded-v3",
+        "tollgate-captive-portal@main": "decoded-v3"
+      },
+      "evidence": [
+        {
+          "kind": "reported",
+          "ref": "corpus v0 (PR #29): minted by cdk-cli, backend reached 1022, portal rendered CU109 card (a post-decode keyset check)",
+          "date": "2026-10-16"
+        },
+        {
+          "kind": "live",
+          "target": "nutshell 0.21.0 `cashu decode`",
+          "date": "2026-10-16",
+          "observed": "decodes",
+          "by": "corpus v1 capture"
+        },
+        {
+          "kind": "live",
+          "target": "portal main @ c2ddba1 decoder via vitest (portal#83's vendored-corpus probe)",
+          "date": "2026-10-16",
+          "observed": "validateToken accepts the token (status 1, correct amount/unit)",
+          "by": "corpus v1 capture"
+        }
+      ],
+      "notes": "Portal decode success is inferred from the CU109 card being reached; the v0 report does not decompose the portal pipeline into stages."
+    },
+    "verify": {
+      "verdicts": {
+        "cdk-cli@0.18.1": "ok",
+        "tollgate-module-basic-go@rc": "ok",
+        "tollgate-captive-portal@pin": "reject-keyset-format",
+        "tollgate-captive-portal@main": "ok"
+      },
+      "evidence": [
+        {
+          "kind": "reported",
+          "ref": "tollgate-captive-portal-site#82: client-side keyset comparison cannot match any V2 id (CU109 'outdated mint key' card)",
+          "date": "2026-10-16"
+        },
+        {
+          "kind": "reported",
+          "ref": "corpus v0: backend 1022 on this token implies offline validation passed",
+          "date": "2026-10-16"
+        },
+        {
+          "kind": "live",
+          "target": "cdk-cli 0.18.1 wallet receive (--allow-untrusted)",
+          "date": "2026-10-16",
+          "observed": "a freshly minted sibling V3/V2 token received successfully (4 sat) — keyset resolution, C points and amounts validated end-to-end",
+          "by": "corpus v1 capture"
+        },
+        {
+          "kind": "live",
+          "target": "portal main @ c2ddba1 decoder via vitest (portal#83's vendored-corpus probe)",
+          "date": "2026-10-16",
+          "observed": "validateToken accepts the token (status 1, correct amount/unit)",
+          "by": "corpus v1 capture"
+        }
+      ],
+      "divergence": "DIV-2026-10-portal-v2-keyset"
+    },
+    "checkstate": {
+      "verdicts": {
+        "fakewallet@2026-10-16": "SPENT"
+      },
+      "evidence": [
+        {
+          "kind": "live",
+          "target": "mint http://192.168.13.221:8383 POST /v1/checkstate",
+          "date": "2026-10-16",
+          "observed": "both proofs (amounts 2,2) state=SPENT",
+          "by": "corpus v1 capture"
+        }
+      ],
+      "notes": "Proofs were consumed by the v0 verification run (1022 ACCEPTED against the live rig). The fixture is therefore a double-spend vector for spend-stage runners, not a fresh-payment vector."
+    },
+    "spend": {
+      "verdicts": [
+        {
+          "when": "2026-10-16, proofs fresh",
+          "tollgate-module-basic-go@rc": "accepted-1022",
+          "evidence": [
+            {
+              "kind": "reported",
+              "ref": "corpus v0 (PR #29) live verification against the rig",
+              "date": "2026-10-16"
+            }
+          ]
+        },
+        {
+          "when": "2026-10-16, after the v0 verification spent the proofs",
+          "tollgate-module-basic-go@rc": "rejected-21023",
+          "reject_code": "payment-error-token-spent",
+          "evidence": [
+            {
+              "kind": "source",
+              "repo": "OpenTollGate/tollgate-module-basic-go",
+              "ref": "origin/main @ 27baf22",
+              "location": "src/merchant/merchant.go:1731"
+            }
+          ],
+          "notes": "Re-verify live once the rig is back in full service; expected 400 + kind 21023 + code payment-error-token-spent."
+        }
+      ]
+    }
+  },
+  "provenance": {
+    "minted_by": "cdk-cli 0.18.0 against the fakewallet (corpus v0, PR #29)",
+    "regen": "cdk-cli mint <fakewallet-url> 11; cdk-cli send --mint-url <url> --amount 4 --include-fee --v3"
+  },
+  "portal_pin_note": "The @pin verdict (CU109 rejection, never submits) is the deployed router pin measured by v0 and portal#82's capture; portal main's decode path was reworked (#38/#55/#61) and now accepts — regression lock portal#83, deployed-pin refresh pending."
+}

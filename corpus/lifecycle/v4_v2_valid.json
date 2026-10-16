@@ -1,0 +1,131 @@
+{
+  "id": "lifecycle/v4_v2_valid",
+  "fixture": "../tokens/v4_v2_valid.cashu",
+  "shape": {
+    "token_version": 4,
+    "prefix": "cashuB",
+    "encoding": "CBOR in base64url (NUT-00 V4: top-level {t:[{i,p}], m: mint_url, u: unit})",
+    "keyset_id_format": "8 bytes at the token level (native cdk V4 serialization: the prefix of the canonical V2 id)",
+    "keyset_id_in_token": "01e73e75a0809604",
+    "canonical_keyset_id": "01e73e75a0809604372487732ee917e8f881cc4c882ccd9fbac094fbfd3e3a42e6",
+    "keyset_version": 2,
+    "c_encoding": "base64",
+    "proofs": 2,
+    "amounts": [
+      2,
+      2
+    ],
+    "unit": "sat",
+    "mint": "http://192.168.13.221:8383"
+  },
+  "stages": {
+    "decode": {
+      "verdicts": {
+        "cdk-cli@0.18.0": "decoded-v4",
+        "tollgate-module-basic-go@rc": "decoded-v4",
+        "tollgate-captive-portal@pin": "unknown",
+        "nutshell@0.21.0": "decoded-v4",
+        "tollgate-captive-portal@main": "decoded-v4"
+      },
+      "evidence": [
+        {
+          "kind": "reported",
+          "ref": "corpus v0 (PR #29): minted by cdk-cli; backend 1022 implies decode succeeded",
+          "date": "2026-10-16"
+        },
+        {
+          "kind": "live",
+          "target": "nutshell 0.21.0 `cashu decode`",
+          "date": "2026-10-16",
+          "observed": "decodes the V4/CBOR token",
+          "by": "corpus v1 capture"
+        },
+        {
+          "kind": "live",
+          "target": "portal main @ c2ddba1 decoder via vitest (portal#83's vendored-corpus probe)",
+          "date": "2026-10-16",
+          "observed": "validateToken accepts the token (status 1, correct amount/unit)",
+          "by": "corpus v1 capture"
+        }
+      ],
+      "notes": "Portal V4 decode verdict is the highest-value unknown in the corpus: the portal defect class (CU109) is keyset-side, but V4/CBOR decode is a separate failure surface."
+    },
+    "verify": {
+      "verdicts": {
+        "cdk-cli@0.18.1": "ok",
+        "tollgate-module-basic-go@rc": "ok",
+        "tollgate-captive-portal@pin": "unknown",
+        "nutshell@0.21.0": "unknown"
+      },
+      "evidence": [
+        {
+          "kind": "reported",
+          "ref": "corpus v0: backend 1022 on this token",
+          "date": "2026-10-16"
+        },
+        {
+          "kind": "live",
+          "target": "cdk-cli 0.18.1 wallet receive (--allow-untrusted)",
+          "date": "2026-10-16",
+          "observed": "a freshly minted sibling V4/V2 token received successfully (2 sat) — including resolution of the token's 8-byte keyset id prefix",
+          "by": "corpus v1 capture"
+        }
+      ],
+      "notes": "nutshell verify not testable on this fixture: its proofs are spent (a receive would fail at checkstate, not at verify). Decode-only tested."
+    },
+    "checkstate": {
+      "verdicts": {
+        "fakewallet@2026-10-16": "SPENT"
+      },
+      "evidence": [
+        {
+          "kind": "live",
+          "target": "mint http://192.168.13.221:8383 POST /v1/checkstate (V4 CBOR proof extraction via cbor2)",
+          "date": "2026-10-16",
+          "observed": "both proofs (amounts 2,2) state=SPENT",
+          "by": "corpus v1 capture"
+        }
+      ],
+      "notes": "Consumed by the v0 verification run."
+    },
+    "spend": {
+      "verdicts": [
+        {
+          "when": "2026-10-16, as minted",
+          "tollgate-module-basic-go@rc": "accepted-1022",
+          "evidence": [
+            {
+              "kind": "reported",
+              "ref": "corpus v0 (PR #29) live verification against the rig",
+              "date": "2026-10-16"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "provenance": {
+    "minted_by": "cdk-cli 0.18.0 against the fakewallet (corpus v0, PR #29)",
+    "regen": "cdk-cli mint <fakewallet-url> 11; cdk-cli send --mint-url <url> --amount 4 --include-fee"
+  },
+  "portal_pin_note": "The @pin verdict (CU109 rejection, never submits) is the deployed router pin measured by v0 and portal#82's capture; portal main's decode path was reworked (#38/#55/#61) and now accepts — regression lock portal#83, deployed-pin refresh pending.",
+  "keyset_id_finding": {
+    "summary": "cdk writes SHORT keyset ids in both token formats: V4 at the token level (8 bytes) and V3 per proof (16 hex). Every consumer must resolve short ids against the mint's keyset list; every mint in the cdk family natively resolves them.",
+    "evidence": [
+      {
+        "kind": "live",
+        "target": "CBOR decode of the committed V4 fixture + JSON decode of all V3 fixtures",
+        "date": "2026-10-16",
+        "observed": "V4 t[0].i = 8 bytes 01e73e75a0809604; every V3 proof id = the same 16-hex value; the mint's canonical keyset id is the 33-byte form",
+        "by": "corpus v1 capture + review byte-verification"
+      },
+      {
+        "kind": "source",
+        "repo": "cashubtc/cdk",
+        "ref": "0.18.1",
+        "location": "crates/cashu/src/nuts/nut00/mod.rs:519 (ProofV3.keyset_id: ShortKeysetId), crates/cashu/src/nuts/nut02.rs:383 (ShortKeysetId: v1 = whole id, v2 = 8-byte prefix)"
+      }
+    ],
+    "retraction": "The earlier v0-era narrative — that the 16-hex spelling was a test minter's 'v2-short truncation' transplanted from V4 (PRTA#247) — is RETRACTED: the short spelling is cdk's native V3 output, byte-identical across the 'valid' and so-called 'truncated' fixtures. The portal@pin defect was short-id resolution, not malformed tokens."
+  }
+}

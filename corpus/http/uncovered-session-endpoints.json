@@ -1,0 +1,250 @@
+{
+  "endpoint": "POST /session/ticket and POST /session/rebind",
+  "port": 2121,
+  "spec_status": "spec-uncovered — served by the reference implementation (origin/main @ 27baf22); no protocol-repo document or open docs PR covers them. Recorded here so the surface is visible and testable; promoting them to spec (or removing them) is a protocol-repo decision per AGENTS.md (no spec edits to match one implementation without cross-implementation agreement).",
+  "identity": "device identifier resolved from the request's network context (no report headers on these routes)",
+  "vectors": [
+    {
+      "id": "session-ticket/issue-happy-path",
+      "request": {
+        "method": "POST",
+        "path": "/session/ticket"
+      },
+      "preconditions": {
+        "session": "active for the requesting device"
+      },
+      "response": {
+        "status": 200,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 1,
+            "ticket": {
+              "matcher": "nonempty"
+            },
+            "expires_at": {
+              "matcher": "integer"
+            }
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go HandleSessionTicket 1372-1412; src/merchant/session_ticket.go (12h TTL)"
+        }
+      ],
+      "notes": "A session ticket lets a device re-attach its session after its MAC changes (e.g. NIC swap) without re-paying. expires_at is unix seconds, session start + 12h."
+    },
+    {
+      "id": "session-ticket/no-session",
+      "request": {
+        "method": "POST",
+        "path": "/session/ticket"
+      },
+      "preconditions": {
+        "session": "none",
+        "gateway_mode": "full-service (degraded mode answers ticket-unavailable/rebind-failed before session lookup — see session-ticket/degraded-or-starting)"
+      },
+      "response": {
+        "status": 404,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 0,
+            "code": "no-session",
+            "error": "no session to issue a ticket for"
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1390-1399"
+        }
+      ]
+    },
+    {
+      "id": "session-ticket/degraded-or-starting",
+      "request": {
+        "method": "POST",
+        "path": "/session/ticket"
+      },
+      "preconditions": {
+        "gateway_mode": "degraded"
+      },
+      "response": {
+        "status": 500,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 0,
+            "code": "ticket-unavailable",
+            "error": "could not issue a session ticket"
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "live",
+          "target": "rig http://192.168.13.1:2121",
+          "date": "2026-10-16",
+          "observed": "HTTP 500 {\"status\":0,\"error\":\"could not issue a session ticket\",\"code\":\"ticket-unavailable\"}"
+        },
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1400-1406"
+        }
+      ]
+    },
+    {
+      "id": "session-rebind/missing-ticket",
+      "request": {
+        "method": "POST",
+        "path": "/session/rebind",
+        "content_type": "application/json",
+        "body": {
+          "inline": "{}"
+        }
+      },
+      "preconditions": {
+        "gateway_mode": "any (body decode precedes the merchant call; verified live in degraded mode)"
+      },
+      "response": {
+        "status": 400,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 0,
+            "code": "invalid-request",
+            "error": "a session ticket is required"
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1441-1444 (8 KiB body cap)"
+        }
+      ]
+    },
+    {
+      "id": "session-rebind/attachment-conflict",
+      "request": {
+        "method": "POST",
+        "path": "/session/rebind",
+        "content_type": "application/json",
+        "body": {
+          "inline": "{\"ticket\": \"<valid ticket issued to another device>\"}"
+        }
+      },
+      "preconditions": {
+        "session": "the ticket's session is already attached to a different active device"
+      },
+      "response": {
+        "status": 409,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 0,
+            "code": "attachment-active"
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1457-1462; src/merchant/session_ticket.go ErrAttachmentActive"
+        }
+      ]
+    },
+    {
+      "id": "session-rebind/invalid-ticket",
+      "request": {
+        "method": "POST",
+        "path": "/session/rebind",
+        "content_type": "application/json",
+        "body": {
+          "inline": "{\"ticket\": \"<malformed | bad-signature | unknown | expired>\"}"
+        }
+      },
+      "preconditions": {
+        "gateway_mode": "full-service (degraded mode answers ticket-unavailable/rebind-failed before session lookup — see session-ticket/degraded-or-starting)"
+      },
+      "response": {
+        "status": 403,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 0,
+            "code": "ticket-invalid"
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1468; src/merchant/session_ticket.go error set (malformed/signature/unknown/expired)"
+        }
+      ]
+    },
+    {
+      "id": "session-rebind/happy-path",
+      "request": {
+        "method": "POST",
+        "path": "/session/rebind",
+        "content_type": "application/json",
+        "body": {
+          "inline": "{\"ticket\": \"<valid ticket issued to this device's session>\"}"
+        }
+      },
+      "preconditions": {
+        "gateway_mode": "full-service",
+        "ticket": "valid, unexpired, session rebindable"
+      },
+      "response": {
+        "status": 200,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 1,
+            "mac": {
+              "matcher": "mac-format"
+            },
+            "usage": {
+              "matcher": "regex",
+              "value": "^[0-9-]+/[0-9-]+$"
+            }
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1477-1488 (usage is the /usage string)"
+        }
+      ]
+    }
+  ]
+}

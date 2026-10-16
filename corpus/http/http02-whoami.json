@@ -1,0 +1,53 @@
+{
+  "endpoint": "GET /whoami",
+  "port": 2121,
+  "spec_refs": ["HTTP-02#GET /whoami"],
+  "identity": "the responder: returns the caller's own resolved device identifier; no client-supplied value is trusted",
+  "rate_limit": "none (not behind the per-IP limiter or the startup gate)",
+  "vectors": [
+    {
+      "id": "http02-whoami/resolvable",
+      "request": {"method": "GET", "path": "/whoami"},
+      "preconditions": {"client": "IP resolves to a MAC (dhcp lease or arp entry)"},
+      "response": {
+        "status": 200,
+        "content_type": "text/plain; charset=utf-8",
+        "body": {"type": "text", "matcher": "regex", "value": "^mac=[0-9A-Fa-f]{2}(:[0-9A-Fa-f]{2}){5}$"},
+        "headers": {"X-TollGate-Client-MAC": {"matcher": "mac-format"}}
+      },
+      "evidence": [
+        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "'mac=82:49:5a:95:5e:53' with X-Tollgate-Client-Mac header carrying the same canonical MAC"},
+        {"kind": "spec", "ref": "HTTP-02: 200 OK, body formatted as [type]=[value]"}
+      ]
+    },
+    {
+      "id": "http02-whoami/mac-claim-ignored",
+      "request": {"method": "GET", "path": "/whoami?mac=aa:bb:cc:dd:ee:ff"},
+      "preconditions": {"client": "IP resolves to a MAC"},
+      "response": {
+        "status": 200,
+        "body": {"type": "text", "matcher": "regex", "value": "^mac=(?!aa:bb:cc:dd:ee:ff)[0-9A-Fa-f]{2}(:[0-9A-Fa-f]{2}){5}$"},
+        "headers": {"X-TollGate-Mac-Claim-Ignored": "aa:bb:cc:dd:ee:ff"}
+      },
+      "evidence": [
+        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "body mac=<socket-resolved MAC> (not the claimed one); X-Tollgate-Mac-Claim-Ignored: aa:bb:cc:dd:ee:ff"},
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go 1012-1027, reportClientIdentity 908-926"}
+      ],
+      "notes": "Identity-spoofing pin: query/body MAC claims are never trusted, only reported."
+    },
+    {
+      "id": "http02-whoami/unresolvable",
+      "request": {"method": "GET", "path": "/whoami"},
+      "preconditions": {"client": "IP resolves to no MAC"},
+      "response": {
+        "status": 200,
+        "content_type": "text/plain; charset=utf-8",
+        "body": {"type": "text", "matcher": "exact", "value": "mac="}
+      },
+      "evidence": [
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go 1016-1027 (empty value on lookup failure; never the 00:00:00:00:00:00 sentinel)"}
+      ],
+      "notes": "Spec gap: HTTP-02 does not define the failure body. The reference answers 200 'mac=' rather than an error; consumers must treat an empty value as 'identity unresolved'."
+    }
+  ]
+}

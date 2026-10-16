@@ -1,0 +1,38 @@
+{
+  "endpoint": "GET /usage",
+  "port": 2121,
+  "spec_refs": ["HTTP-03#GET /usage"],
+  "identity": "device identifier resolved from the request's network context",
+  "vectors": [
+    {
+      "id": "http03-usage/active-session",
+      "request": {"method": "GET", "path": "/usage"},
+      "preconditions": {"session": "active for the requesting device"},
+      "response": {
+        "status": 200,
+        "content_type": "text/plain; charset=utf-8",
+        "body": {"type": "text", "matcher": "regex", "value": "^[0-9]+/[0-9]+$"},
+        "semantics": "usage/allotment in the session's metric unit (bytes or milliseconds); milliseconds usage is elapsed session time"
+      },
+      "evidence": [
+        {"kind": "spec", "ref": "HTTP-03: 200 OK, body [usage]/[allotment]"},
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/merchant/merchant.go GetUsage 596-629"}
+      ]
+    },
+    {
+      "id": "http03-usage/no-session",
+      "request": {"method": "GET", "path": "/usage"},
+      "preconditions": {"session": "none"},
+      "response": {
+        "status": 200,
+        "content_type": "text/plain; charset=utf-8",
+        "body": {"type": "text", "matcher": "exact", "value": "-1/-1"}
+      },
+      "evidence": [
+        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "'-1/-1'"},
+        {"kind": "spec", "ref": "HTTP-03: no active session -> -1/-1"}
+      ],
+      "notes": "Also the degraded-mode answer (verified live in the same capture; GetUsage short-circuits to -1/-1 with no reachable mints)."
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "endpoint": "GET /session-state",
+  "port": 2121,
+  "spec_status": "spec gap — tollgate#24 (served by the reference implementation without spec coverage); vectors pin the implemented surface so the eventual spec has a conformance base",
+  "spec_refs": ["tollgate#24"],
+  "identity": "device identifier resolved from the request's network context",
+  "vectors": [
+    {
+      "id": "session-state/no-session",
+      "request": {"method": "GET", "path": "/session-state"},
+      "preconditions": {"session": "none"},
+      "response": {
+        "status": 200,
+        "content_type": "application/json",
+        "body": {"type": "json", "fields": {"status": 1, "mac": {"matcher": "mac-format"}, "state": "none"}}
+      },
+      "evidence": [
+        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "{\"status\":1,\"mac\":\"82:49:5a:95:5e:53\",\"state\":\"none\"}"},
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go HandleSessionState 1291-1327"}
+      ]
+    },
+    {
+      "id": "session-state/active",
+      "request": {"method": "GET", "path": "/session-state"},
+      "preconditions": {"session": "active for the requesting device"},
+      "response": {
+        "status": 200,
+        "content_type": "application/json",
+        "body": {"type": "json", "fields": {"status": 1, "mac": {"matcher": "mac-format"}, "state": "active"}}
+      },
+      "evidence": [
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/merchant/merchant.go SessionState constants 69-80 (none|active|expired)"}
+      ]
+    },
+    {
+      "id": "session-state/expired",
+      "request": {"method": "GET", "path": "/session-state"},
+      "preconditions": {"session": "most recent session for the device is exhausted/expired"},
+      "response": {
+        "status": 200,
+        "content_type": "application/json",
+        "body": {"type": "json", "fields": {"status": 1, "state": "expired"}}
+      },
+      "evidence": [
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/merchant/merchant.go 69-80"}
+      ]
+    },
+    {
+      "id": "session-state/unresolvable-device",
+      "request": {"method": "GET", "path": "/session-state"},
+      "preconditions": {"client": "IP resolves to no MAC"},
+      "response": {
+        "status": 200,
+        "content_type": "application/json",
+        "body": {"type": "json", "fields": {"status": 1, "mac": "", "state": "none"}}
+      },
+      "evidence": [
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go 1311"}
+      ],
+      "notes": "Mirrors /balance's unresolvable-device contract (200 with a definite answer, not an error)."
+    }
+  ]
+}

@@ -1,0 +1,287 @@
+{
+  "schema_version": 1,
+  "corpus_version": "v1",
+  "updated": "2026-10-16",
+  "issue": "OpenTollGate/tollgate#28",
+  "purpose": "Pin the TollGate interop surface as data: canonical token fixtures with per-stage lifecycle verdicts, and HTTP endpoint request/response vectors. Every TollGate consumer (portal decoder, Go wallet, Rust wallet, test minters, client implementations) must produce the recorded verdicts for these inputs; a divergence is a filed bug against this repo, not a field incident.",
+  "reference_environment": {
+    "mint": {
+      "url": "http://192.168.13.221:8383",
+      "implementation": "cdk-mintd/0.18.1 (fakewallet backend: mint quotes auto-settle)",
+      "keysets": [
+        {
+          "id": "01e73e75a0809604372487732ee917e8f881cc4c882ccd9fbac094fbfd3e3a42e6",
+          "unit": "sat",
+          "keyset_version": 2,
+          "id_format": "66-hex with 01 prefix"
+        }
+      ]
+    },
+    "local_v1_mint": {
+      "url": "http://127.0.0.1:8384",
+      "implementation": "cdk-mintd 0.18.1, fakewallet backend, keyset_version 'v1' (Version00, use_keyset_v2=false)",
+      "keysets": [
+        {
+          "id": "0016f5fb5e5278f2",
+          "unit": "sat",
+          "keyset_version": 1,
+          "id_format": "16-hex (V1-era)"
+        }
+      ],
+      "determinism": "seeded with the all-zeros BIP39 test mnemonic (public test vector, not a secret); same config + mnemonic reproduces the keyset",
+      "config": {
+        "listen": "127.0.0.1:8384",
+        "payment_backend": "fakewallet",
+        "onchain_backend": "none",
+        "fee_percent": 0.0
+      }
+    },
+    "minter": "cdk-cli 0.18.0 (CDK reference; Nutshell 0.21.0 secondary — the V1-era fixtures are Nutshell-minted against the local V1 mint)",
+    "gateway": {
+      "url": "http://192.168.13.1:2121",
+      "implementation": "tollgate-module-basic-go, v0.6.0-rc series live rig",
+      "source_ref": "origin/main @ 27baf22 (v0.6.0-rc3)"
+    },
+    "notes": "Verdicts cited as live were captured against these targets on 2026-10-16; the rig was in degraded mode (no reachable mints) for part of the capture, which is itself a pinned mode (TIP-01 degraded mode)."
+  },
+  "kg_state": {
+    "documented_in": "KNOWN-GOOD.md",
+    "status": "pinned 2026-10-16, one consumer gap open (portal)",
+    "definition": "cdk-cli 0.18.1 (CDK primary reference) minted tokens on V2 keysets, NUT-00 V4 (primary, newest) + V3 (current), accepted end-to-end by the reference backend (1022; degraded refusal must not consume proofs) and received cleanly by the CDK reference wallet",
+    "fixtures": [
+      "tokens/v4_v2_kg181.cashu",
+      "tokens/v3_v2_kg181.cashu"
+    ],
+    "green_consumers": [
+      "cdk-cli@0.18.1 (reference)",
+      "tollgate-module-basic-go@rc (full-service 1022 re-verify pending rig recovery)",
+      "tollgate-captive-portal@main (vendored-corpus suite portal#83; deployed pin refresh pending)"
+    ],
+    "open_gaps": [
+      {
+        "consumer": "tollgate-captive-portal@deployed-pin",
+        "divergence": "DIV-2026-10-portal-v2-keyset",
+        "note": "portal MAIN is green on the KG set (probed 2026-10-16; regression lock portal#83) — the gap is the stale deployed pin, i.e. release/deploy work"
+      }
+    ],
+    "backwards_compatibility": "OUT OF SCOPE for this pin — V1-keyset era and older-wallet behavior is deferred to compat-era/ and is layered on only after this state is green across every consumer"
+  },
+  "vocabularies": {
+    "lifecycle_stages": {
+      "decode": "parse the token string offline into a token structure",
+      "verify": "offline field/keyset validation before any network call",
+      "checkstate": "NUT-07 POST /v1/checkstate at the mint that minted the proofs",
+      "spend": "submit as payment to a TollGate (HTTP-01 POST /) or wallet Receive"
+    },
+    "decode_verdicts": [
+      "decoded-v3",
+      "decoded-v4",
+      "reject-undecodable",
+      "no-verdict-hang"
+    ],
+    "no_verdict_hang_note": "consumer does not terminate on the input. Observed on cdk-cli 0.18.1 decode-token: with a COLD wallet (no cached keysets) it deadlocks silently — single sleeping thread, no I/O — on tokens whose keyset id cannot resolve from wallet state (V3 with a truncated id whose mint is not registered; Nutshell-minted V1-era tokens whose mint is not registered). With the mint's keysets cached (reference configuration) the truncated-id V3 token decodes. A hang is not a verdict: runners MUST apply a timeout and report no-verdict-hang, and the shape is a candidate upstream bug to file against the consumer",
+    "verify_verdicts": [
+      "ok",
+      "reject-keyset-format",
+      "reject-keyset-unknown",
+      "reject-c-encoding",
+      "reject-amount-not-power-of-two"
+    ],
+    "checkstate_verdicts": [
+      "UNSPENT",
+      "PENDING",
+      "SPENT"
+    ],
+    "spend_verdicts": [
+      "accepted-1022",
+      "rejected-21023",
+      "refused-degraded-unconsumed"
+    ],
+    "spend_reject_codes": [
+      "payment-error-invalid-token",
+      "payment-error-below-swap-fee",
+      "client-not-registered",
+      "payment-duplicate-inflight",
+      "payment-outcome-unknown",
+      "payment-received-grant-pending",
+      "payment-error-token-spent",
+      "mint-rate-limited",
+      "payment-error-keyset-expired",
+      "payment-error-mint-unreachable",
+      "payment-processing-failed",
+      "session-error",
+      "invalid-event",
+      "invalid-request",
+      "device-unresolved",
+      "service-unavailable",
+      "internal-error"
+    ],
+    "evidence_kinds": {
+      "live": "observed on the reference environment on the given date; observed field carries the capture",
+      "source": "read from the cited source ref of an implementation",
+      "spec": "sanctioned by the cited spec document or docs PR",
+      "reported": "captured in a cited issue/PR report"
+    },
+    "assertion_matchers": {
+      "exact": "literal string/number equality (default for scalars)",
+      "prefix": "string starts with value",
+      "regex": "ECMA-262 regex, fully anchored by the consumer",
+      "integer": "any integer",
+      "mac-format": "AA:BB:CC:DD:EE:FF colon-hex",
+      "nostr-pubkey": "64 hex chars (32-byte x-only); MUST NOT be a MAC or any other non-pubkey value",
+      "nonempty": "any non-empty string",
+      "omit": "field/tag must not be present",
+      "one-of": "any of values"
+    }
+  },
+  "consumer_ids": {
+    "tollgate-module-basic-go": "Go reference backend (gonuts/cdk-go wallet core)",
+    "tollgate-captive-portal": "browser portal decoder",
+    "cdk-cli": "CDK reference wallet",
+    "nutshell": "Nutshell reference wallet (secondary)",
+    "test-minters": "lab mint tooling",
+    "cdk-cli@0.18.0": "v0-capture provenance key (the 0.18.1 entries are the v1 lane's)"
+  },
+  "index": {
+    "tokens": [
+      {
+        "path": "tokens/v4_v2_kg181.cashu",
+        "shape": "KG twin: V4, V2 keyset, cdk-cli 0.18.1-minted, proofs UNSPENT"
+      },
+      {
+        "path": "tokens/v3_v2_kg181.cashu",
+        "shape": "KG twin: V3, V2 keyset, cdk-cli 0.18.1-minted, proofs UNSPENT"
+      },
+      {
+        "path": "tokens/v3_v2_valid.cashu",
+        "shape": "V3 token, V2 keyset, valid (proofs SPENT; v0 provenance cdk-cli 0.18.0)"
+      },
+      {
+        "path": "tokens/v4_v2_valid.cashu",
+        "shape": "V4 token, V2 keyset, valid (proofs SPENT; token-level id is the 8-byte prefix; v0 provenance)"
+      },
+      {
+        "path": "tokens/v3_v2_truncated_id.cashu",
+        "shape": "V3 token whose 16-hex id is cdk's NATIVE serialization — byte-identical to the valid fixtures (the v0 'truncated_id' framing is retracted; proofs SPENT)"
+      },
+      {
+        "path": "tokens/v3_v2_hex_c.cashu",
+        "shape": "V3 token with non-point C bytes (49 garbage bytes; v0 regen artifact — CU102 class: C unparseable in any encoding)"
+      }
+    ],
+    "lifecycle": [
+      {
+        "path": "lifecycle/v4_v2_kg181.json"
+      },
+      {
+        "path": "lifecycle/v3_v2_kg181.json"
+      },
+      {
+        "path": "lifecycle/v3_v2_valid.json"
+      },
+      {
+        "path": "lifecycle/v4_v2_valid.json"
+      },
+      {
+        "path": "lifecycle/v3_v2_truncated_id.json"
+      },
+      {
+        "path": "lifecycle/v3_v2_hex_c.json"
+      }
+    ],
+    "compat_era": {
+      "status": "DEFERRED — not part of the known-good contract (see kg_state.backwards_compatibility); parked data from the v1 capture so the compat layer starts from evidence, not zero",
+      "tokens": [
+        {
+          "path": "compat-era/tokens/v3_v1_valid.cashu",
+          "shape": "V3, V1 keyset, Nutshell-minted, proofs UNSPENT"
+        },
+        {
+          "path": "compat-era/tokens/v4_v1_valid.cashu",
+          "shape": "V4, V1 keyset, Nutshell-minted, proofs UNSPENT"
+        }
+      ],
+      "lifecycle": [
+        {
+          "path": "compat-era/lifecycle/v3_v1_valid.json"
+        },
+        {
+          "path": "compat-era/lifecycle/v4_v1_valid.json"
+        }
+      ]
+    },
+    "http": [
+      {
+        "path": "http/http01-payment.json"
+      },
+      {
+        "path": "http/http01-discovery.json"
+      },
+      {
+        "path": "http/http02-whoami.json"
+      },
+      {
+        "path": "http/http03-usage.json"
+      },
+      {
+        "path": "http/http03-balance.json"
+      },
+      {
+        "path": "http/http03-ln-invoice.json"
+      },
+      {
+        "path": "http/session-state.json"
+      },
+      {
+        "path": "http/uncovered-session-endpoints.json"
+      }
+    ],
+    "events": [
+      {
+        "path": "events/session-event-1022.json"
+      },
+      {
+        "path": "events/notice-21023.json"
+      },
+      {
+        "path": "events/discovery-10021.json"
+      }
+    ]
+  },
+  "known_divergences": [
+    {
+      "id": "DIV-2026-10-portal-v2-keyset",
+      "class": "verify-stage",
+      "consumers": [
+        "tollgate-captive-portal@deployed-pin"
+      ],
+      "summary": "Deployed portal pin rejects every V2-keyset token at its client-side keyset check (CU109 card), never submits; broke browser e-cash payments on 4 of 6 default mints. Portal MAIN already decodes all corpus shapes (probed through the real decoder 2026-10-16); regression lock landed as portal#83. The divergence is now release/deploy work: refresh the pin.",
+      "refs": [
+        "tollgate-captive-portal-site#82",
+        "tollgate-captive-portal-site#83",
+        "physical-router-test-automation#247",
+        "tollgate-module-basic-go#952"
+      ]
+    },
+    {
+      "id": "DIV-2026-10-mac-in-p-tag",
+      "class": "event-grammar",
+      "consumers": [
+        "tollgate-module-basic-go"
+      ],
+      "summary": "Reference backend (origin/main @ 27baf22) emits the customer MAC in the p tag of kind-1022 session events and addressed kind-21023 notices. Spec (tollgate#26): p is optional and MUST be a Nostr pubkey when present, never a device identifier. Session path fixed in tmbg PR #951 (open at capture time); notice path is tmbg#950.",
+      "refs": [
+        "tollgate#16",
+        "tollgate#26",
+        "tollgate-module-basic-go#949",
+        "tollgate-module-basic-go#950",
+        "tollgate-module-basic-go#951"
+      ]
+    }
+  ],
+  "encoding_model": {
+    "source": "cdk 0.18.x crates/cashu/src/nuts/nut00/mod.rs:519 (ProofV3) and nut02.rs:383 (ShortKeysetId)",
+    "statement": "cdk serializes V3 per-proof keyset ids as 16-hex short ids (version byte + 7-byte prefix of the canonical id; for V1 keysets the short id IS the whole id) and C points as hex. V4 carries the 8-byte keyset-id prefix at the token level. Consumers must resolve short ids against the mint's keyset list; mints natively resolve them (cdk nut02 has a dedicated UnknownShortKeysetId error path). The 66-hex spelling is the canonical mint-level id, not the in-token spelling.",
+    "incident_reading": "The portal@pin CU109 incident is a short-id resolution failure: the deployed pin compared 16-hex in-token ids against 66-hex keyset-list ids and could never match. It was NOT token 'truncation' by any minter — the short spelling is the reference toolchain's native output."
+  }
+}

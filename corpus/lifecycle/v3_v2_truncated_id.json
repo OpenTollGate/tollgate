@@ -1,0 +1,131 @@
+{
+  "id": "lifecycle/v3_v2_truncated_id",
+  "fixture": "../tokens/v3_v2_truncated_id.cashu",
+  "shape": {
+    "token_version": 3,
+    "prefix": "cashuA",
+    "encoding": "JSON in base64url",
+    "keyset_id_format": "v3-short-16hex — byte-identical to the 'valid' fixtures' ids (native cdk serialization; NOT a distinct shape)",
+    "keyset_id": "01e73e75a0809604",
+    "keyset_version": 2,
+    "c_encoding": "base64",
+    "proofs": 1,
+    "amounts": [
+      4
+    ],
+    "unit": "sat",
+    "mint": "http://192.168.13.221:8383",
+    "canonical_keyset_id": "01e73e75a0809604372487732ee917e8f881cc4c882ccd9fbac094fbfd3e3a42e6"
+  },
+  "stages": {
+    "decode": {
+      "verdicts": {
+        "cdk-cli@0.18.1": "decoded-v3",
+        "tollgate-module-basic-go@rc": "decoded-v3",
+        "tollgate-captive-portal@pin": "decoded-v3",
+        "nutshell@0.21.0": "decoded-v3",
+        "tollgate-captive-portal@main": "decoded-v3"
+      },
+      "evidence": [
+        {
+          "kind": "reported",
+          "ref": "corpus v0: backend 1022 and portal CU109 card both require successful JSON decode",
+          "date": "2026-10-16"
+        },
+        {
+          "kind": "live",
+          "target": "nutshell 0.21.0 `cashu decode`",
+          "date": "2026-10-16",
+          "observed": "decodes",
+          "by": "corpus v1 capture"
+        },
+        {
+          "kind": "live",
+          "target": "portal main @ c2ddba1 decoder via vitest (portal#83's vendored-corpus probe)",
+          "date": "2026-10-16",
+          "observed": "validateToken accepts the token (status 1, correct amount/unit)",
+          "by": "corpus v1 capture"
+        },
+        {
+          "kind": "live",
+          "target": "cdk-cli 0.18.1 `decode-token`, wallet with the mint's keysets cached (reference configuration)",
+          "date": "2026-10-16",
+          "observed": "decodes",
+          "by": "corpus v1 capture + runner lane re-run"
+        },
+        {
+          "kind": "live",
+          "target": "cdk-cli 0.18.1 `decode-token`, cold HOME (no cached keysets)",
+          "date": "2026-10-16",
+          "observed": "silent deadlock (killed at 10s): the 16-hex id resolves to nothing without the mint's keyset list and the resolver deadlocks instead of erroring — wallet-state-dependent",
+          "by": "corpus v1 capture + runner lane"
+        }
+      ],
+      "notes": "cdk-cli's verdict on this shape is wallet-state-dependent: a warm wallet (mint keysets cached) decodes; a cold wallet hangs. The verdict records the reference-configuration (warm) answer; the cold-wallet hang is the documented failure mode and runners must apply timeouts. Contrast with the Go backend, which resolves the prefix and ACCEPTS (1022), and the portal pin, which rejects — the consumer spread on this one shape is the divergence the corpus exists to expose."
+    },
+    "verify": {
+      "verdicts": {
+        "cdk-cli@0.18.0": "unknown",
+        "tollgate-module-basic-go@rc": "ok",
+        "tollgate-captive-portal@pin": "reject-keyset-format",
+        "tollgate-captive-portal@main": "ok"
+      },
+      "evidence": [
+        {
+          "kind": "reported",
+          "ref": "corpus v0: backend accepts BOTH id spellings (1022); portal CU109 rejects every V2-era spelling",
+          "date": "2026-10-16"
+        },
+        {
+          "kind": "live",
+          "target": "portal main @ c2ddba1 decoder via vitest (portal#83's vendored-corpus probe)",
+          "date": "2026-10-16",
+          "observed": "validateToken accepts the token (status 1, correct amount/unit)",
+          "by": "corpus v1 capture"
+        }
+      ],
+      "notes": "The shape that hid the portal defect for months: internally-consistent test pairs passed while the deployed portal could not resolve any short id against a V2 keyset list."
+    },
+    "checkstate": {
+      "verdicts": {
+        "fakewallet@2026-10-16": "SPENT"
+      },
+      "evidence": [
+        {
+          "kind": "live",
+          "target": "mint http://192.168.13.221:8383 POST /v1/checkstate",
+          "date": "2026-10-16",
+          "observed": "proof (amount 4, secret matching the canonical keyset's Y) state=SPENT",
+          "by": "corpus v1 capture"
+        }
+      ],
+      "notes": "Proofs SPENT (consumed by the v0 verification run). No backend prefix-resolution inference is needed: short proof ids are the native cdk spelling and the mint resolves them during swap (cdk nut02 UnknownShortKeysetId path)."
+    },
+    "spend": {
+      "verdicts": [
+        {
+          "when": "2026-10-16, proof fresh",
+          "tollgate-module-basic-go@rc": "accepted-1022",
+          "evidence": [
+            {
+              "kind": "reported",
+              "ref": "corpus v0 (PR #29) live verification against the rig",
+              "date": "2026-10-16"
+            }
+          ]
+        }
+      ],
+      "notes": "Consumers MUST NOT treat the 16-hex truncation of a V2 id as a distinct keyset: it is either resolved to the canonical id (backend behavior) or rejected (portal behavior). Silently minting NEW tokens with truncated ids (the test-minter regression) is forbidden — that is how the ecosystem invented a third id spelling."
+    }
+  },
+  "provenance": {
+    "minted_by": "cdk-cli 0.18.0, then each proof id replaced by id[:16] and re-encoded (corpus v0, PR #29)",
+    "regen": "decode the V3 token, set each proof id to the first 16 hex chars of the canonical id, re-encode"
+  },
+  "portal_pin_note": "The @pin verdict (CU109 rejection, never submits) is the deployed router pin measured by v0 and portal#82's capture; portal main's decode path was reworked (#38/#55/#61) and now accepts — regression lock portal#83, deployed-pin refresh pending.",
+  "reframed": {
+    "what_v0_called_it": "the 'truncated id' / PRTA#247 regression shape",
+    "what_it_actually_is": "a plain valid-shaped cdk V3 token: its id spelling is cdk's native serialization, byte-identical to tokens/v3_v2_valid.cashu's ids. There was never a truncation to test; the fixture survives as the historical record of the confusion.",
+    "incident_reread": "portal@pin rejected these tokens (CU109 'outdated mint key') because it compared the 16-hex in-token id against the mint's 66-hex keyset-list ids — a resolution failure, not a token defect. The backend accepted (1022): it resolves like cdk wallets do. See DIV-2026-10-portal-v2-keyset."
+  }
+}

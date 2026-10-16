@@ -1,0 +1,591 @@
+{
+  "endpoint": "POST /ln-invoice and GET /ln-invoice?quote=",
+  "port": 2121,
+  "spec_refs": [
+    "tollgate#23 (docs/http03-balance-ln-invoice): POST /ln-invoice, GET /ln-invoice"
+  ],
+  "identity": "device identifier resolved from the request's network context; a mac field in the POST body is accepted for wire compatibility and ignored",
+  "rate_limit": "three stacked quotas on POST only (per-client 6/min burst 3, per-source 20/min burst 5, global 2/s burst 5 on defaults; env-tunable) plus merchant-side ceilings (3 active quotes per MAC, 128 global, per-mint outbound budget); GET is never throttled by these",
+  "vectors": [
+    {
+      "id": "http03-ln/post-valid",
+      "request": {
+        "method": "POST",
+        "path": "/ln-invoice",
+        "content_type": "application/json",
+        "body": {
+          "inline": "{\"amount\": 4, \"mint_url\": \"http://192.168.13.221:8383\"}"
+        }
+      },
+      "preconditions": {
+        "gateway_mode": "full-service",
+        "mint": "in the gateway's accepted-mint list",
+        "quotas": "not exhausted"
+      },
+      "response": {
+        "status": 200,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 1,
+            "quote": {
+              "matcher": "nonempty"
+            },
+            "invoice": {
+              "matcher": "prefix",
+              "value": "lnbc"
+            },
+            "mint_url": "http://192.168.13.221:8383",
+            "amount": 4,
+            "expiry": {
+              "matcher": "integer"
+            },
+            "state": {
+              "matcher": "one-of",
+              "values": [
+                "UNPAID",
+                "PAID",
+                "ISSUED",
+                "PENDING",
+                "UNKNOWN"
+              ]
+            },
+            "access_granted": false
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "spec",
+          "ref": "tollgate#23: success carries quote, invoice and a NUT-04 state"
+        },
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1697-1706; state strings from tollwallet MintQuoteState.String() = uppercase UNPAID|PAID|ISSUED|PENDING|UNKNOWN"
+        }
+      ]
+    },
+    {
+      "id": "http03-ln/post-malformed-json",
+      "request": {
+        "method": "POST",
+        "path": "/ln-invoice",
+        "content_type": "application/json",
+        "body": {
+          "inline": "{\"amount\":\"x\"}"
+        }
+      },
+      "preconditions": {
+        "gateway_mode": "any (but mode-specific outcomes are only pinned for the declared mode)",
+        "quotas": "not exhausted (every POST /ln-invoice consumes quota)"
+      },
+      "response": {
+        "status": 400,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 0,
+            "error": "invalid request body"
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "live",
+          "target": "rig http://192.168.13.1:2121",
+          "date": "2026-10-16",
+          "observed": "HTTP 400 {\"status\":0,\"quote\":\"\",\"mint_url\":\"\",\"amount\":0,\"state\":\"\",\"access_granted\":false,\"error\":\"invalid request body\"}"
+        },
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1619-1626"
+        }
+      ],
+      "notes": "Wire quirk to pin: the error envelope always emits the full zero-valued lightningInvoiceResponse fields (quote \"\", amount 0, ...), not just status+error. Consumers must not read the zero fields as meaningful."
+    },
+    {
+      "id": "http03-ln/post-missing-fields",
+      "request": {
+        "method": "POST",
+        "path": "/ln-invoice",
+        "content_type": "application/json",
+        "body": {
+          "inline": "{\"amount\": 0, \"mint_url\": \"\"}"
+        }
+      },
+      "preconditions": {
+        "gateway_mode": "any (but mode-specific outcomes are only pinned for the declared mode)",
+        "quotas": "not exhausted (every POST /ln-invoice consumes quota)"
+      },
+      "response": {
+        "status": 400,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 0,
+            "error": "amount and mint_url are required"
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1627-1637"
+        }
+      ]
+    },
+    {
+      "id": "http03-ln/post-amount-too-large",
+      "request": {
+        "method": "POST",
+        "path": "/ln-invoice",
+        "content_type": "application/json",
+        "body": {
+          "inline": "{\"amount\": 1000001, \"mint_url\": \"http://192.168.13.221:8383\"}"
+        }
+      },
+      "preconditions": {
+        "gateway_mode": "any (but mode-specific outcomes are only pinned for the declared mode)",
+        "quotas": "not exhausted (every POST /ln-invoice consumes quota)"
+      },
+      "response": {
+        "status": 400,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 0,
+            "code": "amount-too-large",
+            "error": {
+              "matcher": "nonempty"
+            }
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1638-1646 (ceiling 1,000,000 sats)"
+        }
+      ]
+    },
+    {
+      "id": "http03-ln/post-body-too-large",
+      "request": {
+        "method": "POST",
+        "path": "/ln-invoice",
+        "content_type": "application/json",
+        "body": {
+          "inline": "valid JSON padded past 8192 bytes"
+        }
+      },
+      "preconditions": {
+        "gateway_mode": "any (but mode-specific outcomes are only pinned for the declared mode)",
+        "quotas": "not exhausted (every POST /ln-invoice consumes quota)"
+      },
+      "response": {
+        "status": 413,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 0,
+            "code": "request-too-large",
+            "error": {
+              "matcher": "nonempty"
+            }
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1613-1618 (8 KiB cap)"
+        },
+        {
+          "kind": "spec",
+          "ref": "tollgate#23: oversized bodies 413"
+        }
+      ]
+    },
+    {
+      "id": "http03-ln/post-rate-limited",
+      "request": {
+        "method": "POST",
+        "path": "/ln-invoice",
+        "content_type": "application/json",
+        "body": {
+          "inline": "{\"amount\": 4, \"mint_url\": \"<accepted mint>\"}"
+        }
+      },
+      "preconditions": {
+        "gateway_mode": "full-service",
+        "quotas": "per-client or per-source or global quota exhausted"
+      },
+      "response": {
+        "status": 429,
+        "headers": {
+          "Retry-After": {
+            "matcher": "integer-seconds"
+          }
+        },
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 0,
+            "code": "quote-rate-limited",
+            "retry_after": {
+              "matcher": "integer"
+            }
+          },
+          "invariants": [
+            "retry_after mirrors the Retry-After header"
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go quoteCreateQuotaMiddleware 359-382, writeLightningRefusal 384-396"
+        },
+        {
+          "kind": "spec",
+          "ref": "tollgate#23: 429 with Retry-After header and a mirrored retry_after in the body"
+        }
+      ],
+      "notes": "Default retry_after windows: 10s (per-client), 3s (per-source), 1s (global). Runners must not assume the defaults — they are deployment-tunable."
+    },
+    {
+      "id": "http03-ln/post-quote-table-full",
+      "request": {
+        "method": "POST",
+        "path": "/ln-invoice",
+        "content_type": "application/json",
+        "body": {
+          "inline": "{\"amount\": 4, \"mint_url\": \"<accepted mint>\"}"
+        }
+      },
+      "preconditions": {
+        "gateway_mode": "full-service",
+        "quotas": "3 active quotes already held by the requesting MAC (or 128 globally)"
+      },
+      "response": {
+        "status": 429,
+        "headers": {
+          "Retry-After": "60"
+        },
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 0,
+            "code": "quote-table-full",
+            "retry_after": 60
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1675-1684; src/merchant/lightning.go maxActiveQuotesPerMAC/Global 63-64, ErrTooManyQuotes 28"
+        },
+        {
+          "kind": "spec",
+          "ref": "tollgate#23: 429 sanctioned when the unpaid-invoice table is full"
+        }
+      ]
+    },
+    {
+      "id": "http03-ln/post-mint-busy",
+      "request": {
+        "method": "POST",
+        "path": "/ln-invoice",
+        "content_type": "application/json",
+        "body": {
+          "inline": "{\"amount\": 4, \"mint_url\": \"<accepted mint>\"}"
+        }
+      },
+      "preconditions": {
+        "gateway_mode": "full-service",
+        "mint": "rate-limiting the gateway's outbound quote creation",
+        "quotas": "not exhausted (every POST /ln-invoice consumes quota)"
+      },
+      "response": {
+        "status": 429,
+        "headers": {
+          "Retry-After": "2"
+        },
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 0,
+            "code": "mint-busy-local",
+            "retry_after": 2
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1685-1689; src/merchant/lightning.go ErrMintBusyLocal 33"
+        }
+      ]
+    },
+    {
+      "id": "http03-ln/post-degraded",
+      "request": {
+        "method": "POST",
+        "path": "/ln-invoice",
+        "content_type": "application/json",
+        "body": {
+          "inline": "{\"amount\": 4, \"mint_url\": \"http://192.168.13.221:8383\"}"
+        }
+      },
+      "preconditions": {
+        "gateway_mode": "degraded",
+        "quotas": "not exhausted (every POST /ln-invoice consumes quota)"
+      },
+      "response": {
+        "status": 400,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 0,
+            "error": "failed to create lightning invoice"
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "live",
+          "target": "rig http://192.168.13.1:2121",
+          "date": "2026-10-16",
+          "observed": "HTTP 400, error 'failed to create lightning invoice' (degraded errors are not sentinel-coded)"
+        },
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1690-1694"
+        }
+      ],
+      "notes": "Spec gap: degraded mode on /ln-invoice answers a bare 400 with no code. Consumers cannot distinguish 'degraded' from other quote failures on this endpoint — candidate protocol-repo issue."
+    },
+    {
+      "id": "http03-ln/get-missing-quote-param",
+      "request": {
+        "method": "GET",
+        "path": "/ln-invoice"
+      },
+      "preconditions": {
+        "gateway_mode": "any"
+      },
+      "response": {
+        "status": 400,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 0,
+            "error": "quote is required"
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "live",
+          "target": "rig http://192.168.13.1:2121",
+          "date": "2026-10-16",
+          "observed": "HTTP 400, error 'quote is required'"
+        },
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1710-1715"
+        }
+      ]
+    },
+    {
+      "id": "http03-ln/get-unknown-quote-fullservice",
+      "request": {
+        "method": "GET",
+        "path": "/ln-invoice?quote=00000000-0000-0000-0000-000000000000"
+      },
+      "preconditions": {
+        "gateway_mode": "full-service"
+      },
+      "response": {
+        "status": 404,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 0,
+            "error": "failed to fetch invoice status"
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1757-1766 (ErrQuoteNotFound -> 404)"
+        }
+      ],
+      "notes": "Same quote id from a different device (quote-vs-MAC mismatch) yields the same 404 — a quote is readable only by its creator, and the refusal is indistinguishable from 'unknown quote' by design."
+    },
+    {
+      "id": "http03-ln/get-unknown-quote-degraded",
+      "request": {
+        "method": "GET",
+        "path": "/ln-invoice?quote=00000000-0000-0000-0000-000000000000"
+      },
+      "preconditions": {
+        "gateway_mode": "degraded"
+      },
+      "response": {
+        "status": 500,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 0,
+            "error": "failed to fetch invoice status"
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "live",
+          "target": "rig http://192.168.13.1:2121",
+          "date": "2026-10-16",
+          "observed": "HTTP 500 (not 404): the degraded-mode lookup error is not ErrQuoteNotFound"
+        },
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1767-1771 (non-sentinel error path)"
+        }
+      ],
+      "notes": "Mode-dependent status for the same request shape — runners must precondition on gateway mode."
+    },
+    {
+      "id": "http03-ln/get-paid-access-applied",
+      "request": {
+        "method": "GET",
+        "path": "/ln-invoice?quote=<quote created by this device>"
+      },
+      "preconditions": {
+        "gateway_mode": "full-service",
+        "invoice": "paid",
+        "access": "applied"
+      },
+      "response": {
+        "status": 200,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 1,
+            "quote": {
+              "matcher": "nonempty"
+            },
+            "state": "ISSUED",
+            "access_granted": true,
+            "allotment": {
+              "matcher": "integer"
+            },
+            "metric": {
+              "matcher": "one-of",
+              "values": [
+                "bytes",
+                "milliseconds"
+              ]
+            }
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "spec",
+          "ref": "tollgate#23: response repeats the creation shape with updated state, plus access_granted and the granted allotment/metric"
+        },
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1772-1781; merchant/lightning.go (SessionGranted forces state ISSUED)"
+        }
+      ]
+    },
+    {
+      "id": "http03-ln/get-paid-not-yet-applied",
+      "request": {
+        "method": "GET",
+        "path": "/ln-invoice?quote=<quote created by this device>"
+      },
+      "preconditions": {
+        "gateway_mode": "full-service",
+        "invoice": "settled",
+        "access": "NOT yet applied (grant retry pending)"
+      },
+      "response": {
+        "status": 503,
+        "headers": {
+          "Retry-After": "15"
+        },
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 0,
+            "code": "access-grant-failed",
+            "retry_after": 15,
+            "error": {
+              "matcher": "regex",
+              "value": ".*Do NOT pay again.*"
+            }
+          }
+        }
+      },
+      "evidence": [
+        {
+          "kind": "spec",
+          "ref": "tollgate#23: a settled invoice whose access could not be applied MUST NOT read as a payment failure: 503 with a machine-readable code and a do-not-pay-again message, because the grant is retried server-side"
+        },
+        {
+          "kind": "source",
+          "repo": "OpenTollGate/tollgate-module-basic-go",
+          "ref": "origin/main @ 27baf22",
+          "location": "src/main.go 1749-1756 (ErrAccessGrantNotApplied -> 503 code access-grant-failed, Retry-After 15, 'Do NOT pay again' message); src/merchant/lightning.go 46, 682, 701"
+        }
+      ],
+      "notes": "The fund-safety invariant of the ln-invoice flow: 503 here means 'paid, grant pending', never 'pay again'. Clients that map any 5xx to 'retry payment' will double-pay."
+    }
+  ]
+}
