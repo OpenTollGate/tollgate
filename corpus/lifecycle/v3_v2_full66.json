@@ -1,0 +1,69 @@
+{
+  "id": "lifecycle/v3_v2_full66",
+  "fixture": "../tokens/v3_v2_full66.cashu",
+  "role": "id-spelling twin — the full 66-hex keyset-id spelling that wallet-side minters emit (Nutshell, cashu-ts); cdk serializes the short form natively, so this fixture pins the OTHER legal spelling. Ships UNSPENT with its own proof (independent of the KG twins).",
+  "shape": {
+    "token_version": 3,
+    "prefix": "cashuA",
+    "encoding": "JSON in base64url",
+    "keyset_id_format": "full 66-hex canonical id in-token (the wallet-side spelling; cdk natively writes the 16-hex short form — see manifest encoding_model)",
+    "keyset_id": "01e73e75a0809604372487732ee917e8f881cc4c882ccd9fbac094fbfd3e3a42e6",
+    "canonical_keyset_id": "01e73e75a0809604372487732ee917e8f881cc4c882ccd9fbac094fbfd3e3a42e6",
+    "keyset_version": 2,
+    "c_encoding": "hex (compressed point; NUT-00 native per cdk ProofV3 serde)",
+    "dleq": "present (NUT-12, as minted by cdk)",
+    "proofs": 1,
+    "amounts": [4],
+    "unit": "sat",
+    "mint": "http://192.168.13.221:8383"
+  },
+  "stages": {
+    "decode": {
+      "verdicts": {
+        "cdk-cli@0.18.1": "decoded-v3",
+        "nutshell@0.21.0": "decoded-v3",
+        "tollgate-module-basic-go@rc": "unknown",
+        "tollgate-captive-portal@main": "decoded-v3",
+        "tollgate-captive-portal@pin-6c25834": "decoded-v3"
+      },
+      "evidence": [
+        {"kind": "live", "target": "cdk-cli 0.18.1 decode-token, warm AND cold HOME", "date": "2026-10-16", "observed": "decodes both wallet states (exit 0)", "by": "corpus v1.1 capture"},
+        {"kind": "live", "target": "nutshell 0.21.0 cashu decode", "date": "2026-10-16", "observed": "decodes", "by": "corpus v1.1 capture"},
+        {"kind": "live", "target": "portal decoder via vitest (main @ a47ae1c and the deployed repo pin 6c25834)", "date": "2026-10-16", "observed": "validateToken accepts (status 1, amount 4, unit sat)", "by": "corpus v1.1 capture"}
+      ],
+      "notes": "Provenance: cdk-minted sibling with each proof id rewritten to the canonical form — the exact class of token a Nutshell/cashu-ts wallet user pastes into the portal. Both consumers of record accept BOTH spellings; a consumer that accepts only one spelling is divergent."
+    },
+    "verify": {
+      "verdicts": {
+        "cdk-cli@0.18.1": "unknown",
+        "nutshell@0.21.0": "unknown",
+        "tollgate-module-basic-go@rc": "unknown",
+        "tollgate-captive-portal@main": "ok",
+        "tollgate-captive-portal@pin-6c25834": "ok"
+      },
+      "evidence": [
+        {"kind": "live", "target": "portal decoder (main + repo pin) validateToken with mint {url, unit sat}", "date": "2026-10-16", "observed": "accepted", "by": "corpus v1.1 capture"},
+        {"kind": "reported", "ref": "corpus v0 asserted 'the backend accepts BOTH id spellings' but shipped no full-id fixture — this vector makes that claim testable; runner verifies", "date": "2026-10-16"}
+      ]
+    },
+    "checkstate": {
+      "verdicts": {"fakewallet@2026-10-16": "UNSPENT"},
+      "evidence": [
+        {"kind": "live", "target": "mint http://192.168.13.221:8383 POST /v1/checkstate", "date": "2026-10-16", "observed": "the single 4-sat proof UNSPENT at commit time", "by": "corpus v1.1 capture"}
+      ]
+    },
+    "spend": {
+      "verdicts": [
+        {
+          "when": "full service (re-verify recipe)",
+          "tollgate-module-basic-go@rc": "accepted-1022",
+          "evidence": [{"kind": "reported", "ref": "corpus v0's both-spellings claim (no fixture existed; runner now verifies)", "date": "2026-10-16"}]
+        }
+      ]
+    }
+  },
+  "provenance": {
+    "minted_by": "cdk-cli 0.18.1 against the fakewallet, then each proof id rewritten from the native 16-hex short form to the canonical 66-hex form",
+    "regen": "cdk-cli mint http://192.168.13.221:8383 11; cdk-cli send --mint-url http://192.168.13.221:8383 --amount 4 --include-fee --v3; then set each proof id to the canonical keyset id"
+  }
+}

@@ -41,13 +41,21 @@ format (current, still-served), are:
 | cdk-cli 0.18.1 (reference) | decodes, verifies, receives both formats | **green** (is the reference) |
 | tollgate-module-basic-go (rc) | decodes both formats; 1022 per v0 live evidence + source; degraded-refusal-unconsumed live-verified | **green** (full-service 1022 re-verify pending rig recovery) |
 | tollgate-captive-portal @ main | decodes both KG formats + all incident shapes (probed through the real decoder, 2026-10-16); raw POST / wire pinned by regression tests | **green at main** — regression lock portal#83 |
-| tollgate-captive-portal @ deployed pin | rejects every V2-keyset token at its client-side keyset check (CU109 card), never submits | **RED — the incident**: portal#82 / PRTA#247 / tmbg#952 (`DIV-2026-10-portal-v2-keyset`). The deployed pin predates the main fixes (#38/#55/#61); refresh closes it |
+| tollgate-captive-portal @ repo pin 6c25834 | **passes the full corpus** (decode + POST wire, both id spellings, all incident shapes — verified 2026-10-16 by running the vendored-corpus suite at the pin) | **green** — the tmbg packaging pin contains the decoder fixes (#38/#55/#61) |
+| tollgate-captive-portal @ lab rig build | rejected tokens in portal#82's capture (2026-10-16): CU109 + 0 POSTs | **RED — the incident**: portal#82 / PRTA#247 / tmbg#952. The repo pin already passes, so the failing deployment is an older/different build or a flow-level trigger (mint-option/unit path). Root cause OPEN: the rig's portal port was not serving for fingerprinting |
 | Nutshell 0.21.0 (secondary) | decodes both formats (verify untested on spent v0 twins) | partially green — runner fills |
 
-**The pin is not claimed green until the deployed portal pin is
-refreshed** to a main-era build (decoder fixes + portal#83's corpus
-regression lock). The code paths are green at portal main; what
-remains is release/deploy work, measured by this scoreboard.
+**Correction 2026-10-16 (v1.1):** an earlier revision of this
+scoreboard claimed the repo pin "predates the main fixes" — that was
+wrong: pin 6c25834 (2026-10-08) contains the decoder fixes and passes
+the entire corpus decode+wire suite, including both id spellings
+(`lifecycle/v3_v2_full66.json` is the wallet-side spelling fixture).
+The remaining RED row is the lab rig's deployed build (portal#82's
+capture), whose vintage is unidentified — the incident is NOT closed
+by a pin bump. Closing it needs: (1) fingerprint the deployed build
+(the rig's portal port was down at capture time), (2) exercise the
+app-level flow (mint-option selection from a live 10021 advertisement)
+against a V2-keyset mint.
 
 ## One-command re-verification (full-service leg)
 

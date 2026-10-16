@@ -59,9 +59,9 @@
     ],
     "open_gaps": [
       {
-        "consumer": "tollgate-captive-portal@deployed-pin",
+        "consumer": "tollgate-captive-portal@lab-rig-build",
         "divergence": "DIV-2026-10-portal-v2-keyset",
-        "note": "portal MAIN is green on the KG set (probed 2026-10-16; regression lock portal#83) — the gap is the stale deployed pin, i.e. release/deploy work"
+        "note": "repo pin 6c25834 passes the corpus; the deployed build's vintage is unidentified — a pin bump does NOT close this"
       }
     ],
     "backwards_compatibility": "OUT OF SCOPE for this pin — V1-keyset era and older-wallet behavior is deferred to compat-era/ and is layered on only after this state is green across every consumer"
@@ -167,6 +167,10 @@
       {
         "path": "tokens/v3_v2_hex_c.cashu",
         "shape": "V3 token with non-point C bytes (49 garbage bytes; v0 regen artifact — CU102 class: C unparseable in any encoding)"
+      },
+      {
+        "path": "tokens/v3_v2_full66.cashu",
+        "shape": "V3 with the full 66-hex keyset-id spelling (wallet-side; cdk writes short natively) — proofs UNSPENT, independent of the KG twins"
       }
     ],
     "lifecycle": [
@@ -187,6 +191,9 @@
       },
       {
         "path": "lifecycle/v3_v2_hex_c.json"
+      },
+      {
+        "path": "lifecycle/v3_v2_full66.json"
       }
     ],
     "compat_era": {
@@ -253,9 +260,9 @@
       "id": "DIV-2026-10-portal-v2-keyset",
       "class": "verify-stage",
       "consumers": [
-        "tollgate-captive-portal@deployed-pin"
+        "tollgate-captive-portal@lab-rig-build"
       ],
-      "summary": "Deployed portal pin rejects every V2-keyset token at its client-side keyset check (CU109 card), never submits; broke browser e-cash payments on 4 of 6 default mints. Portal MAIN already decodes all corpus shapes (probed through the real decoder 2026-10-16); regression lock landed as portal#83. The divergence is now release/deploy work: refresh the pin.",
+      "summary": "Field incident (portal#82, 2026-10-16): the deployed lab-rig portal rejected V2-keyset tokens (CU109 card, 0 POSTs). Portal MAIN and the tmbg packaging pin 6c25834 BOTH pass the full corpus (verified 2026-10-16, both id spellings) — the failing deployment is an older/different build or a flow-level trigger (mint-option/unit path). Root cause open: fingerprint the deployed build; exercise the app-level flow against a live advertisement.",
       "refs": [
         "tollgate-captive-portal-site#82",
         "tollgate-captive-portal-site#83",
@@ -282,6 +289,7 @@
   "encoding_model": {
     "source": "cdk 0.18.x crates/cashu/src/nuts/nut00/mod.rs:519 (ProofV3) and nut02.rs:383 (ShortKeysetId)",
     "statement": "cdk serializes V3 per-proof keyset ids as 16-hex short ids (version byte + 7-byte prefix of the canonical id; for V1 keysets the short id IS the whole id) and C points as hex. V4 carries the 8-byte keyset-id prefix at the token level. Consumers must resolve short ids against the mint's keyset list; mints natively resolve them (cdk nut02 has a dedicated UnknownShortKeysetId error path). The 66-hex spelling is the canonical mint-level id, not the in-token spelling.",
-    "incident_reading": "The portal@pin CU109 incident is a short-id resolution failure: the deployed pin compared 16-hex in-token ids against 66-hex keyset-list ids and could never match. It was NOT token 'truncation' by any minter — the short spelling is the reference toolchain's native output."
+    "incident_reading": "The portal@pin CU109 incident is a short-id resolution failure: the deployed pin compared 16-hex in-token ids against 66-hex keyset-list ids and could never match. It was NOT token 'truncation' by any minter — the short spelling is the reference toolchain's native output.",
+    "id_spelling_dimension": "Both spellings are legal on the wire: the short form (cdk's native serialization) and the full 66-hex canonical form (Nutshell/cashu-ts wallet-side serialization). Consumers MUST accept both — see lifecycle/v3_v2_full66.json vs the KG twins."
   }
 }

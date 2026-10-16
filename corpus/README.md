@@ -178,10 +178,12 @@ walks `manifest.json`, and for each vector
 
 ## What's next
 
-- Close the portal gap for real: portal **main** passes the KG set
-  (probed 2026-10-16; regression lock portal#83) — refresh the
-  **deployed pin** on the routers and KNOWN-GOOD goes green across
-  all consumers.
+- Close the portal gap for real: portal **main AND the repo pin
+  6c25834** pass the corpus (probed 2026-10-16, both id spellings) —
+  the failing deployment in portal#82's capture is an older/different
+  build or a flow-level trigger. Next: fingerprint the deployed build
+  and exercise the app-level mint-option flow against a live V2-keyset
+  advertisement.
 - Re-verify the backend full-service leg (one-command recipe in
   KNOWN-GOOD.md) when the rig is back in full service.
 - Fill the remaining `unknown` verdicts (portal V4 decode, Nutshell
