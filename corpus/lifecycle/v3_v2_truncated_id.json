@@ -1,0 +1,61 @@
+{
+  "id": "lifecycle/v3_v2_truncated_id",
+  "fixture": "../tokens/v3_v2_truncated_id.cashu",
+  "shape": {
+    "token_version": 3,
+    "prefix": "cashuA",
+    "encoding": "JSON in base64url",
+    "keyset_id_format": "16-hex (the first 16 chars of the canonical V2 id; NOT a keyset that exists at any mint — V1-era id length, V2-era keyset)",
+    "keyset_id": "01e73e75a0809604",
+    "keyset_version": 2,
+    "c_encoding": "base64",
+    "proofs": 1,
+    "amounts": [4],
+    "unit": "sat",
+    "mint": "http://192.168.13.221:8383"
+  },
+  "stages": {
+    "decode": {
+      "verdicts": {
+        "cdk-cli@0.18.0": "unknown",
+        "tollgate-module-basic-go@rc": "decoded-v3",
+        "tollgate-captive-portal@pin": "decoded-v3"
+      },
+      "evidence": [
+        {"kind": "reported", "ref": "corpus v0: backend 1022 and portal CU109 card both require successful JSON decode", "date": "2026-10-16"}
+      ]
+    },
+    "verify": {
+      "verdicts": {
+        "cdk-cli@0.18.0": "unknown",
+        "tollgate-module-basic-go@rc": "ok",
+        "tollgate-captive-portal@pin": "reject-keyset-format"
+      },
+      "evidence": [
+        {"kind": "reported", "ref": "corpus v0: backend accepts BOTH id spellings (1022); portal CU109 rejects every V2-era spelling", "date": "2026-10-16"}
+      ],
+      "notes": "The shape that hid the portal defect for months: a test minter adopted this 'v2-short' truncation (exists nowhere in NUT-00/02) and the internally-consistent pair passed tests while real mints rotated to V2."
+    },
+    "checkstate": {
+      "verdicts": {"fakewallet@2026-10-16": "SPENT"},
+      "evidence": [
+        {"kind": "live", "target": "mint http://192.168.13.221:8383 POST /v1/checkstate", "date": "2026-10-16", "observed": "proof (amount 4, secret matching the canonical keyset's Y) state=SPENT", "by": "corpus v1 capture"}
+      ],
+      "notes": "The proofs were spent at the mint during the v0 verification run even though the token's id field is the truncated form: the swap request that reached the mint must have carried the canonical id, so the backend resolves the 16-hex prefix to the canonical V2 keyset id before swapping (mechanism inferred from the mint's acceptance; source-level confirmation pending — open question for the backend maintainers)."
+    },
+    "spend": {
+      "verdicts": [
+        {
+          "when": "2026-10-16, proof fresh",
+          "tollgate-module-basic-go@rc": "accepted-1022",
+          "evidence": [{"kind": "reported", "ref": "corpus v0 (PR #29) live verification against the rig", "date": "2026-10-16"}]
+        }
+      ],
+      "notes": "Consumers MUST NOT treat the 16-hex truncation of a V2 id as a distinct keyset: it is either resolved to the canonical id (backend behavior) or rejected (portal behavior). Silently minting NEW tokens with truncated ids (the test-minter regression) is forbidden — that is how the ecosystem invented a third id spelling."
+    }
+  },
+  "provenance": {
+    "minted_by": "cdk-cli 0.18.0, then each proof id replaced by id[:16] and re-encoded (corpus v0, PR #29)",
+    "regen": "decode the V3 token, set each proof id to the first 16 hex chars of the canonical id, re-encode"
+  }
+}

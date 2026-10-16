@@ -1,0 +1,102 @@
+{
+  "endpoint": "GET / (and any unregistered GET path — the / mux pattern is a catch-all)",
+  "port": 2121,
+  "spec_refs": ["HTTP-01#GET /", "tollgate#27 (docs/tip01-degraded-mode)", "TIP-01 (Discovery event)", "TIP-02 (price_per_step tags)"],
+  "identity": "none (advertisement slot is not client-scoped)",
+  "rate_limit": "per-IP limiter, default 10 req/min with burst 10 (env TOLLGATE_RATE_LIMIT_RPM); shared across GET and POST on /",
+  "vectors": [
+    {
+      "id": "http01-get/discovery-fullservice",
+      "request": {"method": "GET", "path": "/"},
+      "preconditions": {"gateway_mode": "full-service", "at_least_one_advertised_mint": true},
+      "response": {
+        "status": 200,
+        "content_type": "application/json",
+        "body": {
+          "type": "nostr_event",
+          "kind": 10021,
+          "signed": true,
+          "tags_include": [["metric", {"matcher": "one-of", "values": ["bytes", "milliseconds"]}], ["step_size", {"matcher": "integer"}], ["tips", "1", "2"]],
+          "tags_zero_or_more": [["price_per_step", "cashu", {"matcher": "integer"}, {"matcher": "nonempty"}, {"matcher": "nonempty"}, {"matcher": "integer"}]],
+          "content": ""
+        }
+      },
+      "evidence": [
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/merchant/merchant.go CreateAdvertisement 1976-2033; src/main.go handleDetails 1030-1040"},
+        {"kind": "spec", "ref": "HTTP-01: MAY return kind=10021 Discovery event; TIP-01/TIP-02 tag grammar"}
+      ],
+      "notes": "Content-Type is exactly 'application/json' (no charset) — pinned because reseller probers match on it. price_per_step appears once per advertised mint; tips is the implemented-TIPs list, '1','2' on the reference impl."
+    },
+    {
+      "id": "http01-get/discovery-degraded",
+      "request": {"method": "GET", "path": "/"},
+      "preconditions": {"gateway_mode": "degraded (no reachable mints)"},
+      "response": {
+        "status": 200,
+        "content_type": "application/json",
+        "body": {
+          "type": "nostr_event",
+          "kind": 21023,
+          "signed": true,
+          "tags_include": [["level", "warning"], ["code", "no-reachable-mints"]],
+          "tags_omit": ["p"],
+          "content_contains": ["auto-recover"]
+        }
+      },
+      "evidence": [
+        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "HTTP 200, kind 21023, level=warning, code=no-reachable-mints, content 'TollGate is initializing. No reachable mints detected. Service will auto-recover.', no p tag"},
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/merchant/merchant_degraded.go 183-194"},
+        {"kind": "spec", "ref": "tollgate#27: where the Discovery event would normally be served, the TollGate MAY answer with a Notice (level warning, code no-reachable-mints)"}
+      ],
+      "notes": "Client contract: a Notice MUST be accepted wherever a Session or Discovery event would normally arrive (TIP-01 degraded mode)."
+    },
+    {
+      "id": "http01-get/rate-limited",
+      "request": {"method": "GET", "path": "/", "burst": "11 requests within one minute from one IP (default config)"},
+      "preconditions": {"gateway_mode": "any"},
+      "response": {
+        "status": 429,
+        "headers": {"Retry-After": "6"},
+        "content_type": "text/plain; charset=utf-8",
+        "headers_also": ["X-Content-Type-Options: nosniff"],
+        "body": {"type": "json", "fields": {"error": "rate limit exceeded"}}
+      },
+      "evidence": [
+        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "requests 1-10 -> 200, 11th -> 429 with Retry-After: 6, Content-Type text/plain; charset=utf-8, X-Content-Type-Options: nosniff, body {\"error\":\"rate limit exceeded\"}"},
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go 43-71 (getIPLimiter, RateLimitMiddleware)"}
+      ],
+      "notes": "Wire quirk to pin, not to copy: the body is JSON but served as text/plain via http.Error (trailing newline). The limiter is configured per deployment; runners must read the advertised limit or probe it, not assume 10/min."
+    },
+    {
+      "id": "http01-get/cors-preflight",
+      "request": {"method": "OPTIONS", "path": "/", "headers": {"Origin": "http://<lan-client>:8080", "Access-Control-Request-Method": "POST"}},
+      "preconditions": {"gateway_mode": "any"},
+      "response": {
+        "status": 200,
+        "headers": {
+          "Access-Control-Allow-Origin": {"matcher": "echo-origin (private/loopback/same-host only)"},
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+          "Access-Control-Expose-Headers": "X-TollGate-Client-MAC, X-TollGate-Mac-Claim-Ignored, Retry-After",
+          "Vary": "Origin"
+        },
+        "body": {"type": "text", "matcher": "exact", "value": ""}
+      },
+      "evidence": [
+        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "preflight answered 200, origin echoed for a private-space origin, Vary: Origin, empty body"},
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go CorsMiddleware 971-1010 (never '*'; private/loopback or same-host only)"}
+      ]
+    },
+    {
+      "id": "http01-get/unknown-path-is-catch-all",
+      "request": {"method": "GET", "path": "/not-a-registered-path"},
+      "preconditions": {"gateway_mode": "any"},
+      "response": "identical to GET / for the current mode (discovery event or degraded notice)",
+      "evidence": [
+        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "GET /not-a-registered-path answered the degraded-mode discovery notice, HTTP 200 (not a 404)"},
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go registerAPIHandlers 1800-1832 ('/' is the ServeMux catch-all)"}
+      ],
+      "notes": "Clients must not path-sniff on 404 semantics: unknown paths are the payment/discovery surface."
+    }
+  ]
+}

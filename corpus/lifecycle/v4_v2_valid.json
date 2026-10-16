@@ -1,0 +1,58 @@
+{
+  "id": "lifecycle/v4_v2_valid",
+  "fixture": "../tokens/v4_v2_valid.cashu",
+  "shape": {
+    "token_version": 4,
+    "prefix": "cashuB",
+    "encoding": "CBOR in base64url (NUT-00 V4)",
+    "keyset_id_format": "v2-66hex",
+    "keyset_id": "01e73e75a0809604372487732ee917e8f881cc4c882ccd9fbac094fbfd3e3a42e6",
+    "keyset_version": 2,
+    "c_encoding": "base64",
+    "proofs": "unknown (pending V4 decode tooling)",
+    "unit": "sat",
+    "mint": "http://192.168.13.221:8383"
+  },
+  "stages": {
+    "decode": {
+      "verdicts": {
+        "cdk-cli@0.18.0": "decoded-v4",
+        "tollgate-module-basic-go@rc": "decoded-v4",
+        "tollgate-captive-portal@pin": "unknown"
+      },
+      "evidence": [
+        {"kind": "reported", "ref": "corpus v0 (PR #29): minted by cdk-cli; backend 1022 implies decode succeeded", "date": "2026-10-16"},
+        {"kind": "reported", "ref": "corpus v0: portal verdict 'needs verification'", "date": "2026-10-16"}
+      ],
+      "notes": "Portal V4 decode verdict is the highest-value unknown in the corpus: the portal defect class (CU109) is keyset-side, but V4/CBOR decode is a separate failure surface."
+    },
+    "verify": {
+      "verdicts": {
+        "cdk-cli@0.18.0": "ok",
+        "tollgate-module-basic-go@rc": "ok",
+        "tollgate-captive-portal@pin": "unknown"
+      },
+      "evidence": [
+        {"kind": "reported", "ref": "corpus v0: backend 1022 on this token", "date": "2026-10-16"}
+      ]
+    },
+    "checkstate": {
+      "verdicts": {"fakewallet@2026-10-16": "unknown"},
+      "evidence": [],
+      "notes": "Pending V4 (CBOR) proof extraction in the corpus toolchain; expected SPENT if the v0 verification consumed it, UNSPENT otherwise. Runner note: derive secrets from the V4 token and POST /v1/checkstate."
+    },
+    "spend": {
+      "verdicts": [
+        {
+          "when": "2026-10-16, as minted",
+          "tollgate-module-basic-go@rc": "accepted-1022",
+          "evidence": [{"kind": "reported", "ref": "corpus v0 (PR #29) live verification against the rig", "date": "2026-10-16"}]
+        }
+      ]
+    }
+  },
+  "provenance": {
+    "minted_by": "cdk-cli 0.18.0 against the fakewallet (corpus v0, PR #29)",
+    "regen": "cdk-cli mint <fakewallet-url> 11; cdk-cli send --mint-url <url> --amount 4 --include-fee"
+  }
+}

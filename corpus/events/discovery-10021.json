@@ -1,0 +1,59 @@
+{
+  "event": "kind 10021 TollGate Discovery / Advertisement event",
+  "transport": "HTTP-01 GET / response body; Nostr relays per NOSTR-01 (reserved)",
+  "spec_refs": ["TIP-01#TollGate Details / Advertisement", "TIP-02#TollGate Discovery (price_per_step)", "tollgate#22 (merged): min_steps default and per-mint precedence"],
+  "grammar": {
+    "kind": 10021,
+    "pubkey": {"matcher": "nostr-pubkey", "meaning": "TollGate identity"},
+    "signed": true,
+    "content": "",
+    "tags": {
+      "metric": {"required": true, "value": "one of milliseconds, bytes"},
+      "step_size": {"required": true, "value": "positive integer, in the metric's unit"},
+      "tips": {"required": true, "shape": ["tips", "<implemented TIP numbers...>"], "value": "the reference emits 1, 2"},
+      "min_steps": {
+        "required": false,
+        "value": "positive whole number; advertisement-level minimum purchase. A per-mint min_steps on a price_per_step entry takes precedence for that pricing option. Absent means 1.",
+        "spec_note": "tollgate#22: an absent value or 0 MUST be treated as 1 (known clients reject min_steps=0 advertisements, so flooring keeps such advertisements purchasable)"
+      },
+      "price_per_step": {
+        "required": "zero or more (TIP-02: one per accepted mint)",
+        "shape": ["price_per_step", "cashu", "<price>", "<unit>", "<mint_url>", "<min_steps>"],
+        "invariants": ["bearer_asset_type is always 'cashu'", "price MUST be identical across all occurrences of the same unit", "min_steps positive whole number, default 1, 0 MUST be treated as 1"]
+      }
+    }
+  },
+  "vectors": [
+    {
+      "id": "event-10021/reference-shape",
+      "input": "GET / on the reference implementation in full service",
+      "assert": {
+        "kind": 10021,
+        "signed": true,
+        "tags_include": [["metric", {"matcher": "one-of", "values": ["milliseconds", "bytes"]}], ["step_size", {"matcher": "integer"}], ["tips", "1", "2"]],
+        "tags_zero_or_more": [["price_per_step", "cashu", {"matcher": "integer"}, {"matcher": "nonempty"}, {"matcher": "nonempty"}, {"matcher": "integer"}]]
+      },
+      "evidence": [
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/merchant/merchant.go CreateAdvertisement 1976-2033"},
+        {"kind": "spec", "ref": "TIP-01 + TIP-02 tag grammar"}
+      ]
+    },
+    {
+      "id": "event-10021/min-steps-zero-floored",
+      "input": "advertisement carrying a price_per_step entry with min_steps '0' or absent",
+      "assert": {"consumer_rule": "treat as 1; never reject the advertisement"},
+      "evidence": [
+        {"kind": "spec", "ref": "tollgate#22 (merged into TIP-02): absent or 0 MUST be treated as 1 — known clients reject min_steps=0"}
+      ]
+    },
+    {
+      "id": "event-10021/degraded-slot-substitution",
+      "input": "GET / while no accepted mint is reachable",
+      "assert": {"substituted_by": "kind 21023 notice, level=warning, code=no-reachable-mints (see notice-21023.json and http01-discovery.json)", "client_rule": "a Notice MUST be accepted wherever a Discovery event would normally arrive"},
+      "evidence": [
+        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "degraded notice served in the advertisement slot"},
+        {"kind": "spec", "ref": "tollgate#27: the TollGate MAY answer the advertisement slot with a no-reachable-mints warning notice; recovery is automatic and carries no protocol message"}
+      ]
+    }
+  ]
+}

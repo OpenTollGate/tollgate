@@ -1,0 +1,76 @@
+{
+  "event": "kind 1022 TollGate Session event",
+  "transport": "HTTP-01 POST / response body (JSON-serialized signed Nostr event); future transports per NOSTR-01",
+  "spec_refs": ["TIP-01#Session", "tollgate#26 (docs/tip01-session-p-tag): p conditional, pubkey-only"],
+  "grammar": {
+    "kind": 1022,
+    "pubkey": {"matcher": "nostr-pubkey", "meaning": "TollGate identity"},
+    "signed": true,
+    "content": "",
+    "tags": {
+      "device-identifier": {"required": true, "shape": ["device-identifier", "<type>", "<value>"], "value": "hardware identifier of the customer's device; the reference uses type 'mac' and a colon-hex MAC"},
+      "allotment": {"required": true, "shape": ["allotment", "<amount>"], "value": "non-negative integer of <metric> granted"},
+      "metric": {"required": true, "shape": ["metric", "<metric>"], "value": "one of bytes, milliseconds"},
+      "start-time": {"required": false, "shape": ["start-time", "<unix-seconds>"], "value": "session start; emitted by the reference implementation on fresh sessions (additive; the renewal variant omits it)"},
+      "p": {
+        "required": false,
+        "shape": ["p", "<customer pubkey>"],
+        "rule": "present ONLY when the payment carried a customer Nostr identity. Raw bearer-token payments (the normative path since March 2026) carry none — such sessions omit p and are identified by device-identifier alone. When present, p MUST be a Nostr pubkey (64 hex chars): never a device identifier, MAC address, or any other value."
+      }
+    }
+  },
+  "vectors": [
+    {
+      "id": "event-1022/raw-token-session",
+      "input": "kind 1022 emitted for a successful raw-token payment (any of the http01-post/*-valid vectors)",
+      "assert": {
+        "kind": 1022,
+        "signed": true,
+        "tags_include": [["device-identifier", "mac", {"matcher": "mac-format"}], ["allotment", {"matcher": "integer"}], ["metric", {"matcher": "one-of", "values": ["bytes", "milliseconds"]}]],
+        "tags_omit": ["p"]
+      },
+      "evidence": [
+        {"kind": "spec", "ref": "tollgate#26: raw-token sessions omit p; identified by device-identifier alone"},
+        {"kind": "reported", "ref": "tollgate-module-basic-go#951: test TestSessionEventOmitsPTagAndCarriesTheContractTags on the fix branch (p omitted, contract tags present, signature verifies)", "date": "2026-10-16"}
+      ],
+      "divergences": [
+        {"consumer": "tollgate-module-basic-go", "verdict": "divergent-until-fixed", "ref": "tollgate-module-basic-go#949, #951", "detail": "origin/main @ 27baf22 emits [\"p\", <customer MAC>] on every raw-token session (createSessionEvent receives macAddress as customerPubkey). The MAC already lives in device-identifier; duplicating it into p breaks #p filtering and violates the pubkey-only clause. Fix open at capture time."}
+      ]
+    },
+    {
+      "id": "event-1022/legacy-envelope-session-with-identity",
+      "input": "kind 1022 emitted for a successful payment that carried a customer Nostr identity (pre-March-2026 signed kind=21000 flow; no currently-specified interface delivers one — NOSTR-01 is a reserved stub)",
+      "assert": {
+        "kind": 1022,
+        "tags_include": [["p", {"matcher": "nostr-pubkey"}], ["device-identifier", "mac", {"matcher": "mac-format"}], ["allotment", {"matcher": "integer"}], ["metric", {"matcher": "one-of", "values": ["bytes", "milliseconds"]}]]
+      },
+      "evidence": [
+        {"kind": "spec", "ref": "tollgate#26: accommodates a future customer-identity interface without inventing one"}
+      ],
+      "notes": "Consumers must accept p when present AND pubkey-shaped; must reject (or flag) the event when p is present and NOT pubkey-shaped."
+    },
+    {
+      "id": "event-1022/mac-in-p-tag-forbidden",
+      "input": "kind 1022 carrying [\"p\", \"aa:bb:cc:dd:ee:ff\"] (or any non-64-hex value) — the wire shape origin/main emits today",
+      "assert": {"valid": false, "reason": "p present with a non-pubkey value violates the pubkey-only clause"},
+      "evidence": [
+        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "analogous MAC-in-p on the notice path (see notice-21023.json); the session-path shape is the same bug class, source-confirmed at merchant.go createSessionEvent 2114-2153"},
+        {"kind": "reported", "ref": "tollgate-module-basic-go#949 (fixed by #951, open at capture time)"}
+      ],
+      "notes": "This is the regression shape the corpus exists to catch: three implementations once agreed on it because nothing tested them against each other."
+    },
+    {
+      "id": "event-1022/renewal-variant",
+      "input": "kind 1022 emitted by the reference's extendSessionEvent path (session renewal; currently uncalled, aligned for completeness)",
+      "assert": {
+        "kind": 1022,
+        "tags_include": [["device-identifier", "mac", {"matcher": "mac-format"}], ["allotment", {"matcher": "integer"}], ["metric", "milliseconds"]],
+        "tags_omit": ["start-time"],
+        "p_rule": "same conditional pubkey-only rule as above"
+      },
+      "evidence": [
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/merchant/merchant.go extendSessionEvent 2156-2241"}
+      ]
+    }
+  ]
+}

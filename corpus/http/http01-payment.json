@@ -1,0 +1,233 @@
+{
+  "endpoint": "POST / (and any unregistered path — the / mux pattern is a catch-all)",
+  "port": 2121,
+  "spec_refs": [
+    "HTTP-01#POST /",
+    "tollgate#25 (docs/http01-legacy-payment-envelope): legacy kind=21000 envelope deprecated, servers MAY accept, unauthenticated container",
+    "tollgate#27 (docs/tip01-degraded-mode): service-unavailable refusal precedes token processing, token not consumed",
+    "tollgate#26 (docs/tip01-session-p-tag): raw-token payments omit the p tag"
+  ],
+  "identity": "device identifier (MAC) resolved from the request's network context (socket IP -> dhcp.leases -> /proc/net/arp); a ?mac= query claim is ignored and reported via X-TollGate-Mac-Claim-Ignored",
+  "rate_limit": "per-IP limiter (default 10 req/min, burst 10) shared with GET /; see http01-discovery.json",
+  "notes": "Reference-source wire facts (tollgate-module-basic-go origin/main @ 27baf22): body cap 1 MiB; allowed Content-Types: text/plain, application/json, absent (anything else: 415); errors after the media-type gate are answered as kind-21023 Notice event JSON with HTTP 400, not as a JSON error envelope; non-POST methods: 405 with empty body.",
+  "vectors": [
+    {
+      "id": "http01-post/raw-v3-valid-fullservice",
+      "request": {"method": "POST", "path": "/", "content_type": "text/plain", "body": {"fixture": "../tokens/v3_v2_valid.cashu", "state": "fresh-unspent (regen: see lifecycle/v3_v2_valid.json provenance)"}},
+      "preconditions": {"gateway_mode": "full-service", "fixture": "freshly minted (the committed fixture's proofs are already SPENT — see lifecycle)"},
+      "response": {
+        "status": 200,
+        "content_type": "application/json",
+        "body": {
+          "type": "nostr_event",
+          "kind": 1022,
+          "signed": true,
+          "tags_include": [["device-identifier", "mac", {"matcher": "mac-format"}], ["allotment", {"matcher": "integer"}], ["metric", {"matcher": "one-of", "values": ["bytes", "milliseconds"]}], ["start-time", {"matcher": "integer"}]],
+          "tags_omit": ["p"],
+          "content": ""
+        }
+      },
+      "evidence": [
+        {"kind": "reported", "ref": "corpus v0 (PR #29): 1022 ACCEPTED observed on the live rig for this exact shape", "date": "2026-10-16"},
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/merchant/merchant.go createSessionEvent 2114-2153; main.go HandleRootPost 1147"},
+        {"kind": "spec", "ref": "HTTP-01: 200 OK with kind=1022 Session event; tollgate#26: p omitted for raw-token payments"}
+      ],
+      "divergences": [
+        {"consumer": "tollgate-module-basic-go", "verdict": "divergent-until-fixed", "ref": "tollgate-module-basic-go#951", "detail": "origin/main emits [\"p\", <customer MAC>] in the 1022 event (createSessionEvent receives macAddress as customerPubkey). Fix open at capture time. Consumers MUST NOT copy this: the corpus asserts tags_omit p, and any client that #p-filters on it would match nothing at real relays."}
+      ]
+    },
+    {
+      "id": "http01-post/raw-v4-valid-fullservice",
+      "request": {"method": "POST", "path": "/", "content_type": "text/plain", "body": {"fixture": "../tokens/v4_v2_valid.cashu", "state": "fresh-unspent (regen: see lifecycle/v4_v2_valid.json provenance)"}},
+      "preconditions": {"gateway_mode": "full-service", "fixture": "freshly minted"},
+      "response": {"same_as": "http01-post/raw-v3-valid-fullservice"},
+      "evidence": [
+        {"kind": "reported", "ref": "corpus v0 (PR #29): 1022 ACCEPTED observed on the live rig", "date": "2026-10-16"},
+        {"kind": "spec", "ref": "NUT-00 V4 token format; HTTP-01"}
+      ]
+    },
+    {
+      "id": "http01-post/legacy-envelope-valid",
+      "request": {
+        "method": "POST", "path": "/", "content_type": "application/json",
+        "body": {"inline_template": "{\"kind\":21000,\"tags\":[[\"payment\",\"<token>\"]],\"content\":\"...\",\"sig\":\"<any>\"}", "substitute": {"<token>": "freshly minted V3 token"}}
+      },
+      "preconditions": {"gateway_mode": "full-service", "fixture": "freshly minted"},
+      "response": {"same_as": "http01-post/raw-v3-valid-fullservice"},
+      "evidence": [
+        {"kind": "spec", "ref": "tollgate#25: servers MAY accept the deprecated kind=21000 envelope; token read from the first [\"payment\", \"<token>\"] tag; the envelope is an unauthenticated container — acceptance is NOT signature verification"},
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go extractCashuToken 1045-1057 (kind==21000 + first payment tag; signature not validated)"}
+      ],
+      "notes": "Deprecated form. Clients SHOULD send raw. A conforming server may remove this path at any time — consumers must treat 400/payment-error-invalid-token here as conformant too."
+    },
+    {
+      "id": "http01-post/legacy-envelope-no-payment-tag",
+      "request": {"method": "POST", "path": "/", "content_type": "application/json", "body": {"inline": "{\"kind\":21000,\"tags\":[],\"content\":\"\"}"}},
+      "preconditions": {"gateway_mode": "any (observed in degraded mode; the envelope check precedes the degraded gate)"},
+      "response": {
+        "status": 400,
+        "content_type": "application/json",
+        "body": {"type": "nostr_event", "kind": 21023, "signed": true, "tags_include": [["level", "error"], ["code", "invalid-event"]], "content_contains": ["No payment tag found in event"]}
+      },
+      "evidence": [
+        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "HTTP 400, kind 21023, level=error, code=invalid-event, content 'No payment tag found in event', p tag carried the client MAC (see divergence)"},
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go 1133-1138"}
+      ],
+      "divergences": [
+        {"consumer": "tollgate-module-basic-go", "verdict": "divergent-until-fixed", "ref": "tollgate-module-basic-go#950", "detail": "The addressed notice carries [\"p\", <MAC>]; spec requires p to be a Nostr pubkey or omitted."}
+      ]
+    },
+    {
+      "id": "http01-post/legacy-envelope-other-kind",
+      "request": {"method": "POST", "path": "/", "content_type": "application/json", "body": {"inline": "{\"kind\":1,\"tags\":[[\"payment\",\"x\"]],\"content\":\"\"}"}},
+      "preconditions": {"gateway_mode": "full-service"},
+      "response": {
+        "status": 400,
+        "content_type": "application/json",
+        "body": {"type": "nostr_event", "kind": 21023, "signed": true, "tags_include": [["level", "error"], ["code", "payment-error-invalid-token"]]}
+      },
+      "evidence": [
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go extractCashuToken 1045-1057: a JSON body whose kind is not 21000 is treated as a raw token string (the trimmed JSON text), which then fails token decode"}
+      ],
+      "notes": "Pins the envelope discrimination: kind==21000 (exactly) + payment tag, else the whole body is the raw token."
+    },
+    {
+      "id": "http01-post/raw-garbage-fullservice",
+      "request": {"method": "POST", "path": "/", "content_type": "text/plain", "body": {"inline": "not-a-cashu-token"}},
+      "preconditions": {"gateway_mode": "full-service"},
+      "response": {
+        "status": 400,
+        "content_type": "application/json",
+        "body": {"type": "nostr_event", "kind": 21023, "signed": true, "tags_include": [["level", "error"], ["code", "payment-error-invalid-token"]]}
+      },
+      "evidence": [
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/merchant/merchant.go 1509 (payment-error-invalid-token after DecodeToken failure)"}
+      ]
+    },
+    {
+      "id": "http01-post/raw-garbage-degraded",
+      "request": {"method": "POST", "path": "/", "content_type": "text/plain", "body": {"inline": "not-a-cashu-token"}},
+      "preconditions": {"gateway_mode": "degraded (no reachable mints)"},
+      "response": {
+        "status": 400,
+        "content_type": "application/json",
+        "body": {"type": "nostr_event", "kind": 21023, "signed": true, "tags_include": [["level", "error"], ["code", "service-unavailable"]], "content_contains": ["try again"]}
+      },
+      "evidence": [
+        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "HTTP 400, kind 21023, level=error, code=service-unavailable, content 'TollGate is initializing. No reachable mints. Please try again in a few minutes.', p tag carried the client MAC"},
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/merchant/merchant_degraded.go 174-181"}
+      ],
+      "divergences": [
+        {"consumer": "tollgate-module-basic-go", "verdict": "divergent-until-fixed", "ref": "tollgate-module-basic-go#950", "detail": "Addressed notice carries [\"p\", <MAC>]."}
+      ],
+      "notes": "Ordering pin: for a non-JSON body the degraded refusal precedes token decode (a raw string needs no envelope extraction), while a kind=21000 JSON envelope without a payment tag fails earlier (invalid-event) — see http01-post/legacy-envelope-no-payment-tag, observed in the same degraded capture."
+    },
+    {
+      "id": "http01-post/valid-token-degraded-not-consumed",
+      "request": {"method": "POST", "path": "/", "content_type": "text/plain", "body": {"fixture": "../tokens/v3_v2_valid.cashu", "state": "fresh-unspent (mint a new one: regen in lifecycle/v3_v2_valid.json)"}},
+      "preconditions": {"gateway_mode": "degraded (no reachable mints)", "fixture": "freshly minted"},
+      "response": {
+        "status": 400,
+        "content_type": "application/json",
+        "body": {"type": "nostr_event", "kind": 21023, "signed": true, "tags_include": [["level", "error"], ["code", "service-unavailable"]], "content_contains": ["try again"]}
+      },
+      "post_conditions": [
+        {"assert": "token-unconsumed", "how": "NUT-07 checkstate of every proof at the minting mint", "expect": "UNSPENT"}
+      ],
+      "evidence": [
+        {"kind": "spec", "ref": "tollgate#27: the refusal happens before any token processing, so the customer can retry once the TollGate recovers or spend the token elsewhere"},
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/merchant/merchant_degraded.go 174-181 (refusal before any wallet call)"}
+      ],
+      "notes": "The fund-safety invariant of degraded mode, expressed as a checkable post-condition. This is the vector that makes 'refused' observably different from 'rejected'." 
+    },
+    {
+      "id": "http01-post/spent-token",
+      "request": {"method": "POST", "path": "/", "content_type": "text/plain", "body": {"fixture": "../tokens/v3_v2_valid.cashu", "state": "as-committed (proofs SPENT at the fakewallet since the v0 verification)"}},
+      "preconditions": {"gateway_mode": "full-service"},
+      "response": {
+        "status": 400,
+        "content_type": "application/json",
+        "body": {"type": "nostr_event", "kind": 21023, "signed": true, "tags_include": [["level", "error"], ["code", "payment-error-token-spent"]]}
+      },
+      "evidence": [
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/merchant/merchant.go 1731"},
+        {"kind": "live", "target": "mint http://192.168.13.221:8383", "date": "2026-10-16", "observed": "committed fixture proofs verified SPENT via /v1/checkstate (corpus v1 capture), so this vector is runnable against the rig as-is once it is back in full service"}
+      ]
+    },
+    {
+      "id": "http01-post/hex-c-token",
+      "request": {"method": "POST", "path": "/", "content_type": "text/plain", "body": {"fixture": "../tokens/v3_v2_hex_c.cashu"}},
+      "preconditions": {"gateway_mode": "full-service"},
+      "response": {
+        "status": 400,
+        "content_type": "application/json",
+        "body": {"type": "nostr_event", "kind": 21023, "signed": true, "tags_include": [["level", "error"], ["code", "payment-processing-failed"]]}
+      },
+      "evidence": [
+        {"kind": "reported", "ref": "corpus v0 (PR #29): 21023 payment-processing-failed observed on the live rig", "date": "2026-10-16"}
+      ]
+    },
+    {
+      "id": "http01-post/unsupported-media-type",
+      "request": {"method": "POST", "path": "/", "content_type": "application/x-www-form-urlencoded", "body": {"inline": "anything"}},
+      "preconditions": {"gateway_mode": "any"},
+      "response": {
+        "status": 415,
+        "content_type": "text/plain; charset=utf-8",
+        "body": {"type": "json", "fields": {"error": "Unsupported Media Type"}}
+      },
+      "evidence": [
+        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "HTTP 415, body {\"error\":\"Unsupported Media Type\"}"},
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go 1072-1078 (allowed: text/plain, application/json, empty)"}
+      ],
+      "notes": "Spec gap: HTTP-01 does not name a Content-Type contract for POST /. This vector pins the reference behavior (spec-silent, de-facto). Follow-up: decide in the spec whether the media-type gate is normative."
+    },
+    {
+      "id": "http01-post/no-content-type",
+      "request": {"method": "POST", "path": "/", "content_type": null, "body": {"inline": "not-a-cashu-token"}},
+      "preconditions": {"gateway_mode": "any (refusal stage observed in degraded mode)"},
+      "response": "passes the media-type gate and is handled as a raw body (same verdicts as raw-garbage for its gateway mode)",
+      "evidence": [
+        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "request with no Content-Type header passed the gate (degraded service-unavailable notice, not 415)"},
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go 1072-1078"}
+      ]
+    },
+    {
+      "id": "http01-post/body-over-1mib",
+      "request": {"method": "POST", "path": "/", "content_type": "text/plain", "body": {"inline": "'x' repeated 1048577 times"}},
+      "preconditions": {"gateway_mode": "full-service"},
+      "response": {
+        "status": 400,
+        "content_type": "application/json",
+        "body": {"type": "nostr_event", "kind": 21023, "signed": true, "tags_include": [["level", "error"], ["code", "invalid-request"]]}
+      },
+      "evidence": [
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go 1103-1108 (1 MiB MaxBytesReader; read failure -> 400 invalid-request notice; POST / has no 413)"}
+      ],
+      "notes": "Deliberate asymmetry with POST /ln-invoice (413 at 8 KiB). Clients must not rely on 413 here."
+    },
+    {
+      "id": "http01-post/non-post-method",
+      "request": {"method": "PUT", "path": "/", "content_type": "text/plain", "body": {"inline": ""}},
+      "preconditions": {"gateway_mode": "any"},
+      "response": {"status": 405, "body": {"type": "text", "matcher": "exact", "value": ""}},
+      "evidence": [
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go 1067-1070"}
+      ]
+    },
+    {
+      "id": "http01-post/device-unresolved",
+      "request": {"method": "POST", "path": "/", "content_type": "text/plain", "body": {"inline": "any"}},
+      "preconditions": {"gateway_mode": "any", "client": "IP that resolves to no MAC (no dhcp lease, no arp entry)"},
+      "response": {
+        "status": 400,
+        "content_type": "application/json",
+        "body": {"type": "nostr_event", "kind": 21023, "signed": true, "tags_include": [["level", "error"], ["code", "device-unresolved"]], "tags_omit": ["p"]}
+      },
+      "evidence": [
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go 1092-1099 (sendNoticeResponse with empty customerPubkey -> no p tag)"}
+      ],
+      "notes": "Identity is socket-derived only on this route: no client-supplied MAC is trusted (the ?mac= claim is reported in X-TollGate-Mac-Claim-Ignored and otherwise ignored)."
+    }
+  ]
+}

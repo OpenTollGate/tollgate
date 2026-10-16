@@ -1,0 +1,78 @@
+{
+  "endpoint": "GET /balance",
+  "port": 2121,
+  "spec_refs": ["tollgate#23 (docs/http03-balance-ln-invoice): GET /balance"],
+  "identity": "device identifier resolved from the request's network context",
+  "vectors": [
+    {
+      "id": "http03-balance/active-session",
+      "request": {"method": "GET", "path": "/balance"},
+      "preconditions": {"session": "active for the requesting device", "gateway_mode": "full-service"},
+      "response": {
+        "status": 200,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {
+            "status": 1,
+            "session_active": true,
+            "metric": {"matcher": "one-of", "values": ["bytes", "milliseconds"]},
+            "usage": {"matcher": "integer"},
+            "allotment": {"matcher": "integer"},
+            "remaining": {"matcher": "integer"},
+            "start_time": {"matcher": "integer"},
+            "mac": {"matcher": "mac-format"}
+          },
+          "invariants": ["remaining == max(allotment - usage, 0)"]
+        }
+      },
+      "evidence": [
+        {"kind": "spec", "ref": "tollgate#23: 200 OK with status/session_active plus metric, usage, allotment, remaining, start_time when active; remaining floored at 0"},
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go HandleBalance 1510-1582, balanceResponse 1256-1271"}
+      ]
+    },
+    {
+      "id": "http03-balance/no-session",
+      "request": {"method": "GET", "path": "/balance"},
+      "preconditions": {"session": "none"},
+      "response": {
+        "status": 200,
+        "content_type": "application/json",
+        "body": {
+          "type": "json",
+          "fields": {"status": 1, "session_active": false, "mac": {"matcher": "mac-format"}},
+          "additive_fields_observed": {"usage": 0, "allotment": 0, "remaining": 0},
+          "fields_omitted": ["error"]
+        }
+      },
+      "evidence": [
+        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "{\"status\":1,\"session_active\":false,\"usage\":0,\"allotment\":0,\"remaining\":0,\"mac\":\"82:49:5a:95:5e:53\"}"},
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go 1544-1561"}
+      ],
+      "notes": "Spec-vs-wire nuance: the spec says usage/allotment/remaining are 'present when a session is active'; the reference always emits them (zeros when inactive). Clients must tolerate both spellings — treat absent and zero as equivalent."
+    },
+    {
+      "id": "http03-balance/unresolvable-device",
+      "request": {"method": "GET", "path": "/balance"},
+      "preconditions": {"client": "IP resolves to no MAC"},
+      "response": {
+        "status": 200,
+        "content_type": "application/json",
+        "body": {"type": "json", "fields": {"status": 1, "session_active": false}}
+      },
+      "evidence": [
+        {"kind": "spec", "ref": "tollgate#23: an unresolvable device identity still answers 200 with session_active false — the balance surface stays usable when lease lookup fails"},
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go 1529"}
+      ]
+    },
+    {
+      "id": "http03-balance/non-get-method",
+      "request": {"method": "POST", "path": "/balance"},
+      "preconditions": {"gateway_mode": "any"},
+      "response": {"status": 405},
+      "evidence": [
+        {"kind": "source", "repo": "OpenTollGate/tollgate-module-basic-go", "ref": "origin/main @ 27baf22", "location": "src/main.go 1516-1519"}
+      ]
+    }
+  ]
+}
