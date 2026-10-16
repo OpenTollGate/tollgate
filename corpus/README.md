@@ -85,13 +85,14 @@ Key facts pinned by the lifecycle set:
    acceptance of the truncated-id V3 fixture is that same resolution;
    the test minter's "v2-short" truncation (PRTA#247) was this native
    V4 spelling transplanted into V3.
-4. **cdk-cli 0.18.1 `decode-token` deadlocks** (silent, no I/O) on
-   the truncated-id shape and on Nutshell-minted V1-era tokens —
-   while decoding its own tokens from the same mints and keysets
-   instantly (dleq presence ruled out by mutation test). A hang is
-   not a verdict: runners must apply timeouts, and the shape is a
-   candidate upstream bug against cdk. One token shape, four
-   consumer behaviors on record (accept / reject / decode / hang).
+4. **cdk-cli 0.18.1 `decode-token` deadlocks on a cold wallet** (no
+   cached keysets, wallet-state-dependent) for tokens whose keyset id
+   cannot resolve from wallet state — the truncated-id shape and
+   Nutshell-minted V1-era tokens — while decoding the same shapes with
+   the mint's keysets cached. A hang is not a verdict: runners must
+   apply timeouts, and the shape is a candidate upstream bug against
+   cdk. One token shape, four consumer behaviors on record (accept /
+   reject / decode / hang).
 5. DLEQ presence is wallet-dependent (cdk-minted proofs carry dleq,
    Nutshell's omit it) — consumers must treat it as optional.
 
@@ -175,7 +176,7 @@ walks `manifest.json`, and for each vector
   verify on the KG twins) as the runner lane comes up.
 - Only after KG is green everywhere: lift `compat-era/` out of
   deferral and pin the V1-keyset layer on top.
-- Unresolved spec gaps this corpus now documents as issues-to-file:
-  POST / Content-Type contract (415 gate), degraded-mode /ln-invoice
-  answering a bare 400 without a code, and the uncovered
-  session/ticket/rebind endpoints.
+- Spec gaps this corpus documented are now filed: POST / Content-Type
+  contract (#31), degraded-mode /ln-invoice bare 400 (#32), uncovered
+  session/ticket + session/rebind endpoints (#33; session-state itself
+  is #24).

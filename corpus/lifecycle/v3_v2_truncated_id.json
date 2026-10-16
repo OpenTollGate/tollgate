@@ -19,7 +19,7 @@
   "stages": {
     "decode": {
       "verdicts": {
-        "cdk-cli@0.18.1": "no-verdict-hang",
+        "cdk-cli@0.18.1": "decoded-v3",
         "tollgate-module-basic-go@rc": "decoded-v3",
         "tollgate-captive-portal@pin": "decoded-v3",
         "nutshell@0.21.0": "decoded-v3",
@@ -40,20 +40,27 @@
         },
         {
           "kind": "live",
-          "target": "cdk-cli 0.18.1 `decode-token`",
-          "date": "2026-10-16",
-          "observed": "silent deadlock (killed at 10s) on this V3 token whose 16-hex id resolves to no keyset at its mint — while cdk-cli's own V4 token carrying the SAME 8-byte id prefix, and its own V3 token with a V1-era 16-hex id that DOES resolve, both decode instantly",
-          "by": "corpus v1 capture"
-        },
-        {
-          "kind": "live",
           "target": "portal main @ c2ddba1 decoder via vitest (portal#83's vendored-corpus probe)",
           "date": "2026-10-16",
           "observed": "validateToken accepts the token (status 1, correct amount/unit)",
           "by": "corpus v1 capture"
+        },
+        {
+          "kind": "live",
+          "target": "cdk-cli 0.18.1 `decode-token`, wallet with the mint's keysets cached (reference configuration)",
+          "date": "2026-10-16",
+          "observed": "decodes",
+          "by": "corpus v1 capture + runner lane re-run"
+        },
+        {
+          "kind": "live",
+          "target": "cdk-cli 0.18.1 `decode-token`, cold HOME (no cached keysets)",
+          "date": "2026-10-16",
+          "observed": "silent deadlock (killed at 10s): the 16-hex id resolves to nothing without the mint's keyset list and the resolver deadlocks instead of erroring — wallet-state-dependent",
+          "by": "corpus v1 capture + runner lane"
         }
       ],
-      "notes": "The reference wallet (cdk) cannot process the regression shape its own V4 spelling seeded: a V3 token with an unresolvable short id deadlocks the CDK decoder. Contrast with the Go backend, which resolves the prefix and ACCEPTS (1022) — a four-way verdict spread (accept / reject / decode / hang) across consumers on one token shape, which is precisely the divergence the corpus exists to expose."
+      "notes": "cdk-cli's verdict on this shape is wallet-state-dependent: a warm wallet (mint keysets cached) decodes; a cold wallet hangs. The verdict records the reference-configuration (warm) answer; the cold-wallet hang is the documented failure mode and runners must apply timeouts. Contrast with the Go backend, which resolves the prefix and ACCEPTS (1022), and the portal pin, which rejects — the consumer spread on this one shape is the divergence the corpus exists to expose."
     },
     "verify": {
       "verdicts": {

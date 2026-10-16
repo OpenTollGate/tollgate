@@ -49,7 +49,7 @@
       "spend": "submit as payment to a TollGate (HTTP-01 POST /) or wallet Receive"
     },
     "decode_verdicts": ["decoded-v3", "decoded-v4", "reject-undecodable", "no-verdict-hang"],
-    "no_verdict_hang_note": "consumer does not terminate on the input (observed: cdk-cli 0.18.1 decode-token deadlocks silently — single sleeping thread, no I/O — on V3 tokens whose keyset id resolves to nothing at the token's mint, and on Nutshell-minted V1-era tokens; a hang is not a verdict: runners MUST apply a timeout and report no-verdict-hang, and the shape is a candidate upstream bug to file against the consumer)",
+    "no_verdict_hang_note": "consumer does not terminate on the input. Observed on cdk-cli 0.18.1 decode-token: with a COLD wallet (no cached keysets) it deadlocks silently — single sleeping thread, no I/O — on tokens whose keyset id cannot resolve from wallet state (V3 with a truncated id whose mint is not registered; Nutshell-minted V1-era tokens whose mint is not registered). With the mint's keysets cached (reference configuration) the truncated-id V3 token decodes. A hang is not a verdict: runners MUST apply a timeout and report no-verdict-hang, and the shape is a candidate upstream bug to file against the consumer",
     "verify_verdicts": ["ok", "reject-keyset-format", "reject-keyset-unknown", "reject-c-encoding", "reject-amount-not-power-of-two"],
     "checkstate_verdicts": ["UNSPENT", "PENDING", "SPENT"],
     "spend_verdicts": ["accepted-1022", "rejected-21023", "refused-degraded-unconsumed"],
