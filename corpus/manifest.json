@@ -31,6 +31,16 @@
     "notes": "Verdicts cited as live were captured against these targets on 2026-10-16; the rig was in degraded mode (no reachable mints) for part of the capture, which is itself a pinned mode (TIP-01 degraded mode)."
   },
 
+  "kg_state": {
+    "documented_in": "KNOWN-GOOD.md",
+    "status": "pinned 2026-10-16, one consumer gap open (portal)",
+    "definition": "cdk-cli 0.18.1 (CDK primary reference) minted tokens on V2 keysets, NUT-00 V4 (primary, newest) + V3 (current), accepted end-to-end by the reference backend (1022; degraded refusal must not consume proofs) and received cleanly by the CDK reference wallet",
+    "fixtures": ["tokens/v4_v2_kg181.cashu", "tokens/v3_v2_kg181.cashu"],
+    "green_consumers": ["cdk-cli@0.18.1 (reference)", "tollgate-module-basic-go@rc (full-service 1022 re-verify pending rig recovery)"],
+    "open_gaps": [{"consumer": "tollgate-captive-portal", "divergence": "DIV-2026-10-portal-v2-keyset"}],
+    "backwards_compatibility": "OUT OF SCOPE for this pin — V1-keyset era and older-wallet behavior is deferred to compat-era/ and is layered on only after this state is green across every consumer"
+  },
+
   "vocabularies": {
     "lifecycle_stages": {
       "decode": "parse the token string offline into a token structure",
@@ -79,21 +89,32 @@
 
   "index": {
     "tokens": [
-      {"path": "tokens/v3_v2_valid.cashu", "shape": "V3 token, V2 keyset, valid (proofs SPENT)"},
-      {"path": "tokens/v4_v2_valid.cashu", "shape": "V4 token, V2 keyset, valid (proofs SPENT; token-level id is the 8-byte prefix)"},
+      {"path": "tokens/v4_v2_kg181.cashu", "shape": "KG twin: V4, V2 keyset, cdk-cli 0.18.1-minted, proofs UNSPENT"},
+      {"path": "tokens/v3_v2_kg181.cashu", "shape": "KG twin: V3, V2 keyset, cdk-cli 0.18.1-minted, proofs UNSPENT"},
+      {"path": "tokens/v3_v2_valid.cashu", "shape": "V3 token, V2 keyset, valid (proofs SPENT; v0 provenance cdk-cli 0.18.0)"},
+      {"path": "tokens/v4_v2_valid.cashu", "shape": "V4 token, V2 keyset, valid (proofs SPENT; token-level id is the 8-byte prefix; v0 provenance)"},
       {"path": "tokens/v3_v2_truncated_id.cashu", "shape": "V3 token, V2 keyset id truncated to 16 hex (PRTA#247 regression shape; proofs SPENT)"},
-      {"path": "tokens/v3_v2_hex_c.cashu", "shape": "V3 token, C points hex-encoded instead of base64 (CU102 class)"},
-      {"path": "tokens/v3_v1_valid.cashu", "shape": "V3 token, V1 keyset, valid (proofs UNSPENT; Nutshell-minted, dleq omitted)"},
-      {"path": "tokens/v4_v1_valid.cashu", "shape": "V4 token, V1 keyset, valid (proofs UNSPENT; Nutshell-minted)"}
+      {"path": "tokens/v3_v2_hex_c.cashu", "shape": "V3 token, C points hex-encoded instead of base64 (CU102 class)"}
     ],
     "lifecycle": [
+      {"path": "lifecycle/v4_v2_kg181.json"},
+      {"path": "lifecycle/v3_v2_kg181.json"},
       {"path": "lifecycle/v3_v2_valid.json"},
       {"path": "lifecycle/v4_v2_valid.json"},
       {"path": "lifecycle/v3_v2_truncated_id.json"},
-      {"path": "lifecycle/v3_v2_hex_c.json"},
-      {"path": "lifecycle/v3_v1_valid.json"},
-      {"path": "lifecycle/v4_v1_valid.json"}
+      {"path": "lifecycle/v3_v2_hex_c.json"}
     ],
+    "compat_era": {
+      "status": "DEFERRED — not part of the known-good contract (see kg_state.backwards_compatibility); parked data from the v1 capture so the compat layer starts from evidence, not zero",
+      "tokens": [
+        {"path": "compat-era/tokens/v3_v1_valid.cashu", "shape": "V3, V1 keyset, Nutshell-minted, proofs UNSPENT"},
+        {"path": "compat-era/tokens/v4_v1_valid.cashu", "shape": "V4, V1 keyset, Nutshell-minted, proofs UNSPENT"}
+      ],
+      "lifecycle": [
+        {"path": "compat-era/lifecycle/v3_v1_valid.json"},
+        {"path": "compat-era/lifecycle/v4_v1_valid.json"}
+      ]
+    },
     "http": [
       {"path": "http/http01-payment.json"},
       {"path": "http/http01-discovery.json"},

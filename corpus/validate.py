@@ -76,14 +76,36 @@ def main() -> int:
         for path in sorted(indexed & on_disk):
             check(load(CORPUS / path) is not None, f"{path} must parse")
 
+    compat = manifest["index"].get("compat_era")
+    if isinstance(compat, dict):
+        check(bool(compat.get("status")), "compat_era must carry an explicit status")
+        comp_tokens = {e["path"] for e in compat.get("tokens", [])}
+        comp_lifecycle = {e["path"] for e in compat.get("lifecycle", [])}
+        for path in sorted(comp_lifecycle):
+            check((CORPUS / path).is_file(), f"compat_era indexes {path} but the file does not exist")
+            check(load(CORPUS / path) is not None, f"{path} must parse")
+        for path in sorted(comp_tokens):
+            check((CORPUS / path).is_file(), f"compat_era indexes {path} but the fixture does not exist")
+        on_disk_lc = {str(p.relative_to(CORPUS)) for p in sorted((CORPUS / "compat-era" / "lifecycle").glob("*.json"))} if (CORPUS / "compat-era" / "lifecycle").is_dir() else set()
+        on_disk_tk = {str(p.relative_to(CORPUS)) for p in sorted((CORPUS / "compat-era" / "tokens").glob("*.cashu"))} if (CORPUS / "compat-era" / "tokens").is_dir() else set()
+        for unindexed in sorted(on_disk_lc - comp_lifecycle):
+            fail(f"{unindexed} exists but is not in manifest.index.compat_era.lifecycle")
+        for unindexed in sorted(on_disk_tk - comp_tokens):
+            fail(f"{unindexed} exists but is not in manifest.index.compat_era.tokens")
+        check(bool(comp_tokens) == bool(on_disk_tk), "compat_era tokens index and disk must agree")
+
     token_index = {e["path"] for e in manifest["index"]["tokens"]}
     tokens_on_disk = {str(p.relative_to(CORPUS)) for p in sorted((CORPUS / "tokens").glob("*.cashu"))}
     for missing in sorted(token_index - tokens_on_disk):
         fail(f"manifest indexes {missing} but the fixture does not exist")
+    for unindexed in sorted(tokens_on_disk - token_index):
+        fail(f"{unindexed} exists but is not in manifest.index.tokens")
 
-    # --- lifecycle vector checks ---
+    lifecycle_entries = list(manifest["index"]["lifecycle"])
+    if isinstance(compat, dict):
+        lifecycle_entries += compat.get("lifecycle", [])
     seen_ids: set[str] = set()
-    for entry in manifest["index"]["lifecycle"]:
+    for entry in lifecycle_entries:
         path = CORPUS / entry["path"]
         vec = load(path)
         if vec is None:
