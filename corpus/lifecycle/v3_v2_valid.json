@@ -5,10 +5,10 @@
     "token_version": 3,
     "prefix": "cashuA",
     "encoding": "JSON in base64url",
-    "keyset_id_format": "v2-66hex",
-    "keyset_id": "01e73e75a0809604372487732ee917e8f881cc4c882ccd9fbac094fbfd3e3a42e6",
+    "keyset_id_format": "v3-short-16hex (native cdk V3 serialization: version byte + 7-byte prefix of the canonical V2 id)",
+    "keyset_id": "01e73e75a0809604",
     "keyset_version": 2,
-    "c_encoding": "base64",
+    "c_encoding": "hex (compressed point; NUT-00 native per cdk ProofV3 serde)",
     "dleq": "present (NUT-12)",
     "proofs": 2,
     "amounts": [
@@ -16,7 +16,8 @@
       2
     ],
     "unit": "sat",
-    "mint": "http://192.168.13.221:8383"
+    "mint": "http://192.168.13.221:8383",
+    "canonical_keyset_id": "01e73e75a0809604372487732ee917e8f881cc4c882ccd9fbac094fbfd3e3a42e6"
   },
   "stages": {
     "decode": {

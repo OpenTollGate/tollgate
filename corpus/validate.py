@@ -227,34 +227,39 @@ def _check_assertions(vid: str, body) -> None:
     if body is None:
         return
     if isinstance(body, dict):
-        for key, value in body.items():
-            if key in ("p", "tags_include", "tag_value_class", "fields", "tags_must_omit"):
-                _ptag_check_value(vid, key, value)
+        _ptag_check_value(vid, body)
+        for value in body.values():
             _check_assertions(vid, value)
     elif isinstance(body, list):
+        head = body[0] if body else None
+        if head == "p":
+            _ptag_enforce(vid, body[1:])
         for item in body:
             _check_assertions(vid, item)
 
 
-def _ptag_check_value(vid: str, key: str, value) -> None:
-    def scan(node) -> None:
-        global CHECKS
-        if isinstance(node, dict):
-            matcher = node.get("matcher")
-            if matcher == "nostr-pubkey":
-                CHECKS += 1  # correct class; nothing to enforce beyond usage
-            if matcher == "mac-format":
-                # a p tag asserted to hold a MAC is the #950 wire-bug class
-                pass
-            for v in node.values():
-                scan(v)
-        elif isinstance(node, list):
-            for item in node:
-                scan(item)
-        elif isinstance(node, str) and MAC_RE.match(node):
-            # literal MAC-shaped values are only legal in device-identifier/mac contexts
-            pass
-    scan(value)
+def _ptag_check_value(vid: str, body: dict) -> None:
+    tvc = body.get("tag_value_class")
+    if isinstance(tvc, dict) and "p" in tvc:
+        _ptag_enforce(vid, [tvc["p"]])
+    fields = body.get("fields")
+    if isinstance(fields, dict) and "p" in fields:
+        _ptag_enforce(vid, [fields["p"]])
+
+
+def _ptag_enforce(vid: str, assertions) -> None:
+    """A p tag may only be asserted as a Nostr pubkey (or non-empty/one-of);
+    asserting a MAC in p is the tmbg#950 wire-bug class and must fail."""
+    global CHECKS
+    for item in assertions:
+        if not isinstance(item, dict) or "matcher" not in item:
+            continue
+        CHECKS += 1
+        matcher = item["matcher"]
+        if matcher == "mac-format":
+            fail(f"{vid}: p tag asserted with a MAC value — the tmbg#950 wire-bug class, forbidden by TIP-01")
+        elif matcher not in ("nostr-pubkey", "nonempty", "one-of"):
+            fail(f"{vid}: p tag asserted with matcher {matcher!r}; only nostr-pubkey/nonempty/one-of are legal")
 
 
 def _ptag_scan(directory: Path) -> None:

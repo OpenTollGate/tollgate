@@ -5,7 +5,7 @@
     "token_version": 3,
     "prefix": "cashuA",
     "encoding": "JSON in base64url",
-    "keyset_id_format": "16-hex (the first 16 chars of the canonical V2 id; NOT a keyset that exists at any mint — V1-era id length, V2-era keyset)",
+    "keyset_id_format": "v3-short-16hex — byte-identical to the 'valid' fixtures' ids (native cdk serialization; NOT a distinct shape)",
     "keyset_id": "01e73e75a0809604",
     "keyset_version": 2,
     "c_encoding": "base64",
@@ -14,7 +14,8 @@
       4
     ],
     "unit": "sat",
-    "mint": "http://192.168.13.221:8383"
+    "mint": "http://192.168.13.221:8383",
+    "canonical_keyset_id": "01e73e75a0809604372487732ee917e8f881cc4c882ccd9fbac094fbfd3e3a42e6"
   },
   "stages": {
     "decode": {
@@ -83,7 +84,7 @@
           "by": "corpus v1 capture"
         }
       ],
-      "notes": "The shape that hid the portal defect for months: a test minter adopted this 'v2-short' truncation (exists nowhere in NUT-00/02) and the internally-consistent pair passed tests while real mints rotated to V2."
+      "notes": "The shape that hid the portal defect for months: internally-consistent test pairs passed while the deployed portal could not resolve any short id against a V2 keyset list."
     },
     "checkstate": {
       "verdicts": {
@@ -98,7 +99,7 @@
           "by": "corpus v1 capture"
         }
       ],
-      "notes": "The proofs were spent at the mint during the v0 verification run even though the token's id field is the truncated form: the swap request that reached the mint must have carried the canonical id, so the backend resolves the 16-hex prefix to the canonical V2 keyset id before swapping. The v4_v2_valid vector explains why this resolution exists: CDK's V4 serialization natively writes the 8-byte id prefix, so every V4-capable consumer already needs short-id resolution — the 'v2-short' spelling a test minter adopted (PRTA#247) is this native V4 form transplanted into V3."
+      "notes": "Proofs SPENT (consumed by the v0 verification run). No backend prefix-resolution inference is needed: short proof ids are the native cdk spelling and the mint resolves them during swap (cdk nut02 UnknownShortKeysetId path)."
     },
     "spend": {
       "verdicts": [
@@ -121,5 +122,10 @@
     "minted_by": "cdk-cli 0.18.0, then each proof id replaced by id[:16] and re-encoded (corpus v0, PR #29)",
     "regen": "decode the V3 token, set each proof id to the first 16 hex chars of the canonical id, re-encode"
   },
-  "portal_pin_note": "The @pin verdict (CU109 rejection, never submits) is the deployed router pin measured by v0 and portal#82's capture; portal main's decode path was reworked (#38/#55/#61) and now accepts — regression lock portal#83, deployed-pin refresh pending."
+  "portal_pin_note": "The @pin verdict (CU109 rejection, never submits) is the deployed router pin measured by v0 and portal#82's capture; portal main's decode path was reworked (#38/#55/#61) and now accepts — regression lock portal#83, deployed-pin refresh pending.",
+  "reframed": {
+    "what_v0_called_it": "the 'truncated id' / PRTA#247 regression shape",
+    "what_it_actually_is": "a plain valid-shaped cdk V3 token: its id spelling is cdk's native serialization, byte-identical to tokens/v3_v2_valid.cashu's ids. There was never a truncation to test; the fixture survives as the historical record of the confusion.",
+    "incident_reread": "portal@pin rejected these tokens (CU109 'outdated mint key') because it compared the 16-hex in-token id against the mint's 66-hex keyset-list ids — a resolution failure, not a token defect. The backend accepted (1022): it resolves like cdk wallets do. See DIV-2026-10-portal-v2-keyset."
+  }
 }

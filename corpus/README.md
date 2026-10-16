@@ -55,45 +55,57 @@ end-to-end:
 | spend | submit as payment to a TollGate | `accepted-1022` `rejected-21023:<code>` `refused-degraded-unconsumed` |
 
 Current verdict matrix (details + evidence in `lifecycle/*.json`; portal
-verdicts now split `@pin` (deployed router pin — the incident) vs `@main`
+verdicts split `@pin` (deployed router pin — the incident) vs `@main`
 (probed through the real decoder 2026-10-16, regression lock portal#83)):
 
 | Fixture | cdk-cli 0.18.1 | nutshell 0.21.0 | tmbg backend (rc) | portal @pin → @main | mint checkstate |
 |---|---|---|---|---|---|
-| `v4_v2_kg181` **(KG)** | minted + receive ✓ | unknown | decodes; 1022 per v0 + source; degraded-refusal-unconsumed live ✓ | reject (CU109) → **decoded-v4** | **UNSPENT** |
-| `v3_v2_kg181` **(KG)** | minted + receive ✓ | unknown | decodes; 1022 per v0 + source; degraded-refusal-unconsumed live ✓ | reject (CU109) → **decoded-v3** | **UNSPENT** |
+| `v4_v2_kg181` **(KG)** | minted + receive ✓ | unknown | decodes; 1022 per v0 + source; degraded-refusal-unconsumed live ✓ | unknown (same shape class as the v0 CU109 rejects) → **decoded-v4** | **UNSPENT** |
+| `v3_v2_kg181` **(KG)** | minted + receive ✓ | unknown | decodes; 1022 per v0 + source; degraded-refusal-unconsumed live ✓ | unknown (same shape class) → **decoded-v3** | **UNSPENT** |
 | `v3_v2_valid` (v0) | ok (receive ✓) | decoded | ok → 1022 (fresh) / `payment-error-token-spent` (as committed) | reject (CU109) → **ok** | SPENT |
 | `v4_v2_valid` (v0) | ok (receive ✓) | decoded | ok → 1022 | unknown → **decoded-v4** | SPENT |
-| `v3_v2_truncated_id` (v0) | **no-verdict-hang** | decoded | ok → 1022 (resolves 16-hex prefix to canonical id) | reject (CU109) → **ok** | SPENT |
-| `v3_v2_hex_c` (v0) | **reject at verify** | decoded / **reject at verify** | reject at verify → `payment-processing-failed` | unknown → **ok (defers C verdict to backend)** | SPENT |
+| `v3_v2_truncated_id` (v0, reframed) | decoded (warm) / hang (cold) | decoded | ok → 1022 | reject (CU109) → **ok** | SPENT |
+| `v3_v2_hex_c` (v0, reclassified) | **reject at verify** | decoded / **reject at verify** | reject at verify → `payment-processing-failed` | unknown → **ok (defers C verdict to backend)** | SPENT |
 | `compat-era/*` (deferred) | see `compat-era/lifecycle/` | decoded / ok / receive ✓ | unknown — out of KG scope | unknown | UNSPENT |
 
 Key facts pinned by the lifecycle set:
 
-1. **KG twins ship UNSPENT** and are never consumed by verification
-   runs — runners replay with sibling tokens from the regen recipes
-   (which the v1 capture re-executed end-to-end: mint → send V3/V4 →
-   receive). The v0 fixtures' proofs are SPENT (verified via NUT-07)
-   and serve as double-spend / decode / verify vectors.
-2. **Degraded-refusal-does-not-consume is verified live end-to-end
+1. **KG twins ship UNSPENT** (a single 4-sat proof each) and are never
+   consumed by verification runs — runners replay with sibling tokens
+   from the regen recipes (which the v1 capture re-executed
+   end-to-end: mint → send V3/V4 → receive). The v0 fixtures' proofs
+   are SPENT (verified via NUT-07) and serve as double-spend /
+   decode / verify vectors.
+2. **cdk serializes SHORT keyset ids in both token formats** — V3
+   per proof (16 hex = version byte + 7-byte prefix of the canonical
+   id) and V4 at the token level (8 bytes) — with C points as hex.
+   Source: cdk nut00/mod.rs:519, nut02.rs:383. Every consumer must
+   resolve short ids against the mint's keyset list; cdk-family mints
+   resolve them natively. The v0-era claim that the 16-hex spelling
+   was a test minter's "truncation" is RETRACTED — it is the
+   reference toolchain's native output, byte-identical across the
+   valid fixtures; the portal@pin incident was a short-id resolution
+   failure (CU109 compared 16-hex token ids to 66-hex keyset-list
+   ids).
+3. `tokens/v3_v2_hex_c.cashu` is **not** a clean wrong-encoding
+   probe: its C values are 49 garbage bytes (v0's regen recipe
+   base64-decoded a hex string). It remains a valid invalid-shape
+   vector — C unparseable as a point in ANY encoding — with the
+   backend verdict `payment-processing-failed` (21023) recorded
+   live; the verdict class is "C not a point", not "hex vs base64".
+4. **Degraded-refusal-does-not-consume is verified live end-to-end
    with cdk 0.18.1**: sibling tokens POSTed through the rig were
    refused `service-unavailable` and re-checked UNSPENT at the mint
    (tollgate#27's fund-safety invariant, made checkable).
-3. **CDK's V4 serialization writes the token-level keyset id as an
-   8-byte prefix** of the canonical V2 id — every V4 consumer must
-   resolve short ids against the mint's keyset list. The backend's
-   acceptance of the truncated-id V3 fixture is that same resolution;
-   the test minter's "v2-short" truncation (PRTA#247) was this native
-   V4 spelling transplanted into V3.
-4. **cdk-cli 0.18.1 `decode-token` deadlocks on a cold wallet** (no
+5. **cdk-cli 0.18.1 `decode-token` deadlocks on a cold wallet** (no
    cached keysets, wallet-state-dependent) for tokens whose keyset id
-   cannot resolve from wallet state — the truncated-id shape and
-   Nutshell-minted V1-era tokens — while decoding the same shapes with
-   the mint's keysets cached. A hang is not a verdict: runners must
-   apply timeouts, and the shape is a candidate upstream bug against
-   cdk. One token shape, four consumer behaviors on record (accept /
-   reject / decode / hang).
-5. DLEQ presence is wallet-dependent (cdk-minted proofs carry dleq,
+   cannot resolve from wallet state — the short-id V3 fixture and
+   Nutshell-minted V1-era tokens — while decoding the same shapes
+   with the mint's keysets cached. A hang is not a verdict: runners
+   must apply timeouts, and the shape is a candidate upstream bug
+   against cdk. One token shape, four consumer behaviors on record
+   (accept / reject / decode / hang).
+6. DLEQ presence is wallet-dependent (cdk-minted proofs carry dleq,
    Nutshell's omit it) — consumers must treat it as optional.
 
 ## HTTP endpoint vectors

@@ -567,12 +567,10 @@
             "code": "access-grant-failed",
             "retry_after": 15,
             "error": {
-              "matcher": "nonempty"
+              "matcher": "regex",
+              "value": ".*Do NOT pay again.*"
             }
-          },
-          "content_must_mention": [
-            "do not pay again"
-          ]
+          }
         }
       },
       "evidence": [

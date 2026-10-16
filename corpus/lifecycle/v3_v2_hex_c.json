@@ -8,7 +8,7 @@
     "keyset_id_format": "v2-66hex",
     "keyset_id": "01e73e75a0809604372487732ee917e8f881cc4c882ccd9fbac094fbfd3e3a42e6",
     "keyset_version": 2,
-    "c_encoding": "hex (INVALID: C points hex-encoded where NUT-00 requires base64)",
+    "c_encoding": "invalid: 49 garbage bytes per proof, hex-encoded — the result of v0's regen recipe base64-decoding a hex string (a double-mangling artifact, not a clean wrong-encoding probe; no wallet produces this)",
     "proofs": 2,
     "amounts": [
       2,
@@ -84,7 +84,8 @@
           "observed": "validateToken accepts (status 1); C-point verdict deferred to the backend by design — the merchant re-validates authoritatively on submit",
           "by": "corpus v1 capture"
         }
-      ]
+      ],
+      "notes": "Verdict class: C not parseable as a compressed point in ANY encoding (hex is the native encoding — this fixture's C bytes are not a point at all). Consumers must reject loudly, never silently."
     },
     "checkstate": {
       "verdicts": {
@@ -121,7 +122,7 @@
   },
   "provenance": {
     "minted_by": "cdk-cli 0.18.0, then each C (base64 point) replaced by its .hex() form and re-encoded (corpus v0, PR #29)",
-    "regen": "decode the V3 token, replace each C with the hex encoding of the same point, re-encode"
+    "regen": "v0's recipe ('replace each C with its .hex() form') was itself buggy — it base64-decoded the hex string first. To build a clean wrong-encoding probe, replace each C with a deliberately non-point string of the same length class (e.g. 66 'a' chars) and re-encode."
   },
   "portal_pin_note": "The @pin verdict (CU109 rejection, never submits) is the deployed router pin measured by v0 and portal#82's capture; portal main's decode path was reworked (#38/#55/#61) and now accepts — regression lock portal#83, deployed-pin refresh pending."
 }

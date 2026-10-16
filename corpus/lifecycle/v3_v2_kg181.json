@@ -11,13 +11,13 @@
     "keyset_version": 2,
     "c_encoding": "base64",
     "dleq": "present (NUT-12, as minted by cdk)",
-    "proofs": 2,
+    "proofs": 1,
     "amounts": [
-      2,
-      2
+      4
     ],
     "unit": "sat",
-    "mint": "http://192.168.13.221:8383"
+    "mint": "http://192.168.13.221:8383",
+    "shape_correction_note": "initial corpus entry recorded proofs [2,2] from the send amount; the committed fixture is a single 4-sat proof (verified by decode, 2026-10-16 review pass)"
   },
   "stages": {
     "decode": {
@@ -78,7 +78,7 @@
           "kind": "live",
           "target": "mint http://192.168.13.221:8383 POST /v1/checkstate",
           "date": "2026-10-16",
-          "observed": "both proofs UNSPENT at commit time",
+          "observed": "the single 4-sat proof UNSPENT at commit time",
           "by": "corpus v1 KG capture"
         }
       ]

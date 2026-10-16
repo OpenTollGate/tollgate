@@ -5,7 +5,7 @@
     "token_version": 4,
     "prefix": "cashuB",
     "encoding": "CBOR in base64url (NUT-00 V4: top-level {t:[{i,p}], m: mint_url, u: unit})",
-    "keyset_id_format": "8 bytes at the token level — the FIRST 8 BYTES of the canonical 33-byte V2 id (see notes: CDK V4 serialization writes the id prefix)",
+    "keyset_id_format": "8 bytes at the token level (native cdk V4 serialization: the prefix of the canonical V2 id)",
     "keyset_id_in_token": "01e73e75a0809604",
     "canonical_keyset_id": "01e73e75a0809604372487732ee917e8f881cc4c882ccd9fbac094fbfd3e3a42e6",
     "keyset_version": 2,
@@ -104,22 +104,28 @@
       ]
     }
   },
-  "keyset_id_finding": {
-    "summary": "CDK 0.18's V4 token serialization writes the token-level keyset id as the 8-byte prefix of the canonical id (01e73e75a0809604), not the full 33 bytes.",
-    "evidence": [
-      {
-        "kind": "live",
-        "target": "CBOR decode of the committed fixture",
-        "date": "2026-10-16",
-        "observed": "t[0].i = bytes 01e73e75a0809604 (8 bytes) while the mint's keyset id is 01e73e75...e6 (33 bytes)",
-        "by": "corpus v1 capture"
-      }
-    ],
-    "implications": "Every V4 consumer must resolve the 8-byte prefix against the mint's keyset list before swapping — which is exactly the resolution behavior the backend exhibited on the v3 truncated-id fixture. The 'v2-short' truncation a test minter adopted (PRTA#247) is this native V4 spelling transplanted into V3. Minting NEW V3 tokens with truncated ids remains forbidden; RESOLVING a short id to the canonical keyset is required for V4."
-  },
   "provenance": {
     "minted_by": "cdk-cli 0.18.0 against the fakewallet (corpus v0, PR #29)",
     "regen": "cdk-cli mint <fakewallet-url> 11; cdk-cli send --mint-url <url> --amount 4 --include-fee"
   },
-  "portal_pin_note": "The @pin verdict (CU109 rejection, never submits) is the deployed router pin measured by v0 and portal#82's capture; portal main's decode path was reworked (#38/#55/#61) and now accepts — regression lock portal#83, deployed-pin refresh pending."
+  "portal_pin_note": "The @pin verdict (CU109 rejection, never submits) is the deployed router pin measured by v0 and portal#82's capture; portal main's decode path was reworked (#38/#55/#61) and now accepts — regression lock portal#83, deployed-pin refresh pending.",
+  "keyset_id_finding": {
+    "summary": "cdk writes SHORT keyset ids in both token formats: V4 at the token level (8 bytes) and V3 per proof (16 hex). Every consumer must resolve short ids against the mint's keyset list; every mint in the cdk family natively resolves them.",
+    "evidence": [
+      {
+        "kind": "live",
+        "target": "CBOR decode of the committed V4 fixture + JSON decode of all V3 fixtures",
+        "date": "2026-10-16",
+        "observed": "V4 t[0].i = 8 bytes 01e73e75a0809604; every V3 proof id = the same 16-hex value; the mint's canonical keyset id is the 33-byte form",
+        "by": "corpus v1 capture + review byte-verification"
+      },
+      {
+        "kind": "source",
+        "repo": "cashubtc/cdk",
+        "ref": "0.18.1",
+        "location": "crates/cashu/src/nuts/nut00/mod.rs:519 (ProofV3.keyset_id: ShortKeysetId), crates/cashu/src/nuts/nut02.rs:383 (ShortKeysetId: v1 = whole id, v2 = 8-byte prefix)"
+      }
+    ],
+    "retraction": "The earlier v0-era narrative — that the 16-hex spelling was a test minter's 'v2-short truncation' transplanted from V4 (PRTA#247) — is RETRACTED: the short spelling is cdk's native V3 output, byte-identical across the 'valid' and so-called 'truncated' fixtures. The portal@pin defect was short-id resolution, not malformed tokens."
+  }
 }
