@@ -521,7 +521,7 @@
       },
       "response": {
         "status": 415,
-        "content_type": "text/plain; charset=utf-8",
+        "content_type": "application/json",
         "body": {
           "type": "json",
           "fields": {
@@ -534,7 +534,7 @@
           "kind": "live",
           "target": "rig http://192.168.13.1:2121",
           "date": "2026-10-16",
-          "observed": "HTTP 415, body {\"error\":\"Unsupported Media Type\"}"
+          "observed": "HTTP 415, Content-Type application/json, body {\"error\":\"Unsupported Media Type\"} (confirmed repeatedly via curl -i and python; an earlier corpus draft recorded text/plain from a pattern-match to the rate-limiter's 429 — that was wrong, and the two runner FAILs it caused were misdiagnosed as rig anomalies)"
         },
         {
           "kind": "source",
