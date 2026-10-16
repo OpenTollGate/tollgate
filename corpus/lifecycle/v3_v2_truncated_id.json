@@ -10,7 +10,9 @@
     "keyset_version": 2,
     "c_encoding": "base64",
     "proofs": 1,
-    "amounts": [4],
+    "amounts": [
+      4
+    ],
     "unit": "sat",
     "mint": "http://192.168.13.221:8383"
   },
@@ -20,12 +22,36 @@
         "cdk-cli@0.18.1": "no-verdict-hang",
         "tollgate-module-basic-go@rc": "decoded-v3",
         "tollgate-captive-portal@pin": "decoded-v3",
-        "nutshell@0.21.0": "decoded-v3"
+        "nutshell@0.21.0": "decoded-v3",
+        "tollgate-captive-portal@main": "decoded-v3"
       },
       "evidence": [
-        {"kind": "reported", "ref": "corpus v0: backend 1022 and portal CU109 card both require successful JSON decode", "date": "2026-10-16"},
-        {"kind": "live", "target": "nutshell 0.21.0 `cashu decode`", "date": "2026-10-16", "observed": "decodes", "by": "corpus v1 capture"},
-        {"kind": "live", "target": "cdk-cli 0.18.1 `decode-token`", "date": "2026-10-16", "observed": "silent deadlock (killed at 10s) on this V3 token whose 16-hex id resolves to no keyset at its mint — while cdk-cli's own V4 token carrying the SAME 8-byte id prefix, and its own V3 token with a V1-era 16-hex id that DOES resolve, both decode instantly", "by": "corpus v1 capture"}
+        {
+          "kind": "reported",
+          "ref": "corpus v0: backend 1022 and portal CU109 card both require successful JSON decode",
+          "date": "2026-10-16"
+        },
+        {
+          "kind": "live",
+          "target": "nutshell 0.21.0 `cashu decode`",
+          "date": "2026-10-16",
+          "observed": "decodes",
+          "by": "corpus v1 capture"
+        },
+        {
+          "kind": "live",
+          "target": "cdk-cli 0.18.1 `decode-token`",
+          "date": "2026-10-16",
+          "observed": "silent deadlock (killed at 10s) on this V3 token whose 16-hex id resolves to no keyset at its mint — while cdk-cli's own V4 token carrying the SAME 8-byte id prefix, and its own V3 token with a V1-era 16-hex id that DOES resolve, both decode instantly",
+          "by": "corpus v1 capture"
+        },
+        {
+          "kind": "live",
+          "target": "portal main @ c2ddba1 decoder via vitest (portal#83's vendored-corpus probe)",
+          "date": "2026-10-16",
+          "observed": "validateToken accepts the token (status 1, correct amount/unit)",
+          "by": "corpus v1 capture"
+        }
       ],
       "notes": "The reference wallet (cdk) cannot process the regression shape its own V4 spelling seeded: a V3 token with an unresolvable short id deadlocks the CDK decoder. Contrast with the Go backend, which resolves the prefix and ACCEPTS (1022) — a four-way verdict spread (accept / reject / decode / hang) across consumers on one token shape, which is precisely the divergence the corpus exists to expose."
     },
@@ -33,17 +59,37 @@
       "verdicts": {
         "cdk-cli@0.18.0": "unknown",
         "tollgate-module-basic-go@rc": "ok",
-        "tollgate-captive-portal@pin": "reject-keyset-format"
+        "tollgate-captive-portal@pin": "reject-keyset-format",
+        "tollgate-captive-portal@main": "ok"
       },
       "evidence": [
-        {"kind": "reported", "ref": "corpus v0: backend accepts BOTH id spellings (1022); portal CU109 rejects every V2-era spelling", "date": "2026-10-16"}
+        {
+          "kind": "reported",
+          "ref": "corpus v0: backend accepts BOTH id spellings (1022); portal CU109 rejects every V2-era spelling",
+          "date": "2026-10-16"
+        },
+        {
+          "kind": "live",
+          "target": "portal main @ c2ddba1 decoder via vitest (portal#83's vendored-corpus probe)",
+          "date": "2026-10-16",
+          "observed": "validateToken accepts the token (status 1, correct amount/unit)",
+          "by": "corpus v1 capture"
+        }
       ],
       "notes": "The shape that hid the portal defect for months: a test minter adopted this 'v2-short' truncation (exists nowhere in NUT-00/02) and the internally-consistent pair passed tests while real mints rotated to V2."
     },
     "checkstate": {
-      "verdicts": {"fakewallet@2026-10-16": "SPENT"},
+      "verdicts": {
+        "fakewallet@2026-10-16": "SPENT"
+      },
       "evidence": [
-        {"kind": "live", "target": "mint http://192.168.13.221:8383 POST /v1/checkstate", "date": "2026-10-16", "observed": "proof (amount 4, secret matching the canonical keyset's Y) state=SPENT", "by": "corpus v1 capture"}
+        {
+          "kind": "live",
+          "target": "mint http://192.168.13.221:8383 POST /v1/checkstate",
+          "date": "2026-10-16",
+          "observed": "proof (amount 4, secret matching the canonical keyset's Y) state=SPENT",
+          "by": "corpus v1 capture"
+        }
       ],
       "notes": "The proofs were spent at the mint during the v0 verification run even though the token's id field is the truncated form: the swap request that reached the mint must have carried the canonical id, so the backend resolves the 16-hex prefix to the canonical V2 keyset id before swapping. The v4_v2_valid vector explains why this resolution exists: CDK's V4 serialization natively writes the 8-byte id prefix, so every V4-capable consumer already needs short-id resolution — the 'v2-short' spelling a test minter adopted (PRTA#247) is this native V4 form transplanted into V3."
     },
@@ -52,7 +98,13 @@
         {
           "when": "2026-10-16, proof fresh",
           "tollgate-module-basic-go@rc": "accepted-1022",
-          "evidence": [{"kind": "reported", "ref": "corpus v0 (PR #29) live verification against the rig", "date": "2026-10-16"}]
+          "evidence": [
+            {
+              "kind": "reported",
+              "ref": "corpus v0 (PR #29) live verification against the rig",
+              "date": "2026-10-16"
+            }
+          ]
         }
       ],
       "notes": "Consumers MUST NOT treat the 16-hex truncation of a V2 id as a distinct keyset: it is either resolved to the canonical id (backend behavior) or rejected (portal behavior). Silently minting NEW tokens with truncated ids (the test-minter regression) is forbidden — that is how the ecosystem invented a third id spelling."
@@ -61,5 +113,6 @@
   "provenance": {
     "minted_by": "cdk-cli 0.18.0, then each proof id replaced by id[:16] and re-encoded (corpus v0, PR #29)",
     "regen": "decode the V3 token, set each proof id to the first 16 hex chars of the canonical id, re-encode"
-  }
+  },
+  "portal_pin_note": "The @pin verdict (CU109 rejection, never submits) is the deployed router pin measured by v0 and portal#82's capture; portal main's decode path was reworked (#38/#55/#61) and now accepts — regression lock portal#83, deployed-pin refresh pending."
 }

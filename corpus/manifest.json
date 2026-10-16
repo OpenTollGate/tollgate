@@ -37,7 +37,7 @@
     "definition": "cdk-cli 0.18.1 (CDK primary reference) minted tokens on V2 keysets, NUT-00 V4 (primary, newest) + V3 (current), accepted end-to-end by the reference backend (1022; degraded refusal must not consume proofs) and received cleanly by the CDK reference wallet",
     "fixtures": ["tokens/v4_v2_kg181.cashu", "tokens/v3_v2_kg181.cashu"],
     "green_consumers": ["cdk-cli@0.18.1 (reference)", "tollgate-module-basic-go@rc (full-service 1022 re-verify pending rig recovery)"],
-    "open_gaps": [{"consumer": "tollgate-captive-portal", "divergence": "DIV-2026-10-portal-v2-keyset"}],
+    "open_gaps": [{"consumer": "tollgate-captive-portal@deployed-pin", "divergence": "DIV-2026-10-portal-v2-keyset", "note": "portal MAIN is green on the KG set (probed 2026-10-16; regression lock portal#83) — the gap is the stale deployed pin, i.e. release/deploy work"}],
     "backwards_compatibility": "OUT OF SCOPE for this pin — V1-keyset era and older-wallet behavior is deferred to compat-era/ and is layered on only after this state is green across every consumer"
   },
 
@@ -136,9 +136,9 @@
     {
       "id": "DIV-2026-10-portal-v2-keyset",
       "class": "verify-stage",
-      "consumers": ["tollgate-captive-portal"],
-      "summary": "Portal rejects every V2-keyset token at its client-side keyset check (CU109 card), never submits; broke browser e-cash payments on 4 of 6 default mints.",
-      "refs": ["tollgate-captive-portal-site#82", "physical-router-test-automation#247", "tollgate-module-basic-go#952"]
+      "consumers": ["tollgate-captive-portal@deployed-pin"],
+      "summary": "Deployed portal pin rejects every V2-keyset token at its client-side keyset check (CU109 card), never submits; broke browser e-cash payments on 4 of 6 default mints. Portal MAIN already decodes all corpus shapes (probed through the real decoder 2026-10-16); regression lock landed as portal#83. The divergence is now release/deploy work: refresh the pin.",
+      "refs": ["tollgate-captive-portal-site#82", "tollgate-captive-portal-site#83", "physical-router-test-automation#247", "tollgate-module-basic-go#952"]
     },
     {
       "id": "DIV-2026-10-mac-in-p-tag",

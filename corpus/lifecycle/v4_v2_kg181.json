@@ -12,7 +12,10 @@
     "keyset_version": 2,
     "c_encoding": "base64",
     "proofs": 2,
-    "amounts": [2, 2],
+    "amounts": [
+      2,
+      2
+    ],
     "unit": "sat",
     "mint": "http://192.168.13.221:8383"
   },
@@ -22,11 +25,30 @@
         "cdk-cli@0.18.1": "decoded-v4",
         "nutshell@0.21.0": "unknown",
         "tollgate-module-basic-go@rc": "decoded-v4",
-        "tollgate-captive-portal@pin": "unknown"
+        "tollgate-captive-portal@pin": "unknown",
+        "tollgate-captive-portal@main": "decoded-v4"
       },
       "evidence": [
-        {"kind": "live", "target": "cdk-cli 0.18.1 (minted the token)", "date": "2026-10-16", "by": "corpus v1 KG capture"},
-        {"kind": "live", "target": "rig http://192.168.13.1:2121", "date": "2026-10-16", "observed": "a sibling cdk-0.18.1 V4 token POSTed to the rig reached token processing (service-unavailable refusal in degraded mode)", "by": "corpus v1 KG capture"}
+        {
+          "kind": "live",
+          "target": "cdk-cli 0.18.1 (minted the token)",
+          "date": "2026-10-16",
+          "by": "corpus v1 KG capture"
+        },
+        {
+          "kind": "live",
+          "target": "rig http://192.168.13.1:2121",
+          "date": "2026-10-16",
+          "observed": "a sibling cdk-0.18.1 V4 token POSTed to the rig reached token processing (service-unavailable refusal in degraded mode)",
+          "by": "corpus v1 KG capture"
+        },
+        {
+          "kind": "live",
+          "target": "portal main @ c2ddba1 decoder via vitest (portal#83's vendored-corpus probe)",
+          "date": "2026-10-16",
+          "observed": "validateToken accepts the token (status 1, correct amount/unit)",
+          "by": "corpus v1 capture"
+        }
       ]
     },
     "verify": {
@@ -37,14 +59,28 @@
         "tollgate-captive-portal@pin": "unknown"
       },
       "evidence": [
-        {"kind": "live", "target": "cdk-cli 0.18.1 wallet receive (--allow-untrusted)", "date": "2026-10-16", "observed": "a sibling cdk-0.18.1 V4/V2 token received successfully (2 sat), including resolution of the 8-byte keyset id prefix", "by": "corpus v1 KG capture"}
+        {
+          "kind": "live",
+          "target": "cdk-cli 0.18.1 wallet receive (--allow-untrusted)",
+          "date": "2026-10-16",
+          "observed": "a sibling cdk-0.18.1 V4/V2 token received successfully (2 sat), including resolution of the 8-byte keyset id prefix",
+          "by": "corpus v1 KG capture"
+        }
       ],
       "notes": "tollgate-module-basic-go verify/1022 leg: pinned by corpus v0's live 1022 on the same mint+keyset (cdk 0.18.0 minting, 2026-10-16) plus origin/main source; re-verify with the recipe in KNOWN-GOOD.md once the rig is back in full service."
     },
     "checkstate": {
-      "verdicts": {"fakewallet@2026-10-16": "UNSPENT"},
+      "verdicts": {
+        "fakewallet@2026-10-16": "UNSPENT"
+      },
       "evidence": [
-        {"kind": "live", "target": "mint http://192.168.13.221:8383 POST /v1/checkstate (V4 CBOR proof extraction)", "date": "2026-10-16", "observed": "both proofs UNSPENT at commit time", "by": "corpus v1 KG capture"}
+        {
+          "kind": "live",
+          "target": "mint http://192.168.13.221:8383 POST /v1/checkstate (V4 CBOR proof extraction)",
+          "date": "2026-10-16",
+          "observed": "both proofs UNSPENT at commit time",
+          "by": "corpus v1 KG capture"
+        }
       ]
     },
     "spend": {
@@ -53,13 +89,25 @@
           "when": "2026-10-16, rig degraded",
           "tollgate-module-basic-go@rc": "refused-degraded-unconsumed",
           "evidence": [
-            {"kind": "live", "target": "rig http://192.168.13.1:2121 POST / with a sibling cdk-0.18.1 V4 token", "date": "2026-10-16", "observed": "HTTP 400, kind 21023, level=error, code=service-unavailable; NUT-07 re-check after the refusal: proofs UNSPENT", "by": "corpus v1 KG capture"}
+            {
+              "kind": "live",
+              "target": "rig http://192.168.13.1:2121 POST / with a sibling cdk-0.18.1 V4 token",
+              "date": "2026-10-16",
+              "observed": "HTTP 400, kind 21023, level=error, code=service-unavailable; NUT-07 re-check after the refusal: proofs UNSPENT",
+              "by": "corpus v1 KG capture"
+            }
           ]
         },
         {
           "when": "full service (re-verify recipe)",
           "tollgate-module-basic-go@rc": "accepted-1022",
-          "evidence": [{"kind": "reported", "ref": "corpus v0 (PR #29): 1022 ACCEPTED live on the same mint+keyset", "date": "2026-10-16"}]
+          "evidence": [
+            {
+              "kind": "reported",
+              "ref": "corpus v0 (PR #29): 1022 ACCEPTED live on the same mint+keyset",
+              "date": "2026-10-16"
+            }
+          ]
         }
       ]
     }
@@ -67,5 +115,6 @@
   "provenance": {
     "minted_by": "cdk-cli 0.18.1 (CDK primary reference) against the fakewallet",
     "regen": "cdk-cli mint http://192.168.13.221:8383 21; cdk-cli send --mint-url http://192.168.13.221:8383 --amount 4 --include-fee"
-  }
+  },
+  "portal_pin_note": "The @pin verdict (CU109 rejection, never submits) is the deployed router pin measured by v0 and portal#82's capture; portal main's decode path was reworked (#38/#55/#61) and now accepts — regression lock portal#83, deployed-pin refresh pending."
 }

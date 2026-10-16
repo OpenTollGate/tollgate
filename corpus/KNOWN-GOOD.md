@@ -40,12 +40,14 @@ format (current, still-served), are:
 |---|---|---|
 | cdk-cli 0.18.1 (reference) | decodes, verifies, receives both formats | **green** (is the reference) |
 | tollgate-module-basic-go (rc) | decodes both formats; 1022 per v0 live evidence + source; degraded-refusal-unconsumed live-verified | **green** (full-service 1022 re-verify pending rig recovery) |
-| tollgate-captive-portal (pin) | rejects every V2-keyset token at its client-side keyset check (CU109 card), never submits | **RED — filed**: portal#82 / PRTA#247 / tmbg#952 (`DIV-2026-10-portal-v2-keyset`) |
+| tollgate-captive-portal @ main | decodes both KG formats + all incident shapes (probed through the real decoder, 2026-10-16); raw POST / wire pinned by regression tests | **green at main** — regression lock portal#83 |
+| tollgate-captive-portal @ deployed pin | rejects every V2-keyset token at its client-side keyset check (CU109 card), never submits | **RED — the incident**: portal#82 / PRTA#247 / tmbg#952 (`DIV-2026-10-portal-v2-keyset`). The deployed pin predates the main fixes (#38/#55/#61); refresh closes it |
 | Nutshell 0.21.0 (secondary) | decodes both formats (verify untested on spent v0 twins) | partially green — runner fills |
 
-**The pin is not claimed green until the portal row is green.** The
-portal divergence is the open incident this corpus exists to close;
-everything else is already at known-good.
+**The pin is not claimed green until the deployed portal pin is
+refreshed** to a main-era build (decoder fixes + portal#83's corpus
+regression lock). The code paths are green at portal main; what
+remains is release/deploy work, measured by this scoreboard.
 
 ## One-command re-verification (full-service leg)
 

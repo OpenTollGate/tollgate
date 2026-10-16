@@ -10,7 +10,10 @@
     "keyset_version": 2,
     "c_encoding": "hex (INVALID: C points hex-encoded where NUT-00 requires base64)",
     "proofs": 2,
-    "amounts": [2, 2],
+    "amounts": [
+      2,
+      2
+    ],
     "unit": "sat",
     "mint": "http://192.168.13.221:8383"
   },
@@ -20,11 +23,29 @@
         "cdk-cli@0.18.0": "unknown",
         "tollgate-module-basic-go@rc": "decoded-v3",
         "tollgate-captive-portal@pin": "unknown",
-        "nutshell@0.21.0": "decoded-v3"
+        "nutshell@0.21.0": "decoded-v3",
+        "tollgate-captive-portal@main": "decoded-v3"
       },
       "evidence": [
-        {"kind": "reported", "ref": "corpus v0: backend reaches a payment-processing failure (21023 payment-processing-failed), i.e. past JSON decode, at C-point parsing", "date": "2026-10-16"},
-        {"kind": "live", "target": "nutshell 0.21.0 `cashu decode`", "date": "2026-10-16", "observed": "JSON-level decode succeeds (C is still a string)", "by": "corpus v1 capture"}
+        {
+          "kind": "reported",
+          "ref": "corpus v0: backend reaches a payment-processing failure (21023 payment-processing-failed), i.e. past JSON decode, at C-point parsing",
+          "date": "2026-10-16"
+        },
+        {
+          "kind": "live",
+          "target": "nutshell 0.21.0 `cashu decode`",
+          "date": "2026-10-16",
+          "observed": "JSON-level decode succeeds (C is still a string)",
+          "by": "corpus v1 capture"
+        },
+        {
+          "kind": "live",
+          "target": "portal main @ c2ddba1 decoder via vitest (portal#83's vendored-corpus probe)",
+          "date": "2026-10-16",
+          "observed": "validateToken accepts the token (status 1, correct amount/unit)",
+          "by": "corpus v1 capture"
+        }
       ],
       "notes": "JSON-level decode succeeds: the C field is still a string. The failure is at C-point decoding (base64 of a compressed secp256k1 point), which the v0 report classifies as CU102. Consumers that 'decode' tokens as plain JSON will pass this stage and must still reject at verify."
     },
@@ -33,18 +54,50 @@
         "cdk-cli@0.18.1": "reject-c-encoding",
         "tollgate-module-basic-go@rc": "reject-c-encoding",
         "tollgate-captive-portal@pin": "unknown",
-        "nutshell@0.21.0": "reject-c-encoding"
+        "nutshell@0.21.0": "reject-c-encoding",
+        "tollgate-captive-portal@main": "ok"
       },
       "evidence": [
-        {"kind": "reported", "ref": "corpus v0: 21023 payment-processing-failed at the backend", "date": "2026-10-16"},
-        {"kind": "live", "target": "nutshell 0.21.0 wallet receive", "date": "2026-10-16", "observed": "ValueError: The public key could not be parsed or is invalid — rejected at C-point parse before any mint call", "by": "corpus v1 capture"},
-        {"kind": "live", "target": "cdk-cli 0.18.1 `decode-token`", "date": "2026-10-16", "observed": "immediate non-zero exit (fast reject, no hang)", "by": "corpus v1 capture"}
+        {
+          "kind": "reported",
+          "ref": "corpus v0: 21023 payment-processing-failed at the backend",
+          "date": "2026-10-16"
+        },
+        {
+          "kind": "live",
+          "target": "nutshell 0.21.0 wallet receive",
+          "date": "2026-10-16",
+          "observed": "ValueError: The public key could not be parsed or is invalid — rejected at C-point parse before any mint call",
+          "by": "corpus v1 capture"
+        },
+        {
+          "kind": "live",
+          "target": "cdk-cli 0.18.1 `decode-token`",
+          "date": "2026-10-16",
+          "observed": "immediate non-zero exit (fast reject, no hang)",
+          "by": "corpus v1 capture"
+        },
+        {
+          "kind": "live",
+          "target": "portal main @ c2ddba1 decoder via vitest (portal#83's vendored-corpus probe)",
+          "date": "2026-10-16",
+          "observed": "validateToken accepts (status 1); C-point verdict deferred to the backend by design — the merchant re-validates authoritatively on submit",
+          "by": "corpus v1 capture"
+        }
       ]
     },
     "checkstate": {
-      "verdicts": {"fakewallet@2026-10-16": "SPENT"},
+      "verdicts": {
+        "fakewallet@2026-10-16": "SPENT"
+      },
       "evidence": [
-        {"kind": "live", "target": "mint http://192.168.13.221:8383 POST /v1/checkstate", "date": "2026-10-16", "observed": "the two secrets hash to the same Y points as v3_v2_valid; state=SPENT", "by": "corpus v1 capture"}
+        {
+          "kind": "live",
+          "target": "mint http://192.168.13.221:8383 POST /v1/checkstate",
+          "date": "2026-10-16",
+          "observed": "the two secrets hash to the same Y points as v3_v2_valid; state=SPENT",
+          "by": "corpus v1 capture"
+        }
       ],
       "notes": "The fixture is a re-encoding of v3_v2_valid's proofs (same secrets), which were spent by the v0 verification run. Its checkstate verdict therefore tracks v3_v2_valid's, not its own (never-processed) history."
     },
@@ -54,7 +107,13 @@
           "when": "2026-10-16",
           "tollgate-module-basic-go@rc": "rejected-21023",
           "reject_code": "payment-processing-failed",
-          "evidence": [{"kind": "reported", "ref": "corpus v0 (PR #29) live verification against the rig", "date": "2026-10-16"}]
+          "evidence": [
+            {
+              "kind": "reported",
+              "ref": "corpus v0 (PR #29) live verification against the rig",
+              "date": "2026-10-16"
+            }
+          ]
         }
       ],
       "notes": "Never reaches the portal (the portal submits the raw string to the backend; the failure is server-side). Verdict class: undecodable-as-ecash — reject loudly, never silently."
@@ -63,5 +122,6 @@
   "provenance": {
     "minted_by": "cdk-cli 0.18.0, then each C (base64 point) replaced by its .hex() form and re-encoded (corpus v0, PR #29)",
     "regen": "decode the V3 token, replace each C with the hex encoding of the same point, re-encode"
-  }
+  },
+  "portal_pin_note": "The @pin verdict (CU109 rejection, never submits) is the deployed router pin measured by v0 and portal#82's capture; portal main's decode path was reworked (#38/#55/#61) and now accepts — regression lock portal#83, deployed-pin refresh pending."
 }

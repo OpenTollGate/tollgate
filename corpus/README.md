@@ -54,16 +54,18 @@ end-to-end:
 | checkstate | NUT-07 at the minting mint | `UNSPENT` `PENDING` `SPENT` |
 | spend | submit as payment to a TollGate | `accepted-1022` `rejected-21023:<code>` `refused-degraded-unconsumed` |
 
-Current verdict matrix (details + evidence in `lifecycle/*.json`):
+Current verdict matrix (details + evidence in `lifecycle/*.json`; portal
+verdicts now split `@pin` (deployed router pin — the incident) vs `@main`
+(probed through the real decoder 2026-10-16, regression lock portal#83)):
 
-| Fixture | cdk-cli 0.18.1 | nutshell 0.21.0 | tmbg backend (rc) | portal (pin) | mint checkstate |
+| Fixture | cdk-cli 0.18.1 | nutshell 0.21.0 | tmbg backend (rc) | portal @pin → @main | mint checkstate |
 |---|---|---|---|---|---|
-| `v4_v2_kg181` **(KG)** | minted + receive ✓ | unknown | decodes; 1022 per v0 + source; degraded-refusal-unconsumed live ✓ | **reject at verify (CU109)** | **UNSPENT** |
-| `v3_v2_kg181` **(KG)** | minted + receive ✓ | unknown | decodes; 1022 per v0 + source; degraded-refusal-unconsumed live ✓ | **reject at verify (CU109)** | **UNSPENT** |
-| `v3_v2_valid` (v0) | ok (receive ✓) | decoded | ok → 1022 (fresh) / `payment-error-token-spent` (as committed) | **reject at verify (CU109)** | SPENT |
-| `v4_v2_valid` (v0) | ok (receive ✓) | decoded | ok → 1022 | needs verification | SPENT |
-| `v3_v2_truncated_id` (v0) | **no-verdict-hang** | decoded | ok → 1022 (resolves 16-hex prefix to canonical id) | **reject at verify (CU109)** | SPENT |
-| `v3_v2_hex_c` (v0) | **reject at verify** | decoded / **reject at verify** | reject at verify → `payment-processing-failed` | unknown | SPENT |
+| `v4_v2_kg181` **(KG)** | minted + receive ✓ | unknown | decodes; 1022 per v0 + source; degraded-refusal-unconsumed live ✓ | reject (CU109) → **decoded-v4** | **UNSPENT** |
+| `v3_v2_kg181` **(KG)** | minted + receive ✓ | unknown | decodes; 1022 per v0 + source; degraded-refusal-unconsumed live ✓ | reject (CU109) → **decoded-v3** | **UNSPENT** |
+| `v3_v2_valid` (v0) | ok (receive ✓) | decoded | ok → 1022 (fresh) / `payment-error-token-spent` (as committed) | reject (CU109) → **ok** | SPENT |
+| `v4_v2_valid` (v0) | ok (receive ✓) | decoded | ok → 1022 | unknown → **decoded-v4** | SPENT |
+| `v3_v2_truncated_id` (v0) | **no-verdict-hang** | decoded | ok → 1022 (resolves 16-hex prefix to canonical id) | reject (CU109) → **ok** | SPENT |
+| `v3_v2_hex_c` (v0) | **reject at verify** | decoded / **reject at verify** | reject at verify → `payment-processing-failed` | unknown → **ok (defers C verdict to backend)** | SPENT |
 | `compat-era/*` (deferred) | see `compat-era/lifecycle/` | decoded / ok / receive ✓ | unknown — out of KG scope | unknown | UNSPENT |
 
 Key facts pinned by the lifecycle set:
@@ -163,8 +165,10 @@ walks `manifest.json`, and for each vector
 
 ## What's next
 
-- Close the portal gap: portal passes the KG set (the CU109 fix) →
-  KNOWN-GOOD goes green across all consumers.
+- Close the portal gap for real: portal **main** passes the KG set
+  (probed 2026-10-16; regression lock portal#83) — refresh the
+  **deployed pin** on the routers and KNOWN-GOOD goes green across
+  all consumers.
 - Re-verify the backend full-service leg (one-command recipe in
   KNOWN-GOOD.md) when the rig is back in full service.
 - Fill the remaining `unknown` verdicts (portal V4 decode, Nutshell
