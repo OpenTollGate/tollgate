@@ -13,7 +13,16 @@
         {"id": "01e73e75a0809604372487732ee917e8f881cc4c882ccd9fbac094fbfd3e3a42e6", "unit": "sat", "keyset_version": 2, "id_format": "66-hex with 01 prefix"}
       ]
     },
-    "minter": "cdk-cli 0.18.0 (CDK reference; Nutshell is the secondary reference)",
+    "local_v1_mint": {
+      "url": "http://127.0.0.1:8384",
+      "implementation": "cdk-mintd 0.18.1, fakewallet backend, keyset_version 'v1' (Version00, use_keyset_v2=false)",
+      "keysets": [
+        {"id": "0016f5fb5e5278f2", "unit": "sat", "keyset_version": 1, "id_format": "16-hex (V1-era)"}
+      ],
+      "determinism": "seeded with the all-zeros BIP39 test mnemonic (public test vector, not a secret); same config + mnemonic reproduces the keyset",
+      "config": {"listen": "127.0.0.1:8384", "payment_backend": "fakewallet", "onchain_backend": "none", "fee_percent": 0.0}
+    },
+    "minter": "cdk-cli 0.18.0 (CDK reference; Nutshell 0.21.0 secondary — the V1-era fixtures are Nutshell-minted against the local V1 mint)",
     "gateway": {
       "url": "http://192.168.13.1:2121",
       "implementation": "tollgate-module-basic-go, v0.6.0-rc series live rig",
@@ -69,16 +78,20 @@
 
   "index": {
     "tokens": [
-      {"path": "tokens/v3_v2_valid.cashu", "shape": "V3 token, V2 keyset, valid"},
-      {"path": "tokens/v4_v2_valid.cashu", "shape": "V4 token, V2 keyset, valid"},
-      {"path": "tokens/v3_v2_truncated_id.cashu", "shape": "V3 token, V2 keyset id truncated to 16 hex (PRTA#247 regression shape)"},
-      {"path": "tokens/v3_v2_hex_c.cashu", "shape": "V3 token, C points hex-encoded instead of base64 (CU102 class)"}
+      {"path": "tokens/v3_v2_valid.cashu", "shape": "V3 token, V2 keyset, valid (proofs SPENT)"},
+      {"path": "tokens/v4_v2_valid.cashu", "shape": "V4 token, V2 keyset, valid (proofs SPENT; token-level id is the 8-byte prefix)"},
+      {"path": "tokens/v3_v2_truncated_id.cashu", "shape": "V3 token, V2 keyset id truncated to 16 hex (PRTA#247 regression shape; proofs SPENT)"},
+      {"path": "tokens/v3_v2_hex_c.cashu", "shape": "V3 token, C points hex-encoded instead of base64 (CU102 class)"},
+      {"path": "tokens/v3_v1_valid.cashu", "shape": "V3 token, V1 keyset, valid (proofs UNSPENT; Nutshell-minted, dleq omitted)"},
+      {"path": "tokens/v4_v1_valid.cashu", "shape": "V4 token, V1 keyset, valid (proofs UNSPENT; Nutshell-minted)"}
     ],
     "lifecycle": [
       {"path": "lifecycle/v3_v2_valid.json"},
       {"path": "lifecycle/v4_v2_valid.json"},
       {"path": "lifecycle/v3_v2_truncated_id.json"},
-      {"path": "lifecycle/v3_v2_hex_c.json"}
+      {"path": "lifecycle/v3_v2_hex_c.json"},
+      {"path": "lifecycle/v3_v1_valid.json"},
+      {"path": "lifecycle/v4_v1_valid.json"}
     ],
     "http": [
       {"path": "http/http01-payment.json"},

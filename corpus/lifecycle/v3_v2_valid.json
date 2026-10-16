@@ -20,10 +20,12 @@
       "verdicts": {
         "cdk-cli@0.18.0": "decoded-v3",
         "tollgate-module-basic-go@rc": "decoded-v3",
-        "tollgate-captive-portal@pin": "decoded-v3"
+        "tollgate-captive-portal@pin": "decoded-v3",
+        "nutshell@0.21.0": "decoded-v3"
       },
       "evidence": [
-        {"kind": "reported", "ref": "corpus v0 (PR #29): minted by cdk-cli, backend reached 1022, portal rendered CU109 card (a post-decode keyset check)", "date": "2026-10-16"}
+        {"kind": "reported", "ref": "corpus v0 (PR #29): minted by cdk-cli, backend reached 1022, portal rendered CU109 card (a post-decode keyset check)", "date": "2026-10-16"},
+        {"kind": "live", "target": "nutshell 0.21.0 `cashu decode`", "date": "2026-10-16", "observed": "decodes", "by": "corpus v1 capture"}
       ],
       "notes": "Portal decode success is inferred from the CU109 card being reached; the v0 report does not decompose the portal pipeline into stages."
     },

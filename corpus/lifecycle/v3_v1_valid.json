@@ -1,0 +1,66 @@
+{
+  "id": "lifecycle/v3_v1_valid",
+  "fixture": "../tokens/v3_v1_valid.cashu",
+  "shape": {
+    "token_version": 3,
+    "prefix": "cashuA",
+    "encoding": "JSON in base64url",
+    "keyset_id_format": "v1-16hex",
+    "keyset_id": "0016f5fb5e5278f2",
+    "keyset_version": 1,
+    "c_encoding": "base64",
+    "dleq": "null (omitted — Nutshell does not request NUT-12 DLEQ proofs; the cdk-cli-minted V2 fixtures carry dleq, so dleq presence is wallet-dependent and MUST be optional for consumers)",
+    "proofs": 2,
+    "amounts": [2, 2],
+    "unit": "sat",
+    "mint": "http://127.0.0.1:8384"
+  },
+  "stages": {
+    "decode": {
+      "verdicts": {
+        "nutshell@0.21.0": "decoded-v3",
+        "tollgate-module-basic-go@rc": "unknown",
+        "tollgate-captive-portal@pin": "unknown",
+        "cdk-cli@0.18.0": "unknown"
+      },
+      "evidence": [
+        {"kind": "live", "target": "nutshell 0.21.0 `cashu decode`", "date": "2026-10-16", "observed": "decodes to short-form JSON (t/i/p/a/s/c/d, dleq null)", "by": "corpus v1 capture"}
+      ]
+    },
+    "verify": {
+      "verdicts": {
+        "nutshell@0.21.0": "ok",
+        "tollgate-module-basic-go@rc": "unknown",
+        "tollgate-captive-portal@pin": "unknown",
+        "cdk-cli@0.18.0": "unknown"
+      },
+      "evidence": [
+        {"kind": "live", "target": "nutshell 0.21.0 wallet receive", "date": "2026-10-16", "observed": "a sibling token from the same keyset (same shape) received successfully — keyset lookup, C points and amounts all validated", "by": "corpus v1 capture"}
+      ]
+    },
+    "checkstate": {
+      "verdicts": {"local-v1-mint@2026-10-16": "UNSPENT"},
+      "evidence": [
+        {"kind": "live", "target": "mint http://127.0.0.1:8384 POST /v1/checkstate", "date": "2026-10-16", "observed": "both proofs (amounts 2,2) state=UNSPENT — the fixture ships unspent for runners", "by": "corpus v1 capture"}
+      ]
+    },
+    "spend": {
+      "verdicts": [
+        {
+          "when": "2026-10-16, wallet-level",
+          "nutshell@0.21.0": "accepted",
+          "tollgate-module-basic-go@rc": "unknown",
+          "evidence": [
+            {"kind": "live", "target": "nutshell wallet-home2 receive", "date": "2026-10-16", "observed": "a sibling token from the same keyset (same shape) received: 4 sat", "by": "corpus v1 capture"}
+          ],
+          "notes": "TollGate-spend untestable on the rig: the local V1 mint is not in its accepted-mint list. Compat-era TollGate spend is a runner task per the issue's layering — V1 comes after the V2 state is pinned."
+        }
+      ]
+    }
+  },
+  "provenance": {
+    "minted_by": "nutshell 0.21.0 (secondary reference) against the local deterministic V1 mint",
+    "mint": "cdk-mintd 0.18.1, fakewallet backend, use_keyset_v2=false (keyset_version 'v1'/Version00), listen 127.0.0.1:8384, work-dir db seeded with the all-zeros BIP39 test mnemonic (public test vector, not a secret)",
+    "regen": "stand up the same mint config (see manifest reference_environment.local_v1_mint), then: cashu -h http://127.0.0.1:8384 invoice 11; cashu -h http://127.0.0.1:8384 send 4 --legacy"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "id": "lifecycle/v4_v1_valid",
+  "fixture": "../tokens/v4_v1_valid.cashu",
+  "shape": {
+    "token_version": 4,
+    "prefix": "cashuB",
+    "encoding": "CBOR in base64url (NUT-00 V4: top-level {t:[{i,p}], m: mint_url, u: unit})",
+    "keyset_id_format": "v1-16hex (8 bytes at the token level; for V1 keysets this is the FULL id)",
+    "keyset_id": "0016f5fb5e5278f2",
+    "keyset_version": 1,
+    "c_encoding": "base64",
+    "proofs": 2,
+    "amounts": [2, 2],
+    "unit": "sat",
+    "mint": "http://127.0.0.1:8384"
+  },
+  "stages": {
+    "decode": {
+      "verdicts": {
+        "nutshell@0.21.0": "decoded-v4",
+        "tollgate-module-basic-go@rc": "unknown",
+        "tollgate-captive-portal@pin": "unknown",
+        "cdk-cli@0.18.0": "unknown"
+      },
+      "evidence": [
+        {"kind": "live", "target": "nutshell 0.21.0 `cashu decode`", "date": "2026-10-16", "observed": "decodes the V4/CBOR token", "by": "corpus v1 capture"}
+      ]
+    },
+    "verify": {
+      "verdicts": {
+        "nutshell@0.21.0": "ok",
+        "tollgate-module-basic-go@rc": "unknown",
+        "tollgate-captive-portal@pin": "unknown",
+        "cdk-cli@0.18.0": "unknown"
+      },
+      "evidence": [
+        {"kind": "live", "target": "nutshell 0.21.0 wallet receive", "date": "2026-10-16", "observed": "a sibling V4 token from the same keyset received successfully", "by": "corpus v1 capture"}
+      ]
+    },
+    "checkstate": {
+      "verdicts": {"local-v1-mint@2026-10-16": "UNSPENT"},
+      "evidence": [
+        {"kind": "live", "target": "mint http://127.0.0.1:8384 POST /v1/checkstate", "date": "2026-10-16", "observed": "both proofs state=UNSPENT — the fixture ships unspent for runners", "by": "corpus v1 capture"}
+      ]
+    },
+    "spend": {
+      "verdicts": [
+        {
+          "when": "2026-10-16, wallet-level",
+          "nutshell@0.21.0": "accepted",
+          "tollgate-module-basic-go@rc": "unknown",
+          "evidence": [
+            {"kind": "live", "target": "nutshell wallet-home2 receive", "date": "2026-10-16", "observed": "a sibling V4 token from the same keyset received: balance +2 sat", "by": "corpus v1 capture"}
+          ],
+          "notes": "TollGate-spend untestable on the rig: the local V1 mint is not in its accepted-mint list."
+        }
+      ]
+    }
+  },
+  "provenance": {
+    "minted_by": "nutshell 0.21.0 (secondary reference) against the local deterministic V1 mint",
+    "mint": "same as lifecycle/v3_v1_valid.json",
+    "regen": "cashu -h http://127.0.0.1:8384 invoice 11; cashu -h http://127.0.0.1:8384 send 4 (V4 is Nutshell's default)"
+  }
+}

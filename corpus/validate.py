@@ -123,7 +123,7 @@ def main() -> int:
         for item in _spend_verdict_list(spend):
             verdict = item.get("tollgate-module-basic-go@rc")
             if verdict is not None:
-                check(verdict in spend_verdicts, f"{vid}/spend: illegal spend verdict {verdict!r}")
+                check(verdict in spend_verdicts or verdict == "unknown", f"{vid}/spend: illegal spend verdict {verdict!r}")
             code = item.get("reject_code")
             if code is not None:
                 check(code in spend_reject_codes, f"{vid}/spend: unknown reject code {code!r}")

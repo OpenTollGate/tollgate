@@ -4,12 +4,14 @@
   "shape": {
     "token_version": 4,
     "prefix": "cashuB",
-    "encoding": "CBOR in base64url (NUT-00 V4)",
-    "keyset_id_format": "v2-66hex",
-    "keyset_id": "01e73e75a0809604372487732ee917e8f881cc4c882ccd9fbac094fbfd3e3a42e6",
+    "encoding": "CBOR in base64url (NUT-00 V4: top-level {t:[{i,p}], m: mint_url, u: unit})",
+    "keyset_id_format": "8 bytes at the token level — the FIRST 8 BYTES of the canonical 33-byte V2 id (see notes: CDK V4 serialization writes the id prefix)",
+    "keyset_id_in_token": "01e73e75a0809604",
+    "canonical_keyset_id": "01e73e75a0809604372487732ee917e8f881cc4c882ccd9fbac094fbfd3e3a42e6",
     "keyset_version": 2,
     "c_encoding": "base64",
-    "proofs": "unknown (pending V4 decode tooling)",
+    "proofs": 2,
+    "amounts": [2, 2],
     "unit": "sat",
     "mint": "http://192.168.13.221:8383"
   },
@@ -18,11 +20,12 @@
       "verdicts": {
         "cdk-cli@0.18.0": "decoded-v4",
         "tollgate-module-basic-go@rc": "decoded-v4",
-        "tollgate-captive-portal@pin": "unknown"
+        "tollgate-captive-portal@pin": "unknown",
+        "nutshell@0.21.0": "decoded-v4"
       },
       "evidence": [
         {"kind": "reported", "ref": "corpus v0 (PR #29): minted by cdk-cli; backend 1022 implies decode succeeded", "date": "2026-10-16"},
-        {"kind": "reported", "ref": "corpus v0: portal verdict 'needs verification'", "date": "2026-10-16"}
+        {"kind": "live", "target": "nutshell 0.21.0 `cashu decode`", "date": "2026-10-16", "observed": "decodes the V4/CBOR token", "by": "corpus v1 capture"}
       ],
       "notes": "Portal V4 decode verdict is the highest-value unknown in the corpus: the portal defect class (CU109) is keyset-side, but V4/CBOR decode is a separate failure surface."
     },
@@ -30,16 +33,20 @@
       "verdicts": {
         "cdk-cli@0.18.0": "ok",
         "tollgate-module-basic-go@rc": "ok",
-        "tollgate-captive-portal@pin": "unknown"
+        "tollgate-captive-portal@pin": "unknown",
+        "nutshell@0.21.0": "unknown"
       },
       "evidence": [
         {"kind": "reported", "ref": "corpus v0: backend 1022 on this token", "date": "2026-10-16"}
-      ]
+      ],
+      "notes": "nutshell verify not testable on this fixture: its proofs are spent (a receive would fail at checkstate, not at verify). Decode-only tested."
     },
     "checkstate": {
-      "verdicts": {"fakewallet@2026-10-16": "unknown"},
-      "evidence": [],
-      "notes": "Pending V4 (CBOR) proof extraction in the corpus toolchain; expected SPENT if the v0 verification consumed it, UNSPENT otherwise. Runner note: derive secrets from the V4 token and POST /v1/checkstate."
+      "verdicts": {"fakewallet@2026-10-16": "SPENT"},
+      "evidence": [
+        {"kind": "live", "target": "mint http://192.168.13.221:8383 POST /v1/checkstate (V4 CBOR proof extraction via cbor2)", "date": "2026-10-16", "observed": "both proofs (amounts 2,2) state=SPENT", "by": "corpus v1 capture"}
+      ],
+      "notes": "Consumed by the v0 verification run."
     },
     "spend": {
       "verdicts": [
@@ -50,6 +57,11 @@
         }
       ]
     }
+  },
+  "keyset_id_finding": {
+    "summary": "CDK 0.18's V4 token serialization writes the token-level keyset id as the 8-byte prefix of the canonical id (01e73e75a0809604), not the full 33 bytes.",
+    "evidence": [{"kind": "live", "target": "CBOR decode of the committed fixture", "date": "2026-10-16", "observed": "t[0].i = bytes 01e73e75a0809604 (8 bytes) while the mint's keyset id is 01e73e75...e6 (33 bytes)", "by": "corpus v1 capture"}],
+    "implications": "Every V4 consumer must resolve the 8-byte prefix against the mint's keyset list before swapping — which is exactly the resolution behavior the backend exhibited on the v3 truncated-id fixture. The 'v2-short' truncation a test minter adopted (PRTA#247) is this native V4 spelling transplanted into V3. Minting NEW V3 tokens with truncated ids remains forbidden; RESOLVING a short id to the canonical keyset is required for V4."
   },
   "provenance": {
     "minted_by": "cdk-cli 0.18.0 against the fakewallet (corpus v0, PR #29)",

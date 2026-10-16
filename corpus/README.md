@@ -41,26 +41,34 @@ end-to-end:
 
 Current verdict matrix (details + evidence in `lifecycle/*.json`):
 
-| Fixture | cdk-cli | tmbg backend (rc) | portal (pin) | mint checkstate |
+| Fixture | nutshell 0.21.0 | tmbg backend (rc) | portal (pin) | mint checkstate |
 |---|---|---|---|---|
-| `v3_v2_valid` | ok | ok → 1022 (fresh) / `payment-error-token-spent` (as committed) | **reject at verify (CU109)** | SPENT |
-| `v4_v2_valid` | ok | ok → 1022 | needs verification | unknown (V4 tooling pending) |
-| `v3_v2_truncated_id` | unknown | ok → 1022 (resolves 16-hex prefix to canonical id) | **reject at verify (CU109)** | SPENT |
-| `v3_v2_hex_c` | unknown | reject at verify → `payment-processing-failed` | unknown | SPENT (shares secrets with `v3_v2_valid`) |
+| `v3_v2_valid` | decoded | ok → 1022 (fresh) / `payment-error-token-spent` (as committed) | **reject at verify (CU109)** | SPENT |
+| `v4_v2_valid` | decoded | ok → 1022 | needs verification | SPENT |
+| `v3_v2_truncated_id` | decoded | ok → 1022 (resolves 16-hex prefix to canonical id) | **reject at verify (CU109)** | SPENT |
+| `v3_v2_hex_c` | decoded / **reject at verify** | reject at verify → `payment-processing-failed` | unknown | SPENT (shares secrets with `v3_v2_valid`) |
+| `v3_v1_valid` | decoded / ok / receive ✓ | unknown (compat era) | unknown | **UNSPENT** |
+| `v4_v1_valid` | decoded / ok / receive ✓ | unknown (compat era) | unknown | **UNSPENT** |
 
 Key facts pinned by the lifecycle set:
 
-1. The committed fixtures' proofs are **SPENT** at the fakewallet
+1. The committed V2-era fixtures' proofs are **SPENT** at the fakewallet
    (verified 2026-10-16 via NUT-07) — they are double-spend and
    decode/verify vectors, not fresh-payment vectors. Regeneration
-   recipes are in each lifecycle file.
-2. The backend accepted the truncated-id token AND the mint recorded
-   the spend — so the swap request carried the canonical id; the
-   backend resolves the 16-hex prefix (mechanism inferred, source
-   confirmation pending).
+   recipes are in each lifecycle file. The V1-era fixtures ship
+   **UNSPENT** (minted on a local deterministic V1 mint, see manifest).
+2. **CDK's V4 serialization writes the token-level keyset id as an
+   8-byte prefix** of the canonical V2 id (`v4_v2_valid` carries
+   `01e73e75a0809604` while the mint's keyset is the 33-byte id) — so
+   every V4 consumer must resolve short ids against the mint's keyset
+   list. The backend's acceptance of the truncated-id V3 fixture is
+   that same resolution; the test minter's "v2-short" truncation
+   (PRTA#247) was this native V4 spelling transplanted into V3.
 3. `refused-degraded-unconsumed` is asserted with a checkstate
    post-condition: a degraded-mode refusal must leave every proof
    UNSPENT (tollgate#27's fund-safety invariant, made checkable).
+4. DLEQ presence is wallet-dependent (cdk-cli-minted proofs carry
+   dleq, Nutshell's omit it) — consumers must treat it as optional.
 
 ## HTTP endpoint vectors (v1)
 
@@ -131,14 +139,16 @@ walks `manifest.json`, and for each vector
 
 ## v1 scope and what's next
 
-- v1 covers the **V2-keyset era** (the live default-mint reality) plus
-  the full HTTP/event surface above. Token fixtures are minted by
-  **cdk-cli 0.18.0** (CDK reference; Nutshell secondary), refreshed on
-  every NUT-00/NUT-02 change.
-- V1-keyset (compat-era) fixtures follow once a deterministic V1 mint
-  is in the fixture toolchain (v0's open item, unchanged).
-- Fill the `unknown` verdicts (portal V4 decode, cdk-cli on the
-  deliberately-invalid shapes) as the runner lane comes up.
+- v1 covers **both keyset eras**: the V2-keyset era (the live
+  default-mint reality, cdk-cli-minted) and — new in v1 — V1-keyset
+  (compat-era) fixtures minted on a local deterministic V1 mint
+  (cdk-mintd 0.18.1, `use_keyset_v2=false`, fakewallet rails; config
+  in the manifest). Token fixtures are refreshed on every
+  NUT-00/NUT-02 change; cdk-cli is the primary reference minter,
+  Nutshell the secondary.
+- Fill the remaining `unknown` verdicts (portal V4 decode, tmbg on
+  V1-era tokens, cdk-cli on the deliberately-invalid shapes) as the
+  runner lane comes up.
 - Unresolved spec gaps this corpus now documents as issues-to-file:
   POST / Content-Type contract (415 gate), degraded-mode /ln-invoice
   answering a bare 400 without a code, and the uncovered
