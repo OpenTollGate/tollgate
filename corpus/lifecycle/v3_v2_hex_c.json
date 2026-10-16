@@ -30,14 +30,15 @@
     },
     "verify": {
       "verdicts": {
-        "cdk-cli@0.18.0": "unknown",
+        "cdk-cli@0.18.1": "reject-c-encoding",
         "tollgate-module-basic-go@rc": "reject-c-encoding",
         "tollgate-captive-portal@pin": "unknown",
         "nutshell@0.21.0": "reject-c-encoding"
       },
       "evidence": [
         {"kind": "reported", "ref": "corpus v0: 21023 payment-processing-failed at the backend", "date": "2026-10-16"},
-        {"kind": "live", "target": "nutshell 0.21.0 wallet receive", "date": "2026-10-16", "observed": "ValueError: The public key could not be parsed or is invalid — rejected at C-point parse before any mint call", "by": "corpus v1 capture"}
+        {"kind": "live", "target": "nutshell 0.21.0 wallet receive", "date": "2026-10-16", "observed": "ValueError: The public key could not be parsed or is invalid — rejected at C-point parse before any mint call", "by": "corpus v1 capture"},
+        {"kind": "live", "target": "cdk-cli 0.18.1 `decode-token`", "date": "2026-10-16", "observed": "immediate non-zero exit (fast reject, no hang)", "by": "corpus v1 capture"}
       ]
     },
     "checkstate": {

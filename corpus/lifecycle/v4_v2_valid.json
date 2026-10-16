@@ -31,13 +31,14 @@
     },
     "verify": {
       "verdicts": {
-        "cdk-cli@0.18.0": "ok",
+        "cdk-cli@0.18.1": "ok",
         "tollgate-module-basic-go@rc": "ok",
         "tollgate-captive-portal@pin": "unknown",
         "nutshell@0.21.0": "unknown"
       },
       "evidence": [
-        {"kind": "reported", "ref": "corpus v0: backend 1022 on this token", "date": "2026-10-16"}
+        {"kind": "reported", "ref": "corpus v0: backend 1022 on this token", "date": "2026-10-16"},
+        {"kind": "live", "target": "cdk-cli 0.18.1 wallet receive (--allow-untrusted)", "date": "2026-10-16", "observed": "a freshly minted sibling V4/V2 token received successfully (2 sat) — including resolution of the token's 8-byte keyset id prefix", "by": "corpus v1 capture"}
       ],
       "notes": "nutshell verify not testable on this fixture: its proofs are spent (a receive would fail at checkstate, not at verify). Decode-only tested."
     },

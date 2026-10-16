@@ -21,11 +21,13 @@
         "nutshell@0.21.0": "decoded-v3",
         "tollgate-module-basic-go@rc": "unknown",
         "tollgate-captive-portal@pin": "unknown",
-        "cdk-cli@0.18.0": "unknown"
+        "cdk-cli@0.18.1": "no-verdict-hang"
       },
       "evidence": [
-        {"kind": "live", "target": "nutshell 0.21.0 `cashu decode`", "date": "2026-10-16", "observed": "decodes to short-form JSON (t/i/p/a/s/c/d, dleq null)", "by": "corpus v1 capture"}
-      ]
+        {"kind": "live", "target": "nutshell 0.21.0 `cashu decode`", "date": "2026-10-16", "observed": "decodes to short-form JSON (t/i/p/a/s/c/d, dleq null)", "by": "corpus v1 capture"},
+        {"kind": "live", "target": "cdk-cli 0.18.1 `decode-token`", "date": "2026-10-16", "observed": "silent deadlock (no output, no I/O, killed at 10s) on this Nutshell-minted V3/V1 token, while cdk-cli's own V3 token from the SAME mint and keyset decodes instantly", "by": "corpus v1 capture"}
+      ],
+      "notes": "The cdk-cli hang isolates to the Nutshell encoding, not the mint or keyset: same mint, same keyset id, cdk-minted spelling decodes (dleq presence ruled out by mutation test). Candidate upstream bug against cdk-cli; a hang is not a verdict, so runners must time out and report no-verdict-hang."
     },
     "verify": {
       "verdicts": {

@@ -20,11 +20,13 @@
         "nutshell@0.21.0": "decoded-v4",
         "tollgate-module-basic-go@rc": "unknown",
         "tollgate-captive-portal@pin": "unknown",
-        "cdk-cli@0.18.0": "unknown"
+        "cdk-cli@0.18.1": "no-verdict-hang"
       },
       "evidence": [
-        {"kind": "live", "target": "nutshell 0.21.0 `cashu decode`", "date": "2026-10-16", "observed": "decodes the V4/CBOR token", "by": "corpus v1 capture"}
-      ]
+        {"kind": "live", "target": "nutshell 0.21.0 `cashu decode`", "date": "2026-10-16", "observed": "decodes the V4/CBOR token", "by": "corpus v1 capture"},
+        {"kind": "live", "target": "cdk-cli 0.18.1 `decode-token`", "date": "2026-10-16", "observed": "silent deadlock (killed at 10s) on this Nutshell-minted V4/V1 token, while cdk-cli's own V4 token from the fakewallet decodes instantly", "by": "corpus v1 capture"}
+      ],
+      "notes": "Same hang class as lifecycle/v3_v1_valid: Nutshell-minted era-V1 tokens deadlock cdk-cli decode-token. Runners must time out and report no-verdict-hang."
     },
     "verify": {
       "verdicts": {

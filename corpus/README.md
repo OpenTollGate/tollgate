@@ -41,22 +41,24 @@ end-to-end:
 
 Current verdict matrix (details + evidence in `lifecycle/*.json`):
 
-| Fixture | nutshell 0.21.0 | tmbg backend (rc) | portal (pin) | mint checkstate |
-|---|---|---|---|---|
-| `v3_v2_valid` | decoded | ok → 1022 (fresh) / `payment-error-token-spent` (as committed) | **reject at verify (CU109)** | SPENT |
-| `v4_v2_valid` | decoded | ok → 1022 | needs verification | SPENT |
-| `v3_v2_truncated_id` | decoded | ok → 1022 (resolves 16-hex prefix to canonical id) | **reject at verify (CU109)** | SPENT |
-| `v3_v2_hex_c` | decoded / **reject at verify** | reject at verify → `payment-processing-failed` | unknown | SPENT (shares secrets with `v3_v2_valid`) |
-| `v3_v1_valid` | decoded / ok / receive ✓ | unknown (compat era) | unknown | **UNSPENT** |
-| `v4_v1_valid` | decoded / ok / receive ✓ | unknown (compat era) | unknown | **UNSPENT** |
+| Fixture | cdk-cli 0.18.1 | nutshell 0.21.0 | tmbg backend (rc) | portal (pin) | mint checkstate |
+|---|---|---|---|---|---|
+| `v3_v2_valid` | ok (receive ✓) | decoded | ok → 1022 (fresh) / `payment-error-token-spent` (as committed) | **reject at verify (CU109)** | SPENT |
+| `v4_v2_valid` | ok (receive ✓) | decoded | ok → 1022 | needs verification | SPENT |
+| `v3_v2_truncated_id` | **no-verdict-hang** | decoded | ok → 1022 (resolves 16-hex prefix to canonical id) | **reject at verify (CU109)** | SPENT |
+| `v3_v2_hex_c` | **reject at verify** | decoded / **reject at verify** | reject at verify → `payment-processing-failed` | unknown | SPENT (shares secrets with `v3_v2_valid`) |
+| `v3_v1_valid` | **no-verdict-hang** | decoded / ok / receive ✓ | unknown (compat era) | unknown | **UNSPENT** |
+| `v4_v1_valid` | **no-verdict-hang** | decoded / ok / receive ✓ | unknown (compat era) | unknown | **UNSPENT** |
 
 Key facts pinned by the lifecycle set:
 
 1. The committed V2-era fixtures' proofs are **SPENT** at the fakewallet
    (verified 2026-10-16 via NUT-07) — they are double-spend and
    decode/verify vectors, not fresh-payment vectors. Regeneration
-   recipes are in each lifecycle file. The V1-era fixtures ship
-   **UNSPENT** (minted on a local deterministic V1 mint, see manifest).
+   recipes are in each lifecycle file, and the v1 capture re-executed
+   the cdk-cli recipes end-to-end (mint 11 → send V3/V4 → receive)
+   to prove them. The V1-era fixtures ship **UNSPENT** (minted on a
+   local deterministic V1 mint, see manifest).
 2. **CDK's V4 serialization writes the token-level keyset id as an
    8-byte prefix** of the canonical V2 id (`v4_v2_valid` carries
    `01e73e75a0809604` while the mint's keyset is the 33-byte id) — so
@@ -64,10 +66,18 @@ Key facts pinned by the lifecycle set:
    list. The backend's acceptance of the truncated-id V3 fixture is
    that same resolution; the test minter's "v2-short" truncation
    (PRTA#247) was this native V4 spelling transplanted into V3.
-3. `refused-degraded-unconsumed` is asserted with a checkstate
+3. **cdk-cli 0.18.1 decode-token deadlocks** (silent, no I/O) on the
+   truncated-id shape and on Nutshell-minted V1-era tokens — while
+   decoding its own tokens from the same mints and keysets instantly
+   (dleq presence ruled out by mutation test). A hang is not a
+   verdict: the vocabulary has `no-verdict-hang`, runners must apply
+   timeouts, and the shape is a candidate upstream bug against cdk.
+   One token shape, four consumer behaviors (accept / reject /
+   decode / hang) — the divergence the corpus exists to expose.
+4. `refused-degraded-unconsumed` is asserted with a checkstate
    post-condition: a degraded-mode refusal must leave every proof
    UNSPENT (tollgate#27's fund-safety invariant, made checkable).
-4. DLEQ presence is wallet-dependent (cdk-cli-minted proofs carry
+5. DLEQ presence is wallet-dependent (cdk-cli-minted proofs carry
    dleq, Nutshell's omit it) — consumers must treat it as optional.
 
 ## HTTP endpoint vectors (v1)

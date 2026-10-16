@@ -31,13 +31,14 @@
     },
     "verify": {
       "verdicts": {
-        "cdk-cli@0.18.0": "ok",
+        "cdk-cli@0.18.1": "ok",
         "tollgate-module-basic-go@rc": "ok",
         "tollgate-captive-portal@pin": "reject-keyset-format"
       },
       "evidence": [
         {"kind": "reported", "ref": "tollgate-captive-portal-site#82: client-side keyset comparison cannot match any V2 id (CU109 'outdated mint key' card)", "date": "2026-10-16"},
-        {"kind": "reported", "ref": "corpus v0: backend 1022 on this token implies offline validation passed", "date": "2026-10-16"}
+        {"kind": "reported", "ref": "corpus v0: backend 1022 on this token implies offline validation passed", "date": "2026-10-16"},
+        {"kind": "live", "target": "cdk-cli 0.18.1 wallet receive (--allow-untrusted)", "date": "2026-10-16", "observed": "a freshly minted sibling V3/V2 token received successfully (4 sat) — keyset resolution, C points and amounts validated end-to-end", "by": "corpus v1 capture"}
       ],
       "divergence": "DIV-2026-10-portal-v2-keyset"
     },
