@@ -1,0 +1,329 @@
+{
+  "_comment": "IOI payout register. Evidence window 2025-10-17..2026-10-17 (UTC), OpenTollGate GitHub org, human payees only. Commits/lines are GitHub contributor statistics (stats/contributors weekly buckets) restricted to the window; raw API dump is gh-contributor-stats.json in this directory.",
+  "window": {
+    "start": "2025-10-17",
+    "end_exclusive": "2026-10-17"
+  },
+  "budget": {
+    "usd": 25000,
+    "source": "repos/opensats-lts-application/opensats-lts-application-tollgate.md:194 and -questions.md:316 \u2014 'Institute of Open Infrastructure (Swiss association, established Q4 2025): received a $25,000 BTC donation intended for contributor rewards/zaps.'",
+    "status": "UNCONFIRMED \u2014 source line still carries a 'TBD: confirm details' marker; confirm the treasury balance before executing this schedule.",
+    "btc_usd_pin": 81180,
+    "btc_usd_pin_source": "mempool.space /api/v1/prices fetched 2026-10-17T17:25Z"
+  },
+  "tiers": {
+    "A": {
+      "weight": 5,
+      "label": "Core maintainer \u2014 owns a shipped subsystem, multiple merged workstreams"
+    },
+    "B": {
+      "weight": 3,
+      "label": "Major subsystem contribution \u2014 sustained work on one component"
+    },
+    "C": {
+      "weight": 2,
+      "label": "Regular contributor \u2014 repeated bounded contributions"
+    },
+    "D": {
+      "weight": 1,
+      "label": "Bounded contribution \u2014 single patch, docs, review"
+    }
+  },
+  "effort_bands": {
+    "3": {
+      "label": "Sustained (>=100 in-window commits in the workstream)",
+      "factor": 3
+    },
+    "2": {
+      "label": "Substantial (20-99 in-window commits in the workstream)",
+      "factor": 2
+    },
+    "1": {
+      "label": "Bounded (<20 in-window commits in the workstream)",
+      "factor": 1
+    }
+  },
+  "payees": [
+    {
+      "id": "amperstrand",
+      "display": "Amperstrand",
+      "handles": [
+        "Amperstrand",
+        "amperstand"
+      ],
+      "payout_status": "needs payout address (open question, schedule section 4)",
+      "contributions": [
+        {
+          "scope": "core OpenWrt Go router module",
+          "repo": "tollgate-module-basic-go",
+          "commits": 179,
+          "added": 71255,
+          "deleted": 6691,
+          "tier": "A",
+          "effort": 3
+        },
+        {
+          "scope": "hardware/firmware test matrix",
+          "repo": "physical-router-test-automation",
+          "commits": 108,
+          "added": 19937,
+          "deleted": 7227,
+          "tier": "A",
+          "effort": 3
+        },
+        {
+          "scope": "protocol/spec text and diagrams",
+          "repo": "tollgate",
+          "commits": 11,
+          "added": 4711,
+          "deleted": 780,
+          "tier": "B",
+          "effort": 1
+        },
+        {
+          "scope": "wallet/mint compatibility patch set",
+          "repo": "gonuts-tollgate",
+          "commits": 20,
+          "added": 3055,
+          "deleted": 493,
+          "tier": "B",
+          "effort": 2
+        },
+        {
+          "scope": "captive portal frontend",
+          "repo": "tollgate-captive-portal-site",
+          "commits": 7,
+          "added": 3612,
+          "deleted": 46,
+          "tier": "C",
+          "effort": 1
+        },
+        {
+          "scope": "org workflows, installer, rust impl (misc)",
+          "repo": "multiple",
+          "commits": 3,
+          "added": 80,
+          "deleted": 1,
+          "tier": "D",
+          "effort": 1
+        }
+      ]
+    },
+    {
+      "id": "origami74",
+      "display": "Arjen (Origami74)",
+      "handles": [
+        "Origami74",
+        "Arjen",
+        "origami74@gmail.com"
+      ],
+      "payout_status": "needs payout address (open question, schedule section 4)",
+      "contributions": [
+        {
+          "scope": "Rust TollGate implementation (subsystem lead)",
+          "repo": "tollgate-rs",
+          "commits": 145,
+          "added": 91661,
+          "deleted": 35437,
+          "tier": "A",
+          "effort": 3
+        },
+        {
+          "scope": "integration landings + large reverts",
+          "repo": "tollgate-module-basic-go",
+          "commits": 21,
+          "added": 24224,
+          "deleted": 21322,
+          "tier": "B",
+          "effort": 2
+        },
+        {
+          "scope": "release browser",
+          "repo": "tollgate-release-explorer-site",
+          "commits": 4,
+          "added": 1042,
+          "deleted": 477,
+          "tier": "C",
+          "effort": 1
+        },
+        {
+          "scope": "spec + knowledgebase docs",
+          "repo": "tollgate / tollgate-knowledgebase",
+          "commits": 4,
+          "added": 969,
+          "deleted": 4072,
+          "tier": "D",
+          "effort": 1
+        }
+      ]
+    },
+    {
+      "id": "felix",
+      "display": "Felix (c03rad0r / felixfelix-bot)",
+      "handles": [
+        "c03rad0r",
+        "felixfelix-bot",
+        "Felix",
+        "Your Name"
+      ],
+      "payout_status": "excluded in scenario A (OpenSats grantee, conflict of interest); included in scenario B",
+      "contributions": [
+        {
+          "scope": "desktop installer app",
+          "repo": "tollgate-installer",
+          "commits": 136,
+          "added": 62555,
+          "deleted": 38346,
+          "tier": "A",
+          "effort": 3
+        },
+        {
+          "scope": "core module work",
+          "repo": "tollgate-module-basic-go",
+          "commits": 157,
+          "added": 91339,
+          "deleted": 6718,
+          "tier": "A",
+          "effort": 3
+        },
+        {
+          "scope": "CI + runner plumbing",
+          "repo": "physical-router-test-automation",
+          "commits": 86,
+          "added": 31967,
+          "deleted": 2612,
+          "tier": "A",
+          "effort": 2
+        },
+        {
+          "scope": "captive portal frontend",
+          "repo": "tollgate-captive-portal-site",
+          "commits": 31,
+          "added": 16727,
+          "deleted": 912,
+          "tier": "B",
+          "effort": 2
+        },
+        {
+          "scope": "android/esp32/fips-exit nodes and e2e",
+          "repo": "multiple",
+          "commits": 45,
+          "added": 23370,
+          "deleted": 6980,
+          "tier": "B",
+          "effort": 2
+        },
+        {
+          "scope": "nostr infra tooling",
+          "repo": "tollgate-infrastructure-kit",
+          "commits": 7,
+          "added": 2614,
+          "deleted": 40,
+          "tier": "C",
+          "effort": 1
+        }
+      ]
+    },
+    {
+      "id": "alexxie16",
+      "display": "Alex Xie (alexxie16)",
+      "handles": [
+        "alexxie16"
+      ],
+      "payout_status": "needs payout address + confirmation of contribution intent (open question, schedule section 4)",
+      "contributions": [
+        {
+          "scope": "feature patches",
+          "repo": "tollgate-module-basic-go / tollgate-captive-portal-site",
+          "commits": 5,
+          "added": 3899,
+          "deleted": 328,
+          "tier": "C",
+          "effort": 1
+        }
+      ]
+    },
+    {
+      "id": "mvanhorn",
+      "display": "mvanhorn",
+      "handles": [
+        "mvanhorn"
+      ],
+      "payout_status": "human identity unverified; hold pending confirmation (open question, schedule section 4)",
+      "contributions": [
+        {
+          "scope": "one-line fix",
+          "repo": "tollgate-module-basic-go",
+          "commits": 1,
+          "added": 16,
+          "deleted": 0,
+          "tier": "D",
+          "effort": 1
+        }
+      ]
+    },
+    {
+      "id": "thomasbiebl",
+      "display": "thomasbiebl",
+      "handles": [
+        "thomasbiebl"
+      ],
+      "payout_status": "human identity unverified; hold pending confirmation (open question, schedule section 4)",
+      "contributions": [
+        {
+          "scope": "one small fix (co-committed with an agent account)",
+          "repo": "tollgate-release-explorer-site",
+          "commits": 1,
+          "added": 28,
+          "deleted": 5,
+          "tier": "D",
+          "effort": 1
+        }
+      ]
+    }
+  ],
+  "excluded_accounts": [
+    {
+      "handle": "sisyphus-dev-ai",
+      "reason": "agent account (152 in-window commits) \u2014 automation, not a human payee"
+    },
+    {
+      "handle": "cursoragent",
+      "reason": "agent account"
+    },
+    {
+      "handle": "claude",
+      "reason": "agent account"
+    },
+    {
+      "handle": "copilot-swe-agent[bot]",
+      "reason": "bot account"
+    },
+    {
+      "handle": "github-actions[bot]",
+      "reason": "bot/CI account"
+    },
+    {
+      "handle": "elnosh",
+      "reason": "upstream gonuts maintainer; fork carries their history, zero in-window commits in OpenTollGate"
+    },
+    {
+      "handle": "joel-st, 0ceanSlim, starius, findingsov, lescuer97, imaginator, dskvr, delcin-raj",
+      "reason": "zero in-window commits in OpenTollGate stats (history-only or upstream-only)"
+    }
+  ],
+  "members_without_code_evidence": [
+    {
+      "name": "Charly",
+      "reason": "named as a desired collaborator (ham radio / hardware, Berlin) in the OpenSats application; no commits in any indexed OpenTollGate repo in-window. Not payable from a code-evidence formula; needs a vote-backed scope record."
+    },
+    {
+      "name": "Andre",
+      "reason": "named for FIPS exit nodes / microfips bent-pipe work; microfips lives under Amperstrand's fork with no in-window OpenTollGate stats. Not payable from this register."
+    },
+    {
+      "name": "Johnathan",
+      "reason": "FIPS core maintainer on the upstream ValiNet project; FIPS work is outside the TollGate/IOI pool."
+    }
+  ]
+}

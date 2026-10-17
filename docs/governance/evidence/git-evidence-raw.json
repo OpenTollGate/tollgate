@@ -1,0 +1,416 @@
+{
+ "tollgate": {
+  "c03rad0r": {
+   "commits": 8,
+   "files": 66,
+   "add": 38963,
+   "del": 10
+  },
+  "Arjen": {
+   "commits": 3,
+   "files": 60,
+   "add": 173,
+   "del": 3747
+  },
+  "Origami74": {
+   "commits": 1,
+   "files": 10,
+   "add": 262,
+   "del": 80
+  },
+  "Your Name": {
+   "commits": 8,
+   "files": 8,
+   "add": 48,
+   "del": 19
+  }
+ },
+ "tollgate-infrastructure-kit": {
+  "Felix": {
+   "commits": 125,
+   "files": 404,
+   "add": 35266,
+   "del": 2275
+  },
+  "worker-admin": {
+   "commits": 5,
+   "files": 14,
+   "add": 711,
+   "del": 174
+  },
+  "worker-inspector": {
+   "commits": 1,
+   "files": 4,
+   "add": 637,
+   "del": 46
+  },
+  "c03rad0r": {
+   "commits": 14,
+   "files": 91,
+   "add": 8522,
+   "del": 206
+  },
+  "Your Name": {
+   "commits": 55,
+   "files": 591,
+   "add": 27092,
+   "del": 3099
+  }
+ },
+ "tollgate-installer": {
+  "c03rad0r": {
+   "commits": 35,
+   "files": 16,
+   "add": 766,
+   "del": 34
+  },
+  "felixfelix-bot": {
+   "commits": 21,
+   "files": 58,
+   "add": 2472,
+   "del": 453
+  },
+  "Felix": {
+   "commits": 28,
+   "files": 162,
+   "add": 10279,
+   "del": 8162
+  }
+ },
+ "tollgate-rs": {
+  "c03rad0r": {
+   "commits": 1,
+   "files": 3,
+   "add": 237,
+   "del": 0
+  },
+  "Arjen": {
+   "commits": 43,
+   "files": 267,
+   "add": 14101,
+   "del": 1772
+  },
+  "Origami74": {
+   "commits": 6,
+   "files": 75,
+   "add": 5094,
+   "del": 517
+  }
+ },
+ "tollgate-esp32": {
+  "Felix": {
+   "commits": 8,
+   "files": 40,
+   "add": 3637,
+   "del": 6
+  },
+  "c03rad0r": {
+   "commits": 19,
+   "files": 29,
+   "add": 1885,
+   "del": 567
+  },
+  "Your Name": {
+   "commits": 23,
+   "files": 483,
+   "add": 44383,
+   "del": 3137
+  }
+ },
+ "tollgate-android": {
+  "c03rad0r": {
+   "commits": 11,
+   "files": 78,
+   "add": 15269,
+   "del": 3316
+  }
+ },
+ "tollgate-module-basic-go": {
+  "Felix": {
+   "commits": 95,
+   "files": 557,
+   "add": 53274,
+   "del": 3475
+  },
+  "c03rad0r": {
+   "commits": 32,
+   "files": 254,
+   "add": 21988,
+   "del": 7438
+  },
+  "Amperstrand": {
+   "commits": 115,
+   "files": 586,
+   "add": 22589,
+   "del": 5201
+  },
+  "Matt Van Horn": {
+   "commits": 1,
+   "files": 2,
+   "add": 16,
+   "del": 0
+  },
+  "Arjen": {
+   "commits": 17,
+   "files": 223,
+   "add": 13385,
+   "del": 12025
+  },
+  "amperstand": {
+   "commits": 14,
+   "files": 202,
+   "add": 3280,
+   "del": 2256
+  },
+  "Origami74": {
+   "commits": 6,
+   "files": 37,
+   "add": 326,
+   "del": 3915
+  },
+  "Alex Xie": {
+   "commits": 4,
+   "files": 28,
+   "add": 3430,
+   "del": 201
+  },
+  "Your Name": {
+   "commits": 6,
+   "files": 50,
+   "add": 3186,
+   "del": 4416
+  }
+ },
+ "tollgate-captive-portal-site": {
+  "Felix": {
+   "commits": 24,
+   "files": 176,
+   "add": 13048,
+   "del": 746
+  },
+  "Amperstrand": {
+   "commits": 22,
+   "files": 48,
+   "add": 3799,
+   "del": 516
+  },
+  "amperstand": {
+   "commits": 5,
+   "files": 5,
+   "add": 105,
+   "del": 6
+  },
+  "c03rad0r": {
+   "commits": 13,
+   "files": 29,
+   "add": 890,
+   "del": 111
+  },
+  "Arjen": {
+   "commits": 1,
+   "files": 0,
+   "add": 0,
+   "del": 0
+  },
+  "Alex Xie": {
+   "commits": 1,
+   "files": 12,
+   "add": 469,
+   "del": 127
+  },
+  "Your Name": {
+   "commits": 2,
+   "files": 2,
+   "add": 32,
+   "del": 18
+  }
+ },
+ "gonuts-tollgate": {
+  "Amperstrand": {
+   "commits": 44,
+   "files": 155,
+   "add": 4823,
+   "del": 880
+  },
+  "c03rad0r": {
+   "commits": 8,
+   "files": 0,
+   "add": 0,
+   "del": 0
+  },
+  "Felix": {
+   "commits": 3,
+   "files": 5,
+   "add": 95,
+   "del": 11
+  },
+  "amperstand": {
+   "commits": 4,
+   "files": 9,
+   "add": 373,
+   "del": 10
+  }
+ },
+ "microfips": {
+  "c03rad0r": {
+   "commits": 33,
+   "files": 97,
+   "add": 3509,
+   "del": 1425
+  },
+  "amperstand": {
+   "commits": 37,
+   "files": 76,
+   "add": 7298,
+   "del": 794
+  },
+  "Amperstrand": {
+   "commits": 470,
+   "files": 1607,
+   "add": 82881,
+   "del": 30296
+  },
+  "copilot-swe-agent[bot]": {
+   "commits": 57,
+   "files": 203,
+   "add": 8601,
+   "del": 5101
+  }
+ },
+ "conwrt": {
+  "felixfelix-bot": {
+   "commits": 3,
+   "files": 33,
+   "add": 3176,
+   "del": 7
+  },
+  "c03rad0r": {
+   "commits": 7,
+   "files": 10,
+   "add": 1339,
+   "del": 0
+  },
+  "Amperstrand": {
+   "commits": 54,
+   "files": 184,
+   "add": 20118,
+   "del": 2883
+  },
+  "Felix": {
+   "commits": 1,
+   "files": 4,
+   "add": 101,
+   "del": 12
+  },
+  "amperstand": {
+   "commits": 293,
+   "files": 1358,
+   "add": 125173,
+   "del": 23449
+  }
+ },
+ "fips": {
+  "Johnathan Corgan": {
+   "commits": 498,
+   "files": 3123,
+   "add": 216213,
+   "del": 66040
+  },
+  "Arjen": {
+   "commits": 12,
+   "files": 48,
+   "add": 1670,
+   "del": 247
+  },
+  "sandwich": {
+   "commits": 5,
+   "files": 29,
+   "add": 949,
+   "del": 9
+  },
+  "oleksky": {
+   "commits": 1,
+   "files": 20,
+   "add": 2345,
+   "del": 5
+  },
+  "Martti Malmi": {
+   "commits": 22,
+   "files": 111,
+   "add": 11026,
+   "del": 398
+  },
+  "Tom": {
+   "commits": 1,
+   "files": 55,
+   "add": 7449,
+   "del": 177
+  },
+  "AndrewH": {
+   "commits": 1,
+   "files": 7,
+   "add": 7,
+   "del": 5
+  },
+  "Alex Xie": {
+   "commits": 3,
+   "files": 35,
+   "add": 2591,
+   "del": 59
+  },
+  "Sats And Sports": {
+   "commits": 1,
+   "files": 5,
+   "add": 305,
+   "del": 1
+  },
+  "SatsAndSports": {
+   "commits": 2,
+   "files": 5,
+   "add": 252,
+   "del": 10
+  },
+  "Origami74": {
+   "commits": 13,
+   "files": 135,
+   "add": 5309,
+   "del": 1201
+  },
+  "redshift": {
+   "commits": 1,
+   "files": 1,
+   "add": 3,
+   "del": 3
+  },
+  "Tim O'Shea": {
+   "commits": 1,
+   "files": 9,
+   "add": 242,
+   "del": 15
+  },
+  "OceanSlim": {
+   "commits": 1,
+   "files": 26,
+   "add": 2491,
+   "del": 612
+  },
+  "jo": {
+   "commits": 4,
+   "files": 9,
+   "add": 848,
+   "del": 44
+  },
+  "Kieran": {
+   "commits": 3,
+   "files": 14,
+   "add": 1121,
+   "del": 22
+  },
+  "origami74@gmail.com": {
+   "commits": 5,
+   "files": 19,
+   "add": 1243,
+   "del": 10
+  }
+ }
+}
