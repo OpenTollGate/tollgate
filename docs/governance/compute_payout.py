@@ -181,11 +181,29 @@ def allocation_table(sc):
     return "\n".join(out)
 
 
-a_amp = next(p for p in A["payees"] if p["payee"] == "amperstrand")
-a_arj = next(p for p in A["payees"] if p["payee"] == "origami74")
-b_amp = next(p for p in B["payees"] if p["payee"] == "amperstrand")
-b_arj = next(p for p in B["payees"] if p["payee"] == "origami74")
-b_fel = next(p for p in B["payees"] if p["payee"] == "felix")
+# Trade-off paragraph is driven off the two scenarios instead of hardcoded payee
+# ids: a trimmed register (or a different payee roster) must not crash the build.
+def payee(sc, pid):
+    return next((p for p in sc["payees"] if p["payee"] == pid), None)
+
+
+def tradeoff():
+    fel = payee(B, "felix")
+    a_amp, b_amp = payee(A, "amperstrand"), payee(B, "amperstrand")
+    a_arj, b_arj = payee(A, "origami74"), payee(B, "origami74")
+    if not (fel and a_amp and b_amp):
+        return "Scenario B does not include the scenario-A baseline payees, so no trade-off is computable."
+    cuts = [
+        f"cutting {a['display']} by **${a['amount'] - b['amount']:,.2f}** "
+        f"(${a['amount']:,.2f} → ${b['amount']:,.2f})"
+        for a, b in ((a_amp, b_amp), (a_arj, b_arj))
+        if a and b
+    ]
+    return (
+        f"**Cost of the decision:** including {fel['display']} moves **${fel['amount']:,.2f}** into "
+        f"his own payout, " + " and ".join(cuts) + "."
+    )
+
 
 md = f"""# IOI payout schedule — open infrastructure contributions
 
@@ -197,9 +215,15 @@ md = f"""# IOI payout schedule — open infrastructure contributions
 > **Budget caveat (read before voting).** The only on-disk reference for the $25,000
 > (`repos/opensats-lts-application/opensats-lts-application-tollgate.md:194`,
 > `-questions.md:316`) is still marked `TBD: confirm details`. This schedule spends the full
-> $25,000. If the treasury holds a different amount, re-run `compute_payout.py` with the real
-> figure: the formula is scale-invariant (everything scales linearly), only the printed amounts
-> change.
+> $25,000. If the treasury holds a different amount, edit `budget.usd` in the register and
+> re-run `compute_payout.py`. Note the formula is **not** scale-invariant: the $300 floor is
+> fixed in dollars, so a smaller pool gives the floors a larger share (at $10,000 the floors
+> are {A['n_payees']}x$300 = {A['n_payees'] * 300 / 100:,.0f}% in scenario A and
+> {B['n_payees']}x$300 = {B['n_payees'] * 300 / 100:,.0f}% in scenario B, versus
+> {A['floor_total'] / BUDGET * 100:,.1f}% and {B['floor_total'] / BUDGET * 100:,.1f}% here), and
+> every weight-proportional amount shifts. Re-derive, don't scale.
+> If the budget cannot cover the floors at all, the script stops with an explicit error rather
+> than paying sub-floor amounts.
 
 ## 1. Structure and rationale
 
@@ -278,9 +302,7 @@ Eligible payees: **{B['n_payees']}**. Floor total: **${B['floor_total']:,.0f}**.
 
 Sums to **${B['total']:,.2f}** → surplus/deficit **${BUDGET - B['total']:,.2f}**.
 
-**Cost of the decision:** including Felix moves **${b_fel['amount']:,.2f}** into his own payout,
-cutting Amperstrand by **${a_amp['amount'] - b_amp['amount']:,.2f}** (${a_amp['amount']:,.2f} → ${b_amp['amount']:,.2f})
-and Arjen by **${a_arj['amount'] - b_arj['amount']:,.2f}** (${a_arj['amount']:,.2f} → ${b_arj['amount']:,.2f}).
+{tradeoff()}
 
 Scenario A is recommended. Felix's in-window TollGate work is precisely what the OpenSats LTS
 grant exists to fund; routing association money to the same person would double-pay one

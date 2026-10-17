@@ -8,9 +8,15 @@
 > **Budget caveat (read before voting).** The only on-disk reference for the $25,000
 > (`repos/opensats-lts-application/opensats-lts-application-tollgate.md:194`,
 > `-questions.md:316`) is still marked `TBD: confirm details`. This schedule spends the full
-> $25,000. If the treasury holds a different amount, re-run `compute_payout.py` with the real
-> figure: the formula is scale-invariant (everything scales linearly), only the printed amounts
-> change.
+> $25,000. If the treasury holds a different amount, edit `budget.usd` in the register and
+> re-run `compute_payout.py`. Note the formula is **not** scale-invariant: the $300 floor is
+> fixed in dollars, so a smaller pool gives the floors a larger share (at $10,000 the floors
+> are 5x$300 = 15% in scenario A and
+> 6x$300 = 18% in scenario B, versus
+> 6.0% and 7.2% here), and
+> every weight-proportional amount shifts. Re-derive, don't scale.
+> If the budget cannot cover the floors at all, the script stops with an explicit error rather
+> than paying sub-floor amounts.
 
 ## 1. Structure and rationale
 
@@ -131,9 +137,7 @@ Eligible payees: **6**. Floor total: **$1,800**. Residual pool: **$23,200.00**. 
 
 Sums to **$25,000.00** → surplus/deficit **$0.00**.
 
-**Cost of the decision:** including Felix moves **$10,403.23** into his own payout,
-cutting Amperstrand by **$6,241.94** ($14,400.00 → $8,158.06)
-and Arjen by **$3,566.82** ($8,357.14 → $4,790.32).
+**Cost of the decision:** including Felix (c03rad0r / felixfelix-bot) moves **$10,403.23** into his own payout, cutting Amperstrand by **$6,241.94** ($14,400.00 → $8,158.06) and cutting Arjen (Origami74) by **$3,566.82** ($8,357.14 → $4,790.32).
 
 Scenario A is recommended. Felix's in-window TollGate work is precisely what the OpenSats LTS
 grant exists to fund; routing association money to the same person would double-pay one
