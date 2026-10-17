@@ -42,7 +42,7 @@ Tags:
 	"pubkey": "63gy...9xvq", // TollGate identity
 	// ...
 	"tags": [
-		["p", "6hjq...1fi6"], // Customer identity (pubkey)
+		["p", "6hjq...1fi6"], // Customer pubkey — only when the payment carried one
 		["device-identifier", "<type>", "<value>"],
 		["allotment", "<amount>"],
 		["metric", "<metric>"]
@@ -51,7 +51,7 @@ Tags:
 ```
 
 Tags:
-- `p`: pubkey of the TollCustomer Gate (from the Customer's Payment event)
+- `p`: (Optional) pubkey of the customer, present only when the payment carried a customer Nostr identity. Raw bearer-token payments (the normative path since March 2026) carry none — there is no signed payment event to take a pubkey from — so such sessions are identified by `device-identifier` alone and omit `p`. When `p` is present it MUST be a Nostr pubkey: never a device identifier, MAC address or any other value, which would break `#p` filtering for every consumer of session events.
 - `device-identifier`: (hardware) identifier of the customer's device.
 - `allotment`: Amount of `<metric>` allotted to customer after payment.
 - `metric`: The purchased metric
