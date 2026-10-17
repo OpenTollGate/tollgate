@@ -88,6 +88,8 @@ Notice events are used by TollGates to communicate issues, warnings, and informa
   - `upstream-error-not-connected`: TollGate has no upstream connection
   - `payment-error-mint-not-accepted`: Payment from unsupported mint
   - `payment-error-token-spent`: Cashu token already spent
+  - `service-unavailable`: Payment refused in degraded mode (no reachable mints); the customer's token is not consumed
+  - `no-reachable-mints`: The advertisement slot is being served in degraded mode
 
 #### Optional Tags
 - `p`: Customer pubkey when addressing a specific customer. Omitted for general notices.
@@ -125,3 +127,13 @@ Human-readable message describing the issue or information. Should be user-frien
     // ...
 }
 ```
+## Degraded mode
+
+A TollGate that cannot reach any of its accepted mints — outage, network partition, or a configuration that names none — enters degraded mode. Degraded mode has no separate event kind: it is communicated entirely through Notice events, and a client MUST accept a Notice wherever a Session or Discovery event would normally arrive.
+
+While degraded:
+
+- Payment attempts are refused with a Notice (`level` `error`, `code` `service-unavailable`) whose content tells the customer the service is temporarily unavailable and to retry shortly. The customer's bearer token is not consumed — the refusal happens before any token processing, so the customer can retry once the TollGate recovers or spend the token elsewhere.
+- Where the Discovery event would normally be served (e.g. [HTTP-01](./HTTP-01.md) `GET /`), the TollGate MAY answer with a Notice (`level` `warning`, `code` `no-reachable-mints`) instead, stating that the service will recover on its own.
+
+Recovery needs no operator action and carries no protocol message: when a mint becomes reachable again the TollGate returns to full service, and clients simply see Discovery and Session events again.
