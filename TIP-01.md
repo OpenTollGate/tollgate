@@ -55,6 +55,16 @@ Tags:
 - `device-identifier`: (hardware) identifier of the customer's device.
 - `allotment`: Amount of `<metric>` allotted to customer after payment.
 - `metric`: The purchased metric
+- `rate`: (Optional) units of `<metric>` per second reserved for this session. Present when the
+  advertisement carried `payment_model: rate-reserved` (TIP-03). Mutually informative with `allotment`:
+  a rate-reserved session is a speed plus a deadline, not a lump sum.
+- `deadline`: (Optional) Unix timestamp at which the funded budget expires.
+- `balance`: (Optional) units of `<metric>` remaining when the event was published.
+- `channel`: (Optional) identifier of the payment channel funding this session (TIP-05).
+
+`allotment` remains REQUIRED for `payment_model: steps` (the default) so existing consumers are
+unaffected. For `rate-reserved` sessions `allotment` SHOULD carry the total funded units, and `rate` +
+`deadline` + `balance` describe how it is consumed.
 
 ## Notice Events
 
