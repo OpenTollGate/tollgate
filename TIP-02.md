@@ -48,6 +48,21 @@ Tags:
 
 The customer sends a Cashu token directly over the TollGate's supported transport(s). The allotment the customer receives is relative to the value of the token sent.
 
+Where the TollGate issues its own vouchers rather than accepting external mint tokens, see
+[TIP-04](TIP-04.md) for the acquisition/redemption split. Acquisition is intentionally out of scope
+there: a voucher is an ordinary Cashu token, so any Cashu-native mechanism can supply it.
+
 ```
 cashuB...
 ```
+
+## Payment channels (discussion)
+
+A TollGate advertising `payment_model: rate-reserved` (TIP-03) settles over a payment channel rather than
+a per-purchase token. Channel lifecycle, durability and refund requirements are proposed in
+[TIP-05](TIP-05.md) and are **not yet ratified**.
+
+## Metering and debit (discussion)
+
+Where a TollGate debits a running budget rather than granting a single allotment, the accounting rule
+and its rounding behaviour are proposed in [TIP-06](TIP-06.md) and are **not yet ratified**.
