@@ -198,6 +198,13 @@ def main() -> int:
     _ptag_scan(CORPUS / "http")
     _ptag_scan(CORPUS / "events")
 
+    # --- fixture provenance: is the reference mint still reachable? ---
+    # ADR-0004. This is the check that would have caught the current state, where
+    # every KG twin was issued by a mint that no longer exists and NUT-07 therefore
+    # cannot answer for any of them -- which silently caps every consumer at the
+    # same permanently-UNVERIFIED score.
+    _check_reference_mint(manifest)
+
     print(f"corpus self-validation: {CHECKS} checks, {len(FAILURES)} failure(s)")
     for msg in FAILURES:
         print(f"  FAIL: {msg}")
@@ -272,6 +279,65 @@ def _ptag_scan(directory: Path) -> None:
             val = m.group(1)
             if val and PUBKEY_RE.match(val) is None and not val.startswith("<"):
                 fail(f"{path.relative_to(CORPUS)}: p tag carries non-pubkey literal {val!r}")
+
+
+def _check_reference_mint(manifest: dict) -> None:
+    """Fixture provenance: a reference mint must be declared, reachable and capable.
+
+    Deliberately offline-tolerant: an unreachable mint is reported as a FAILURE of
+    this check, but the check can be skipped entirely with TOLLGATE_SKIP_MINT_CHECK=1
+    so that an air-gapped CI run is honest rather than red for the wrong reason.
+
+    What it asserts:
+      * `reference_environment` names at least one mint URL;
+      * the URL's host is not one of the known-dead lab addresses, unless it is
+        loopback (a local fakewallet mint is the intended replacement);
+      * if network is allowed, the mint answers /v1/info and advertises NUT-07 and
+        NUT-09, because without those the verify/spend stages are unmeasurable.
+    """
+    import os as _os
+
+    ref = (manifest.get("reference_environment") or {}).get("mint") or {}
+    url = ref.get("url")
+    if not url:
+        check(False, "reference_environment.mint.url is absent: fixtures have no declared origin")
+        return
+    check(True, f"reference mint declared: {url}")
+
+    host = url.split("//", 1)[-1].split("/", 1)[0].split(":")[0].lower()
+    dead_lab = {"192.168.13.221", "192.168.13.231", "192.168.13.1"}
+    if host in dead_lab:
+        # Not a hard failure -- the corpus may be documenting a historical capture --
+        # but it must be visible, because it means NUT-07 cannot be re-run.
+        FAILURES.append(
+            f"reference mint {host} is a lab address; fixtures issued there cannot be "
+            "NUT-07 verified anywhere. Regenerate with corpus/regenerate_fixtures.py."
+        )
+        return
+
+    if _os.environ.get("TOLLGATE_SKIP_MINT_CHECK") == "1":
+        print("  (mint reachability check skipped: TOLLGATE_SKIP_MINT_CHECK=1)")
+        return
+
+    import json as _json
+    import urllib.error as _uerr
+    import urllib.request as _req
+
+    try:
+        r = _req.Request(
+            url.rstrip("/") + "/v1/info",
+            headers={"User-Agent": "tollgate-corpus-validate/1.0"},
+        )
+        with _req.urlopen(r, timeout=10) as resp:
+            info = _json.loads(resp.read().decode())
+    except (_uerr.URLError, TimeoutError, ValueError, OSError) as e:
+        check(False, f"reference mint {url} is unreachable ({e}); verify/spend cannot be measured")
+        return
+
+    nuts = {str(k) for k in (info.get("nuts") or {})}
+    check("7" in nuts, f"reference mint {url} does not advertise NUT-07 (checkstate)")
+    check("9" in nuts, f"reference mint {url} does not advertise NUT-09 (restore)")
+    print(f"  reference mint {url} reachable: {info.get('version', 'unknown')}")
 
 
 if __name__ == "__main__":
