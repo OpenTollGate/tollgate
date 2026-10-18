@@ -103,6 +103,12 @@ Example combinations of Protocol + Interface + Medium specs.
 - [tollgate-module-basic-go](https://github.com/OpenTollGate/tollgate-module-basic-go) — reference implementation for OpenWRT routers.
 - [tollgate-os](https://github.com/OpenTollGate/tollgate-os) — ready-made OpenWRT image with TollGate pre-installed.
 
+## Conformance tiers (discussion)
+
+Implementations differ in what they actually implement, and "TollGate implementation" currently means
+nothing precise. A proposal for three declared conformance tiers, with the evidence each requires, is in
+[CONFORMANCE-TIERS.md](CONFORMANCE-TIERS.md). Not yet adopted.
+
 ## (Breaking) changes
 
 | When | What |
