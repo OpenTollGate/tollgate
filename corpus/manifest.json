@@ -140,7 +140,9 @@
     "cdk-cli": "CDK reference wallet",
     "nutshell": "Nutshell reference wallet (secondary)",
     "test-minters": "lab mint tooling",
-    "cdk-cli@0.18.0": "v0-capture provenance key (the 0.18.1 entries are the v1 lane's)"
+    "cdk-cli@0.18.0": "v0-capture provenance key (the 0.18.1 entries are the v1 lane's)",
+    "tollgate-rs": "V2 protocol (vouchers + Spilman channels, CBOR) -- does NOT implement TIP-01/02 or HTTP-01; declared here so the corpus records it as a known, deliberately out-of-scope implementation rather than an omission. Conformance vectors for V2 are not in corpus v1.",
+    "tollgate-rs@v1_compat": "V2 protocol + V1 TIP bridge: crates/tollgate-net/src/v1_compat/ (16 modules) implements kinds 10021/1022/21023 and price_per_step parsing. Lives on the fork Amperstrand/tollgate-rs-ai-research-and-experiments, NOT on OpenTollGate/tollgate-rs. STATUS: declared, verdicts NOT yet recorded -- nothing has run this bridge against the corpus."
   },
   "index": {
     "tokens": [
@@ -291,5 +293,20 @@
     "statement": "cdk serializes V3 per-proof keyset ids as 16-hex short ids (version byte + 7-byte prefix of the canonical id; for V1 keysets the short id IS the whole id) and C points as hex. V4 carries the 8-byte keyset-id prefix at the token level. Consumers must resolve short ids against the mint's keyset list; mints natively resolve them (cdk nut02 has a dedicated UnknownShortKeysetId error path). The 66-hex spelling is the canonical mint-level id, not the in-token spelling.",
     "incident_reading": "The portal@pin CU109 incident is a short-id resolution failure: the deployed pin compared 16-hex in-token ids against 66-hex keyset-list ids and could never match. It was NOT token 'truncation' by any minter — the short spelling is the reference toolchain's native output.",
     "id_spelling_dimension": "Both spellings are legal on the wire: the short form (cdk's native serialization) and the full 66-hex canonical form (Nutshell/cashu-ts wallet-side serialization). Consumers MUST accept both — see lifecycle/v3_v2_full66.json vs the KG twins."
+  },
+  "declared_unverified": {
+    "tollgate-rs@v1_compat": {
+      "repo": "Amperstrand/tollgate-rs-ai-research-and-experiments",
+      "module": "crates/tollgate-net/src/v1_compat/",
+      "covers": [
+        "TIP-01 10021",
+        "TIP-01 1022",
+        "TIP-01 21023",
+        "TIP-02 price_per_step",
+        "HTTP-01 :2121"
+      ],
+      "not_yet": "no lifecycle or http verdicts recorded; bridge has not been run against corpus v1",
+      "why_declared": "the TIP subset exists only on this fork and is absent from the org repo; leaving it unlisted made a real interop surface invisible"
+    }
   }
 }

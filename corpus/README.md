@@ -157,6 +157,29 @@ divergences are recorded with issue links:
   token at its client-side keyset check (portal#82, PRTA#247,
   tmbg#952). **This is the blocker for the known-good state.**
 
+## Consumers, and what "declared" means
+
+`manifest.json` → `consumer_ids` lists the implementations the corpus speaks to. Two
+Rust entries were added because their absence made a real interop surface invisible:
+
+| id | what it is | verdicts recorded? |
+|---|---|---|
+| `tollgate-rs` | the **V2** protocol (vouchers + Spilman channels, CBOR). Does **not** implement TIP-01/02 or HTTP-01. | n/a — **there are no V2 vectors in corpus v1** |
+| `tollgate-rs@v1_compat` | the V2 repo's **V1 TIP bridge** (`crates/tollgate-net/src/v1_compat/`, 16 modules) — implements 10021/1022/21023 and `price_per_step` | **no** — declared, not certified |
+
+**"Declared" is not "certified".** A `consumer_ids` entry records that the
+implementation exists and that the corpus intends to speak to it. It does **not** mean
+the corpus has been run against it. Only `kg_state.green_consumers` and the per-stage
+verdicts in `lifecycle/*.json` carry that meaning. The declared-but-unmeasured set is
+machine-readable under `declared_unverified`, so a future runner can see exactly what
+is owed instead of inferring it from prose.
+
+The bridge lives on `Amperstrand/tollgate-rs-ai-research-and-experiments`, **not** on
+`OpenTollGate/tollgate-rs` — it was added after the two repos diverged from their
+common ancestor. That makes it the cheapest available route to a second TIP-conformant
+implementation, and it is the reason it is declared here despite being unmeasured: a
+bridge nobody lists is a bridge nobody maintains.
+
 ## Runner consumption contract
 
 The corpus is data first: a runner (the planned consumer-conformance

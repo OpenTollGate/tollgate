@@ -100,8 +100,27 @@ Example combinations of Protocol + Interface + Medium specs.
 
 ## Implementations
 
+Implementations of **this protocol** (TIP-01/02 + HTTP-01/02/03):
+
 - [tollgate-module-basic-go](https://github.com/OpenTollGate/tollgate-module-basic-go) — reference implementation for OpenWRT routers.
 - [tollgate-os](https://github.com/OpenTollGate/tollgate-os) — ready-made OpenWRT image with TollGate pre-installed.
+- [tollgate-module-basic-rust](https://github.com/felixfelix-bot/tollgate-module-basic-rust) — Rust clone of the reference backend on CDK (in progress; see its README for the current phase).
+
+### Separate protocol: `tollgate-rs`
+
+[`tollgate-rs`](https://github.com/OpenTollGate/tollgate-rs) implements a **different design** — vouchers
+on Cashu Spilman payment channels, a node-owned mint, and a CBOR wire protocol — and does **not**
+implement TIP-01/02 or HTTP-01. It is listed here so the two are not confused, and so its TIP bridge
+is not lost:
+
+- [`Amperstrand/tollgate-rs-ai-research-and-experiments`](https://github.com/Amperstrand/tollgate-rs-ai-research-and-experiments)
+  carries `crates/tollgate-net/src/v1_compat/`, which **does** speak kinds 10021/1022/21023 and
+  `price_per_step`. That module is **not** in the org repo and has **no upstream PR yet**.
+  It is declared in `corpus/manifest.json` as `tollgate-rs@v1_compat`, with verdicts still unrecorded.
+
+The corpus currently pins the **TIP** surface only. There are no conformance vectors for
+the voucher/channel protocol, so `tollgate-rs` cannot be certified against it — see
+`corpus/manifest.json` → `declared_unverified`.
 
 ## (Breaking) changes
 
