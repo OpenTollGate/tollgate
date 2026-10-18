@@ -48,6 +48,10 @@ Tags:
 
 The customer sends a Cashu token directly over the TollGate's supported transport(s). The allotment the customer receives is relative to the value of the token sent.
 
+Where the TollGate issues its own vouchers rather than accepting external mint tokens, see
+[TIP-04](TIP-04.md) for the acquisition/redemption split. Acquisition is intentionally out of scope
+there: a voucher is an ordinary Cashu token, so any Cashu-native mechanism can supply it.
+
 ```
 cashuB...
 ```
