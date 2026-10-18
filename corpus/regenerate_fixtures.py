@@ -35,6 +35,7 @@ import argparse
 import json
 import os
 import pathlib
+import shutil
 import subprocess
 import sys
 import time
@@ -125,15 +126,145 @@ def await_paid(mint_url: str, quote: str, timeout: float = 30.0) -> None:
     )
 
 
-def mint_tokens(mint_url: str, quote: str, amount: int, unit: str = "sat") -> dict:
-    """Ask the mint for blinded signatures. Uses the mint's own endpoint directly so
-    the tool has no wallet dependency; the caller supplies pre-blinded outputs."""
-    # NOTE: full NUT-04 minting needs blinded messages from a wallet. Rather than
-    # reimplement BDHKE here (and get it subtly wrong), this step delegates to
-    # cdk-cli when available, which is the corpus's reference toolchain (ADR-0003).
+def _cdk_cli(explicit: str | None = None) -> str:
+    """Locate `cdk-cli`. It is the corpus's reference toolchain (ADR-0003 in the
+    Rust consumer repo), which is why minting is delegated to it rather than
+    reimplementing BDHKE blinding here -- a subtly wrong blinding implementation
+    would produce fixtures that LOOK valid and poison the corpus."""
+    for c in [explicit, os.environ.get("CDK_CLI"), os.path.expanduser("~/mint/cdk-cli"), "cdk-cli"]:
+        if not c:
+            continue
+        found = c if os.path.sep in c else shutil.which(c)
+        if found and os.path.exists(found) and os.access(found, os.X_OK):
+            return found
     raise RegenError(
-        "mint_tokens requires cdk-cli (see below); this function is intentionally "
-        "not implemented"
+        "cdk-cli not found (looked at --cdk-cli, $CDK_CLI, ~/mint/cdk-cli, PATH). "
+        "Minting fixtures requires the reference toolchain; see ADR-0003."
+    )
+
+
+def mint_token(cli: str, mint_url: str, amount: int, workdir: pathlib.Path,
+               v3: bool) -> str:
+    """Mint `amount` sats and return one token, in V4 (default) or V3 form.
+
+    Two subprocesses because that is how cdk-cli models it: `mint` acquires proofs,
+    `send` spends them into a token. The wallet DB lives in `workdir` so a run is
+    self-contained and reproducible from the same mnemonic.
+    """
+    env = dict(os.environ)
+    env.setdefault("CDK_CLI_WORK_DIR", str(workdir))
+    workdir.mkdir(parents=True, exist_ok=True)
+
+    r = subprocess.run(
+        [cli, "mint", mint_url, str(amount)],
+        capture_output=True, text=True, timeout=120, env=env, cwd=str(workdir),
+    )
+    if r.returncode != 0:
+        raise RegenError(
+            f"cdk-cli mint {amount} at {mint_url} failed: "
+            f"{(r.stderr or r.stdout).strip()[:400]}"
+        )
+
+    cmd = [cli, "send", "-a", str(amount)]
+    if v3:
+        # `-v3` collides with a global short flag; the long form works.
+        cmd.append("--v3")
+    r = subprocess.run(
+        cmd, capture_output=True, text=True, timeout=120, env=env, cwd=str(workdir)
+    )
+    if r.returncode != 0:
+        raise RegenError(
+            f"cdk-cli send {amount} failed: {(r.stderr or r.stdout).strip()[:400]}"
+        )
+    tokens = [l.strip() for l in r.stdout.splitlines() if l.strip().startswith("cashu")]
+    if not tokens:
+        raise RegenError(
+            "cdk-cli send produced no token line; refusing to write an empty fixture"
+        )
+    tok = tokens[0]
+    expect = "cashuB" if not v3 else "cashuA"
+    if not tok.startswith(expect):
+        raise RegenError(f"expected a {expect} token, got {tok[:12]!r}")
+    return tok
+
+
+def mint(args) -> int:
+    """Mint fresh KG fixtures, verify each is UNSPENT, then write them + provenance."""
+    assert_testnet(args.mint)
+    info = mint_info(args.mint)
+    nuts = {str(k) for k in (info.get("nuts") or {})}
+    for need, label in (("7", "NUT-07 checkstate"), ("9", "NUT-09 restore")):
+        if need not in nuts:
+            raise RegenError(f"mint does not advertise {label}; fixtures would be unverifiable")
+
+    cli = _cdk_cli(args.cdk_cli)
+    out = pathlib.Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
+    workdir = pathlib.Path(args.workdir).expanduser()
+
+    written = []
+    for name, v3 in ((f"v4_{args.label}", False), (f"v3_{args.label}", True)):
+        tok = mint_token(cli, args.mint, args.amount, workdir, v3=v3)
+        p = out / f"{name}.cashu"
+
+        # Verify the fixture is spendable BEFORE writing it. A spent twin is not a
+        # known-good reference, and finding that out later means every consumer's
+        # verify/spend stage silently mis-scores. Decoding reuses the consumer's own
+        # decoder so the check exercises the path that will read the fixture.
+        ys = _proof_ys_from_token(tok)
+        state = check_unspent(args.mint, ys)
+        p.write_text(tok + "\n")
+        written.append((name, p, len(tok)))
+        print(f"  wrote {p} ({len(tok)} chars, NUT-07 {state})")
+
+    provenance = {
+        "mint": args.mint,
+        "mint_version": info.get("version", "unknown"),
+        "nuts": sorted(nuts, key=lambda x: int(x)),
+        "cdk_cli": subprocess.run(
+            [cli, "--version"], capture_output=True, text=True, timeout=30
+        ).stdout.strip().splitlines()[0],
+        "amount_sat": args.amount,
+        "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "fixtures": [n for n, _, _ in written],
+    }
+    prov = out / "PROVENANCE.json"
+    prov.write_text(json.dumps(provenance, indent=2) + "\n")
+    print(f"  wrote {prov}")
+    print(f"\nMinted {len(written)} fixtures from {args.mint} ({info.get('version')}).")
+    print("  Next: NUT-07 each one (check_unspent) and re-run corpus/validate.py.")
+    return 0
+
+
+def _proof_ys_from_token(tok: str) -> list[str]:
+    """Derive NUT-07 Ys for a token, using the consumer's decoder when present.
+
+    Kept optional on purpose: the corpus must stay runnable without the Rust repo
+    checked out beside it, but when the decoder IS available we use it so the check
+    exercises the same path a consumer would.
+    """
+    import importlib.util
+
+    here = pathlib.Path(__file__).resolve().parent          # .../tollgate/corpus
+    for cand in (
+        here / "ci" / "mint_probe.py",                      # vendored next to the corpus
+        pathlib.Path(os.environ.get("TOLLGATE_MINT_PROBE", "")) if os.environ.get("TOLLGATE_MINT_PROBE") else None,
+        pathlib.Path.home() / "repos" / "tollgate-module-basic-rust" / "ci" / "mint_probe.py",
+        pathlib.Path.home() / "worktrees" / "pathA" / "ci" / "mint_probe.py",
+    ):
+        if cand is None:
+            continue
+        if cand.exists():
+            spec = importlib.util.spec_from_file_location("_mint_probe", cand)
+            mp = importlib.util.module_from_spec(spec)
+            sys.path.insert(0, str(cand.parent))
+            spec.loader.exec_module(mp)
+            _, proofs = mp.decode_token(tok)
+            return mp.proof_ys(proofs)
+    raise RegenError(
+        "cannot derive NUT-07 Ys: no token decoder found. Copy "
+        "tollgate-module-basic-rust/ci/mint_probe.py into corpus/ci/ or set it up "
+        "beside this repo; refusing to write an unverified fixture."
     )
 
 
@@ -234,11 +365,21 @@ def main() -> int:
     mp = sub.add_parser("check", help="verify a mint is reachable and fits the contract")
     mp.add_argument("--mint", required=True)
 
+    gp = sub.add_parser("mint", help="mint fresh KG fixtures and record provenance")
+    gp.add_argument("--mint", required=True)
+    gp.add_argument("--amount", type=int, default=4)
+    gp.add_argument("--label", default="v2_kg", help="fixture name suffix, e.g. v2_kg")
+    gp.add_argument("--out", default="corpus/tokens")
+    gp.add_argument("--workdir", default="/tmp/tollgate-regen-wallet")
+    gp.add_argument("--cdk-cli", default=None, help="path to cdk-cli binary")
+
     args = ap.parse_args()
 
     try:
         if args.cmd == "serve":
             return serve(args)
+        if args.cmd == "mint":
+            return mint(args)
         if args.cmd == "check":
             assert_testnet(args.mint)
             info = mint_info(args.mint)
