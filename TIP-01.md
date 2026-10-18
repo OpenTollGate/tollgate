@@ -20,6 +20,12 @@ Tags:
 - `metric`: `milliseconds` or `bytes`
 - `min_steps`: (Optional) positive whole number. Defines a minimum amount of steps a customer must purchase at a time. Where a `price_per_step` entry (TIP-02) carries its own `<min_steps>`, that per-mint value takes precedence for that pricing option; the advertisement-level `min_steps` applies only to pricing options that do not carry one.
 - `tips`: List of implemented TollGate TIP's represented as numbers
+- `payment_model`: (Optional) how this TollGate sells access. Absent MUST be treated as `steps`
+  (today's behaviour). Defined in [TIP-03](TIP-03.md). Values: `steps`, `rate-reserved`.
+- `payment_model`: (Optional) how this TollGate sells access. Absent MUST be treated as `steps`
+  (today's behaviour). Defined in [TIP-03](TIP-03.md). Values: `steps`, `rate-reserved`.
+- `payment_model`: (Optional) how this TollGate sells access. Absent MUST be treated as `steps`
+  (today's behaviour). Defined in [TIP-03](TIP-03.md). Values: `steps`, `rate-reserved`.
 
 ### Example
 ```json
