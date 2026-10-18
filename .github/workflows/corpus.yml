@@ -1,0 +1,51 @@
+name: corpus
+
+# Why CI reads the network but never writes fixtures: see
+# corpus/ADR-regeneration-is-operator-action.md
+#
+#   regenerate (mint new proofs)  -> operator action, NEVER CI
+#   check the declared mint       -> CI, read-only, every run
+#   validate corpus structure     -> CI, every run
+
+on:
+  push:
+    branches: [main]
+    paths: ["corpus/**", ".github/workflows/corpus.yml"]
+  pull_request:
+    paths: ["corpus/**", ".github/workflows/corpus.yml"]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: corpus self-validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # The validator is stdlib-only on purpose (no requirements to install,
+      # nothing to pin, nothing to break).
+      - name: Validate corpus structure + reference mint
+        run: python3 corpus/validate.py
+
+  validate-offline:
+    name: corpus self-validation (air-gapped)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Deliberately duplicated: an air-gapped run must still prove the corpus is
+      # internally consistent. If this job ever goes green while `validate` is red,
+      # the failure is a mint/reachability problem, not a corpus-structure problem.
+      # Note it does NOT excuse a lab-address reference mint -- that is a defect
+      # regardless of network.
+      - name: Validate corpus structure (mint check skipped)
+        env:
+          TOLLGATE_SKIP_MINT_CHECK: "1"
+        run: python3 corpus/validate.py
