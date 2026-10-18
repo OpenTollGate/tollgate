@@ -165,7 +165,12 @@ def mint_token(cli: str, mint_url: str, amount: int, workdir: pathlib.Path,
             f"{(r.stderr or r.stdout).strip()[:400]}"
         )
 
-    cmd = [cli, "send", "-a", str(amount)]
+    # `--mint-url` is REQUIRED, not optional: when the wallet holds more than one
+    # mint, `send` otherwise prompts "Enter mint number to send from" and then dies
+    # with "cannot parse integer from empty string" -- which looks like a corrupt
+    # wallet rather than a missing flag. In any automated context that prompt is
+    # also a silent hang.
+    cmd = [cli, "send", "-a", str(amount), "--mint-url", mint_url]
     if v3:
         # `-v3` collides with a global short flag; the long form works.
         cmd.append("--v3")
