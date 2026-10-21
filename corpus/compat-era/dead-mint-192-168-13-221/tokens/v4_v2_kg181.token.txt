@@ -1,0 +1,5 @@
+# RETIRED FIxture -- issued by http://192.168.13.221:8383, which no longer exists.
+# The proofs below are therefore unspendable: NUT-07 can only be answered by the
+# mint that issued them. Kept verbatim as historical evidence, not as a live token.
+# Rename to <name>.cashu if the mint is ever restored.
+cashuBo2FteBpodHRwOi8vMTkyLjE2OC4xMy4yMjE6ODM4M2F1Y3NhdGF0gaJhaUgB5z51oICWBGFwgaRhYQRhc3hAZTE1Njg5YTMzYmRlODU4YTM5MjliMjUwNzNjNGNkOGEyNTJkMjBhOTBkYzY3MDkyZWE2OGY0MmQ4MjNlNmEwZGFjWCECv--JkL66_4LA_BedyFd5Ez1bRlnMTvmveHnfjHj_cn1hZKNhZVggRC6feiNAk43De1ZAZduutQn1vadmAFrEaLZhVeSJs5lhc1ggB15RYNJfPSDcFLhKbqQ2MSEDvBVQaVFgZlM1dr7B6QxhclggN_5NVUyCayk-glqp7toXehmqXqKRzdXnCBc4y9gMbbM=

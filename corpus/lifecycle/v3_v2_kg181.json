@@ -1,7 +1,7 @@
 {
   "id": "lifecycle/v3_v2_kg181",
   "fixture": "../tokens/v3_v2_kg181.cashu",
-  "role": "known-good twin — minted by the primary reference (cdk-cli 0.18.1), ships UNSPENT, never consumed by a capture",
+  "role": "known-good twin \u2014 minted by the primary reference (cdk-cli 0.18.1), ships UNSPENT, never consumed by a capture",
   "shape": {
     "token_version": 3,
     "prefix": "cashuA",
@@ -39,7 +39,7 @@
           "kind": "live",
           "target": "rig http://192.168.13.1:2121",
           "date": "2026-10-16",
-          "observed": "a sibling cdk-0.18.1 V3 token POSTed to the rig reached token processing (service-unavailable refusal in degraded mode — the media-type gate, body parse and identity stages all passed)",
+          "observed": "a sibling cdk-0.18.1 V3 token POSTed to the rig reached token processing (service-unavailable refusal in degraded mode \u2014 the media-type gate, body parse and identity stages all passed)",
           "by": "corpus v1 KG capture"
         },
         {
@@ -63,7 +63,7 @@
           "kind": "live",
           "target": "cdk-cli 0.18.1 wallet receive (--allow-untrusted)",
           "date": "2026-10-16",
-          "observed": "a sibling cdk-0.18.1 V3/V2 token received successfully (4 sat) — the reference wallet verifies this exact minting",
+          "observed": "a sibling cdk-0.18.1 V3/V2 token received successfully (4 sat) \u2014 the reference wallet verifies this exact minting",
           "by": "corpus v1 KG capture"
         }
       ],
@@ -71,7 +71,7 @@
     },
     "checkstate": {
       "verdicts": {
-        "fakewallet@2026-10-16": "UNSPENT"
+        "cdk-mintd@0.18.1-local": "UNSPENT"
       },
       "evidence": [
         {
@@ -85,6 +85,13 @@
     },
     "spend": {
       "verdicts": [
+        {
+          "when": "2026-10-18, fixtures regenerated",
+          "note": "the 2026-10-16 degraded-refusal observation was measured on the RETIRED 192.168.13.221:8383 proofs and no longer applies; see compat-era/dead-mint-192-168-13-221/",
+          "tollgate-module-basic-go@rc": "unknown"
+        }
+      ],
+      "superseded_observations": [
         {
           "when": "2026-10-16, rig degraded",
           "tollgate-module-basic-go@rc": "refused-degraded-unconsumed",
@@ -116,5 +123,5 @@
     "minted_by": "cdk-cli 0.18.1 (CDK primary reference) against the fakewallet",
     "regen": "cdk-cli mint http://192.168.13.221:8383 21; cdk-cli send --mint-url http://192.168.13.221:8383 --amount 4 --include-fee --v3"
   },
-  "portal_pin_note": "The @pin verdict (CU109 rejection, never submits) is the deployed router pin measured by v0 and portal#82's capture; portal main's decode path was reworked (#38/#55/#61) and now accepts — regression lock portal#83, deployed-pin refresh pending."
+  "portal_pin_note": "The @pin verdict (CU109 rejection, never submits) is the deployed router pin measured by v0 and portal#82's capture; portal main's decode path was reworked (#38/#55/#61) and now accepts \u2014 regression lock portal#83, deployed-pin refresh pending."
 }

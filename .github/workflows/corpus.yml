@@ -1,0 +1,122 @@
+name: corpus
+
+# Why CI reads the network but never writes fixtures: see
+# corpus/ADR-regeneration-is-operator-action.md
+#
+#   regenerate (mint new proofs)  -> operator action, NEVER CI
+#   check the declared mint       -> CI, read-only, every run
+#   validate corpus structure     -> CI, every run
+#
+# The reference mint runs locally with the same deterministic mnemonic an operator
+# uses, so a fixture's declared mint URL is reachable in CI without depending on a
+# public mint still existing.
+
+on:
+  push:
+    branches: [main]
+    paths: ["corpus/**", ".github/workflows/corpus.yml"]
+  pull_request:
+    paths: ["corpus/**", ".github/workflows/corpus.yml"]
+  workflow_dispatch:
+
+env:
+  # Canonical all-zeros BIP39 test vector. Public test data, not a secret: the corpus
+  # records deterministic regeneration from this mnemonic as its own convention, so a
+  # contributor reproduces the same keysets.
+  MINT_MNEMONIC: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
+  MINT_URL: "http://127.0.0.1:3338"
+
+jobs:
+  validate:
+    name: corpus self-validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # A LOCAL mint, not a public one: the gate then tests the corpus, not the
+      # internet's uptime. fakewallet means no Lightning and quotes auto-settle.
+      #
+      # The named volume matters: `config init` and the daemon must share one SQLite
+      # database. Initialising in a throwaway container and then starting a different
+      # one leaves the daemon at "configuration is not initialized" -- measured, and
+      # the reason this is not two inline `docker run --rm` calls.
+      - name: Start reference mint
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/mint"
+          cat > "$RUNNER_TEMP/mint/mint.toml" <<'TOML'
+          [info]
+          url = "http://127.0.0.1:3338"
+          listen_host = "0.0.0.0"
+          listen_port = 3338
+          mnemonic = "env:CDK_MINTD_MNEMONIC"
+
+          [payment_backend]
+          backend = "fakewallet"
+
+          [onchain]
+          onchain_backend = "fakewallet"
+
+          [fake_wallet]
+          fee_percent = 0.0
+          min_delay_time = 0
+          max_delay_time = 0
+          custom_payment_methods = []
+          TOML
+
+          # Seed the volume: `config init` creates the schema, `config apply` stages
+          # the config. BOTH are required; init alone leaves the daemon unusable.
+          docker run --rm -v mintdata:/data \
+            -e CDK_MINTD_MNEMONIC="$MINT_MNEMONIC" \
+            -v "$RUNNER_TEMP/mint/mint.toml":/mint.toml:ro \
+            cashubtc/mintd:0.18 config init --file /mint.toml --new-mint
+          docker run --rm -v mintdata:/data \
+            -e CDK_MINTD_MNEMONIC="$MINT_MNEMONIC" \
+            -v "$RUNNER_TEMP/mint/mint.toml":/mint.toml:ro \
+            cashubtc/mintd:0.18 config apply --file /mint.toml
+
+          # Same volume, now the long-running daemon.
+          docker run -d --name regen-mint --network host -v mintdata:/data \
+            -e CDK_MINTD_MNEMONIC="$MINT_MNEMONIC" \
+            cashubtc/mintd:0.18 --enable-logging
+
+      - name: Wait for mint
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 60); do
+            if curl -sf -m 2 "$MINT_URL/v1/info" >/dev/null; then
+              echo "mint up after ${i}s"
+              curl -s "$MINT_URL/v1/info" | head -c 300; echo
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "::error::reference mint did not come up"
+          docker logs regen-mint || true
+          exit 1
+
+      # Stdlib-only on purpose: nothing to install, nothing to pin.
+      - name: Validate corpus structure + reference mint
+        run: python3 corpus/validate.py
+
+  validate-offline:
+    name: corpus self-validation (air-gapped)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Deliberately duplicated: an air-gapped run must still prove the corpus is
+      # internally consistent. If this job is green while `validate` is red, the
+      # failure is reachability, not corpus structure. It does NOT excuse a
+      # lab-address reference mint -- that is a defect regardless of network.
+      - name: Validate corpus structure (mint check skipped)
+        env:
+          TOLLGATE_SKIP_MINT_CHECK: "1"
+        run: python3 corpus/validate.py

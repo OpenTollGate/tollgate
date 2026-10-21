@@ -6,16 +6,36 @@
   "purpose": "Pin the TollGate interop surface as data: canonical token fixtures with per-stage lifecycle verdicts, and HTTP endpoint request/response vectors. Every TollGate consumer (portal decoder, Go wallet, Rust wallet, test minters, client implementations) must produce the recorded verdicts for these inputs; a divergence is a filed bug against this repo, not a field incident.",
   "reference_environment": {
     "mint": {
-      "url": "http://192.168.13.221:8383",
-      "implementation": "cdk-mintd/0.18.1 (fakewallet backend: mint quotes auto-settle)",
+      "url": "http://127.0.0.1:3338",
+      "implementation": "cdk-mintd 0.18.1 (fakewallet backend: mint quotes auto-settle)",
+      "reproducible_by": "corpus/regenerate_fixtures.py serve --port 3338",
+      "determinism": "seeded with the all-zeros BIP39 test mnemonic (public test vector, not a secret); the same config + mnemonic reproduces the keyset",
       "keysets": [
         {
-          "id": "01e73e75a0809604372487732ee917e8f881cc4c882ccd9fbac094fbfd3e3a42e6",
+          "id": "01df97b6fb8a572a",
           "unit": "sat",
           "keyset_version": 2,
-          "id_format": "66-hex with 01 prefix"
+          "id_format": "8-byte prefix at token level; resolved against the mint's keyset list"
         }
-      ]
+      ],
+      "nuts": [
+        "4",
+        "5",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "14",
+        "15",
+        "17",
+        "19",
+        "20",
+        "29"
+      ],
+      "generated_at": "2026-10-18T18:08:41Z",
+      "fixture_generator": "cdk-cli 0.18.1"
     },
     "local_v1_mint": {
       "url": "http://127.0.0.1:8384",
@@ -36,7 +56,7 @@
         "fee_percent": 0.0
       }
     },
-    "minter": "cdk-cli 0.18.0 (CDK reference; Nutshell 0.21.0 secondary — the V1-era fixtures are Nutshell-minted against the local V1 mint)",
+    "minter": "cdk-cli 0.18.0 (CDK reference; Nutshell 0.21.0 secondary \u2014 the V1-era fixtures are Nutshell-minted against the local V1 mint)",
     "gateway": {
       "url": "http://192.168.13.1:2121",
       "implementation": "tollgate-module-basic-go, v0.6.0-rc series live rig",
@@ -61,10 +81,10 @@
       {
         "consumer": "tollgate-captive-portal@lab-rig-build",
         "divergence": "DIV-2026-10-portal-v2-keyset",
-        "note": "repo pin 6c25834 passes the corpus; the deployed build's vintage is unidentified — a pin bump does NOT close this"
+        "note": "repo pin 6c25834 passes the corpus; the deployed build's vintage is unidentified \u2014 a pin bump does NOT close this"
       }
     ],
-    "backwards_compatibility": "OUT OF SCOPE for this pin — V1-keyset era and older-wallet behavior is deferred to compat-era/ and is layered on only after this state is green across every consumer"
+    "backwards_compatibility": "OUT OF SCOPE for this pin \u2014 V1-keyset era and older-wallet behavior is deferred to compat-era/ and is layered on only after this state is green across every consumer"
   },
   "vocabularies": {
     "lifecycle_stages": {
@@ -79,7 +99,7 @@
       "reject-undecodable",
       "no-verdict-hang"
     ],
-    "no_verdict_hang_note": "consumer does not terminate on the input. Observed on cdk-cli 0.18.1 decode-token: with a COLD wallet (no cached keysets) it deadlocks silently — single sleeping thread, no I/O — on tokens whose keyset id cannot resolve from wallet state (V3 with a truncated id whose mint is not registered; Nutshell-minted V1-era tokens whose mint is not registered). With the mint's keysets cached (reference configuration) the truncated-id V3 token decodes. A hang is not a verdict: runners MUST apply a timeout and report no-verdict-hang, and the shape is a candidate upstream bug to file against the consumer",
+    "no_verdict_hang_note": "consumer does not terminate on the input. Observed on cdk-cli 0.18.1 decode-token: with a COLD wallet (no cached keysets) it deadlocks silently \u2014 single sleeping thread, no I/O \u2014 on tokens whose keyset id cannot resolve from wallet state (V3 with a truncated id whose mint is not registered; Nutshell-minted V1-era tokens whose mint is not registered). With the mint's keysets cached (reference configuration) the truncated-id V3 token decodes. A hang is not a verdict: runners MUST apply a timeout and report no-verdict-hang, and the shape is a candidate upstream bug to file against the consumer",
     "verify_verdicts": [
       "ok",
       "reject-keyset-format",
@@ -162,15 +182,15 @@
       },
       {
         "path": "tokens/v3_v2_truncated_id.cashu",
-        "shape": "V3 token whose 16-hex id is cdk's NATIVE serialization — byte-identical to the valid fixtures (the v0 'truncated_id' framing is retracted; proofs SPENT)"
+        "shape": "V3 token whose 16-hex id is cdk's NATIVE serialization \u2014 byte-identical to the valid fixtures (the v0 'truncated_id' framing is retracted; proofs SPENT)"
       },
       {
         "path": "tokens/v3_v2_hex_c.cashu",
-        "shape": "V3 token with non-point C bytes (49 garbage bytes; v0 regen artifact — CU102 class: C unparseable in any encoding)"
+        "shape": "V3 token with non-point C bytes (49 garbage bytes; v0 regen artifact \u2014 CU102 class: C unparseable in any encoding)"
       },
       {
         "path": "tokens/v3_v2_full66.cashu",
-        "shape": "V3 with the full 66-hex keyset-id spelling (wallet-side; cdk writes short natively) — proofs UNSPENT, independent of the KG twins"
+        "shape": "V3 with the full 66-hex keyset-id spelling (wallet-side; cdk writes short natively) \u2014 proofs UNSPENT, independent of the KG twins"
       }
     ],
     "lifecycle": [
@@ -197,7 +217,7 @@
       }
     ],
     "compat_era": {
-      "status": "DEFERRED — not part of the known-good contract (see kg_state.backwards_compatibility); parked data from the v1 capture so the compat layer starts from evidence, not zero",
+      "status": "DEFERRED \u2014 not part of the known-good contract (see kg_state.backwards_compatibility); parked data from the v1 capture so the compat layer starts from evidence, not zero",
       "tokens": [
         {
           "path": "compat-era/tokens/v3_v1_valid.cashu",
@@ -262,7 +282,7 @@
       "consumers": [
         "tollgate-captive-portal@lab-rig-build"
       ],
-      "summary": "Field incident (portal#82, 2026-10-16): the deployed lab-rig portal rejected V2-keyset tokens (CU109 card, 0 POSTs). Portal MAIN and the tmbg packaging pin 6c25834 BOTH pass the full corpus (verified 2026-10-16, both id spellings) — the failing deployment is an older/different build or a flow-level trigger (mint-option/unit path). Root cause open: fingerprint the deployed build; exercise the app-level flow against a live advertisement.",
+      "summary": "Field incident (portal#82, 2026-10-16): the deployed lab-rig portal rejected V2-keyset tokens (CU109 card, 0 POSTs). Portal MAIN and the tmbg packaging pin 6c25834 BOTH pass the full corpus (verified 2026-10-16, both id spellings) \u2014 the failing deployment is an older/different build or a flow-level trigger (mint-option/unit path). Root cause open: fingerprint the deployed build; exercise the app-level flow against a live advertisement.",
       "refs": [
         "tollgate-captive-portal-site#82",
         "tollgate-captive-portal-site#83",
@@ -289,7 +309,7 @@
   "encoding_model": {
     "source": "cdk 0.18.x crates/cashu/src/nuts/nut00/mod.rs:519 (ProofV3) and nut02.rs:383 (ShortKeysetId)",
     "statement": "cdk serializes V3 per-proof keyset ids as 16-hex short ids (version byte + 7-byte prefix of the canonical id; for V1 keysets the short id IS the whole id) and C points as hex. V4 carries the 8-byte keyset-id prefix at the token level. Consumers must resolve short ids against the mint's keyset list; mints natively resolve them (cdk nut02 has a dedicated UnknownShortKeysetId error path). The 66-hex spelling is the canonical mint-level id, not the in-token spelling.",
-    "incident_reading": "The portal@pin CU109 incident is a short-id resolution failure: the deployed pin compared 16-hex in-token ids against 66-hex keyset-list ids and could never match. It was NOT token 'truncation' by any minter — the short spelling is the reference toolchain's native output.",
-    "id_spelling_dimension": "Both spellings are legal on the wire: the short form (cdk's native serialization) and the full 66-hex canonical form (Nutshell/cashu-ts wallet-side serialization). Consumers MUST accept both — see lifecycle/v3_v2_full66.json vs the KG twins."
+    "incident_reading": "The portal@pin CU109 incident is a short-id resolution failure: the deployed pin compared 16-hex in-token ids against 66-hex keyset-list ids and could never match. It was NOT token 'truncation' by any minter \u2014 the short spelling is the reference toolchain's native output.",
+    "id_spelling_dimension": "Both spellings are legal on the wire: the short form (cdk's native serialization) and the full 66-hex canonical form (Nutshell/cashu-ts wallet-side serialization). Consumers MUST accept both \u2014 see lifecycle/v3_v2_full66.json vs the KG twins."
   }
 }

@@ -1,12 +1,12 @@
 {
   "id": "lifecycle/v4_v2_kg181",
   "fixture": "../tokens/v4_v2_kg181.cashu",
-  "role": "known-good twin — V4 is the newest NUT-00 token format; minted by the primary reference (cdk-cli 0.18.1), ships UNSPENT, never consumed by a capture",
+  "role": "known-good twin \u2014 V4 is the newest NUT-00 token format; minted by the primary reference (cdk-cli 0.18.1), ships UNSPENT, never consumed by a capture",
   "shape": {
     "token_version": 4,
     "prefix": "cashuB",
     "encoding": "CBOR in base64url (NUT-00 V4: top-level {t:[{i,p}], m: mint_url, u: unit})",
-    "keyset_id_format": "8 bytes at the token level — the prefix of the canonical V2 id (CDK V4 serialization; consumers resolve it against the mint's keyset list)",
+    "keyset_id_format": "8 bytes at the token level \u2014 the prefix of the canonical V2 id (CDK V4 serialization; consumers resolve it against the mint's keyset list)",
     "keyset_id_in_token": "01e73e75a0809604",
     "canonical_keyset_id": "01e73e75a0809604372487732ee917e8f881cc4c882ccd9fbac094fbfd3e3a42e6",
     "keyset_version": 2,
@@ -71,7 +71,7 @@
     },
     "checkstate": {
       "verdicts": {
-        "fakewallet@2026-10-16": "UNSPENT"
+        "cdk-mintd@0.18.1-local": "UNSPENT"
       },
       "evidence": [
         {
@@ -85,6 +85,13 @@
     },
     "spend": {
       "verdicts": [
+        {
+          "when": "2026-10-18, fixtures regenerated",
+          "note": "the 2026-10-16 degraded-refusal observation was measured on the RETIRED 192.168.13.221:8383 proofs and no longer applies; see compat-era/dead-mint-192-168-13-221/",
+          "tollgate-module-basic-go@rc": "unknown"
+        }
+      ],
+      "superseded_observations": [
         {
           "when": "2026-10-16, rig degraded",
           "tollgate-module-basic-go@rc": "refused-degraded-unconsumed",
@@ -116,5 +123,5 @@
     "minted_by": "cdk-cli 0.18.1 (CDK primary reference) against the fakewallet",
     "regen": "cdk-cli mint http://192.168.13.221:8383 21; cdk-cli send --mint-url http://192.168.13.221:8383 --amount 4 --include-fee"
   },
-  "portal_pin_note": "The @pin verdict (CU109 rejection, never submits) is the deployed router pin measured by v0 and portal#82's capture; portal main's decode path was reworked (#38/#55/#61) and now accepts — regression lock portal#83, deployed-pin refresh pending."
+  "portal_pin_note": "The @pin verdict (CU109 rejection, never submits) is the deployed router pin measured by v0 and portal#82's capture; portal main's decode path was reworked (#38/#55/#61) and now accepts \u2014 regression lock portal#83, deployed-pin refresh pending."
 }
