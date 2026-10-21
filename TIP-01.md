@@ -88,6 +88,7 @@ Notice events are used by TollGates to communicate issues, warnings, and informa
   - `upstream-error-not-connected`: TollGate has no upstream connection
   - `payment-error-mint-not-accepted`: Payment from unsupported mint
   - `payment-error-token-spent`: Cashu token already spent
+  - `bootstrap-pending`: TollGate is in relay mode and has not yet confirmed the token with an upstream peer
 
 #### Optional Tags
 - `p`: Customer pubkey when addressing a specific customer. Omitted for general notices.
