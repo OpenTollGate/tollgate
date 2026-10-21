@@ -146,6 +146,7 @@ Feel free to add events via pull request.
 | ✅ | [Dark Prague](https://darkprague.com/) | 2 oct – 4 oct | Czechia, Prague | Stará čistírna odpadních vod 1906, Bubeneč |
 | ✅ | [Nostr Hackday](https://primal.net/e/nevent1qqsgq3dyyea83am64u736lw0mm3fkm8jhctlqkr2au9rvf8sw5cn5hq3nkv4p) | 4 oct | Germany, Berlin | Probably c-base |
 | ❓ | [OsmoDevCon](https://osmocom.org/projects/osmo-dev-con/wiki/OsmoDevCon) | TBD | Germany, Berlin | Lehrter Str. 53 |
+| ✅ | [Exit & Build 6](https://courses.livefree.academy/exit-and-build-6) | 5 nov – 8 nov | USA, Texas | Sovereignty Ranch, Bandera |
 
 ### Past (2026)
 
