@@ -69,7 +69,7 @@ The communication method used for negotiation (advertisement, payment, session m
 |---|-------------|
 | [HTTP-01](HTTP-01.md) | HTTP server |
 | [HTTP-02](HTTP-02.md) | Restrictive OS compatibility |
-| [HTTP-03](HTTP-03.md) | Usage endpoint |
+| [HTTP-03](HTTP-03.md) | Usage, balance and Lightning-invoice endpoints |
 | [NOSTR-01](NOSTR-01.md) | Nostr relay |
 
 ### Medium — *what physical link* carries the sold data?
