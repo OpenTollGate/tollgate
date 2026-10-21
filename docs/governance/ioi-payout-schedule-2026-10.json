@@ -1,0 +1,527 @@
+{
+  "budget_usd": 25000.0,
+  "budget_status": "UNCONFIRMED \u2014 source line still carries a 'TBD: confirm details' marker; confirm the treasury balance before executing this schedule.",
+  "btc_usd_pin": 81180.0,
+  "window": {
+    "start": "2025-10-17",
+    "end_exclusive": "2026-10-17"
+  },
+  "formula": {
+    "weight": "TIER[tier] * EFFORT[effort]",
+    "tier": {
+      "A": 5,
+      "B": 3,
+      "C": 2,
+      "D": 1
+    },
+    "effort": {
+      "3": 3,
+      "2": 2,
+      "1": 1
+    },
+    "floor_usd_per_payee": 300.0,
+    "residual": "budget - floor * eligible_payees",
+    "payee_amount": "floor + residual * (W_p / sum_W)",
+    "allocation": "payee_amount * (W_c / W_p)",
+    "rounding": "largest remainder, cents, schedule-wide then per payee"
+  },
+  "scenarios": {
+    "A \u2014 recommended": {
+      "note": "Felix excluded: he is the OpenSats grantee and his TollGate work is what that grant funds. Paying him from the association treasury would be self-dealing, and the application already has to disclose the Institute as a related entity.",
+      "eligible_payees": 5,
+      "sum_weights": 70,
+      "floor_total_usd": 1500.0,
+      "residual_usd": 23500.0,
+      "total_usd": 25000.0,
+      "surplus_usd": 0.0,
+      "held_usd": 1271.43,
+      "net_payable_usd": 23728.57,
+      "payees": [
+        {
+          "payee": "amperstrand",
+          "display": "Amperstrand",
+          "weight": 42,
+          "amount_usd": 14400.0,
+          "sats": 17738359,
+          "status": "needs payout address (open question, schedule section 4)",
+          "allocations": [
+            {
+              "scope": "core OpenWrt Go router module",
+              "repo": "tollgate-module-basic-go",
+              "commits": 179,
+              "added": 71255,
+              "deleted": 6691,
+              "tier": "A",
+              "effort": 3,
+              "weight": 15,
+              "amount_usd": 5142.86
+            },
+            {
+              "scope": "hardware/firmware test matrix",
+              "repo": "physical-router-test-automation",
+              "commits": 108,
+              "added": 19937,
+              "deleted": 7227,
+              "tier": "A",
+              "effort": 3,
+              "weight": 15,
+              "amount_usd": 5142.86
+            },
+            {
+              "scope": "wallet/mint compatibility patch set",
+              "repo": "gonuts-tollgate",
+              "commits": 20,
+              "added": 3055,
+              "deleted": 493,
+              "tier": "B",
+              "effort": 2,
+              "weight": 6,
+              "amount_usd": 2057.14
+            },
+            {
+              "scope": "protocol/spec text and diagrams",
+              "repo": "tollgate",
+              "commits": 11,
+              "added": 4711,
+              "deleted": 780,
+              "tier": "B",
+              "effort": 1,
+              "weight": 3,
+              "amount_usd": 1028.57
+            },
+            {
+              "scope": "captive portal frontend",
+              "repo": "tollgate-captive-portal-site",
+              "commits": 7,
+              "added": 3612,
+              "deleted": 46,
+              "tier": "C",
+              "effort": 1,
+              "weight": 2,
+              "amount_usd": 685.71
+            },
+            {
+              "scope": "org workflows, installer, rust impl (misc)",
+              "repo": "multiple",
+              "commits": 3,
+              "added": 80,
+              "deleted": 1,
+              "tier": "D",
+              "effort": 1,
+              "weight": 1,
+              "amount_usd": 342.86
+            }
+          ]
+        },
+        {
+          "payee": "origami74",
+          "display": "Arjen (Origami74)",
+          "weight": 24,
+          "amount_usd": 8357.14,
+          "sats": 10294579,
+          "status": "needs payout address (open question, schedule section 4)",
+          "allocations": [
+            {
+              "scope": "Rust TollGate implementation (subsystem lead)",
+              "repo": "tollgate-rs",
+              "commits": 145,
+              "added": 91661,
+              "deleted": 35437,
+              "tier": "A",
+              "effort": 3,
+              "weight": 15,
+              "amount_usd": 5223.21
+            },
+            {
+              "scope": "integration landings + large reverts",
+              "repo": "tollgate-module-basic-go",
+              "commits": 21,
+              "added": 24224,
+              "deleted": 21322,
+              "tier": "B",
+              "effort": 2,
+              "weight": 6,
+              "amount_usd": 2089.29
+            },
+            {
+              "scope": "release browser",
+              "repo": "tollgate-release-explorer-site",
+              "commits": 4,
+              "added": 1042,
+              "deleted": 477,
+              "tier": "C",
+              "effort": 1,
+              "weight": 2,
+              "amount_usd": 696.43
+            },
+            {
+              "scope": "spec + knowledgebase docs",
+              "repo": "tollgate / tollgate-knowledgebase",
+              "commits": 4,
+              "added": 969,
+              "deleted": 4072,
+              "tier": "D",
+              "effort": 1,
+              "weight": 1,
+              "amount_usd": 348.21
+            }
+          ]
+        },
+        {
+          "payee": "alexxie16",
+          "display": "Alex Xie (alexxie16)",
+          "weight": 2,
+          "amount_usd": 971.43,
+          "sats": 1196637,
+          "status": "needs payout address + confirmation of contribution intent (open question, schedule section 4)",
+          "allocations": [
+            {
+              "scope": "feature patches",
+              "repo": "tollgate-module-basic-go / tollgate-captive-portal-site",
+              "commits": 5,
+              "added": 3899,
+              "deleted": 328,
+              "tier": "C",
+              "effort": 1,
+              "weight": 2,
+              "amount_usd": 971.43
+            }
+          ]
+        },
+        {
+          "payee": "mvanhorn",
+          "display": "mvanhorn",
+          "weight": 1,
+          "amount_usd": 635.72,
+          "sats": 783099,
+          "status": "human identity unverified; hold pending confirmation (open question, schedule section 4)",
+          "allocations": [
+            {
+              "scope": "one-line fix",
+              "repo": "tollgate-module-basic-go",
+              "commits": 1,
+              "added": 16,
+              "deleted": 0,
+              "tier": "D",
+              "effort": 1,
+              "weight": 1,
+              "amount_usd": 635.72
+            }
+          ]
+        },
+        {
+          "payee": "thomasbiebl",
+          "display": "thomasbiebl",
+          "weight": 1,
+          "amount_usd": 635.71,
+          "sats": 783086,
+          "status": "human identity unverified; hold pending confirmation (open question, schedule section 4)",
+          "allocations": [
+            {
+              "scope": "one small fix (co-committed with an agent account)",
+              "repo": "tollgate-release-explorer-site",
+              "commits": 1,
+              "added": 28,
+              "deleted": 5,
+              "tier": "D",
+              "effort": 1,
+              "weight": 1,
+              "amount_usd": 635.71
+            }
+          ]
+        }
+      ]
+    },
+    "B \u2014 sensitivity": {
+      "note": "Felix included at full weight, for the case where the association decides the OpenSats window does not cover this work. Shown only to quantify what the decision costs the other two.",
+      "eligible_payees": 6,
+      "sum_weights": 124,
+      "floor_total_usd": 1800.0,
+      "residual_usd": 23200.0,
+      "total_usd": 25000.0,
+      "surplus_usd": 0.0,
+      "held_usd": 974.2,
+      "net_payable_usd": 24025.8,
+      "payees": [
+        {
+          "payee": "felix",
+          "display": "Felix (c03rad0r / felixfelix-bot)",
+          "weight": 54,
+          "amount_usd": 10403.23,
+          "sats": 12815016,
+          "status": "excluded in scenario A (OpenSats grantee, conflict of interest); included in scenario B",
+          "allocations": [
+            {
+              "scope": "desktop installer app",
+              "repo": "tollgate-installer",
+              "commits": 136,
+              "added": 62555,
+              "deleted": 38346,
+              "tier": "A",
+              "effort": 3,
+              "weight": 15,
+              "amount_usd": 2889.79
+            },
+            {
+              "scope": "core module work",
+              "repo": "tollgate-module-basic-go",
+              "commits": 157,
+              "added": 91339,
+              "deleted": 6718,
+              "tier": "A",
+              "effort": 3,
+              "weight": 15,
+              "amount_usd": 2889.79
+            },
+            {
+              "scope": "CI + runner plumbing",
+              "repo": "physical-router-test-automation",
+              "commits": 86,
+              "added": 31967,
+              "deleted": 2612,
+              "tier": "A",
+              "effort": 2,
+              "weight": 10,
+              "amount_usd": 1926.52
+            },
+            {
+              "scope": "captive portal frontend",
+              "repo": "tollgate-captive-portal-site",
+              "commits": 31,
+              "added": 16727,
+              "deleted": 912,
+              "tier": "B",
+              "effort": 2,
+              "weight": 6,
+              "amount_usd": 1155.91
+            },
+            {
+              "scope": "android/esp32/fips-exit nodes and e2e",
+              "repo": "multiple",
+              "commits": 45,
+              "added": 23370,
+              "deleted": 6980,
+              "tier": "B",
+              "effort": 2,
+              "weight": 6,
+              "amount_usd": 1155.91
+            },
+            {
+              "scope": "nostr infra tooling",
+              "repo": "tollgate-infrastructure-kit",
+              "commits": 7,
+              "added": 2614,
+              "deleted": 40,
+              "tier": "C",
+              "effort": 1,
+              "weight": 2,
+              "amount_usd": 385.31
+            }
+          ]
+        },
+        {
+          "payee": "amperstrand",
+          "display": "Amperstrand",
+          "weight": 42,
+          "amount_usd": 8158.06,
+          "sats": 10049347,
+          "status": "needs payout address (open question, schedule section 4)",
+          "allocations": [
+            {
+              "scope": "core OpenWrt Go router module",
+              "repo": "tollgate-module-basic-go",
+              "commits": 179,
+              "added": 71255,
+              "deleted": 6691,
+              "tier": "A",
+              "effort": 3,
+              "weight": 15,
+              "amount_usd": 2913.59
+            },
+            {
+              "scope": "hardware/firmware test matrix",
+              "repo": "physical-router-test-automation",
+              "commits": 108,
+              "added": 19937,
+              "deleted": 7227,
+              "tier": "A",
+              "effort": 3,
+              "weight": 15,
+              "amount_usd": 2913.59
+            },
+            {
+              "scope": "wallet/mint compatibility patch set",
+              "repo": "gonuts-tollgate",
+              "commits": 20,
+              "added": 3055,
+              "deleted": 493,
+              "tier": "B",
+              "effort": 2,
+              "weight": 6,
+              "amount_usd": 1165.44
+            },
+            {
+              "scope": "protocol/spec text and diagrams",
+              "repo": "tollgate",
+              "commits": 11,
+              "added": 4711,
+              "deleted": 780,
+              "tier": "B",
+              "effort": 1,
+              "weight": 3,
+              "amount_usd": 582.72
+            },
+            {
+              "scope": "captive portal frontend",
+              "repo": "tollgate-captive-portal-site",
+              "commits": 7,
+              "added": 3612,
+              "deleted": 46,
+              "tier": "C",
+              "effort": 1,
+              "weight": 2,
+              "amount_usd": 388.48
+            },
+            {
+              "scope": "org workflows, installer, rust impl (misc)",
+              "repo": "multiple",
+              "commits": 3,
+              "added": 80,
+              "deleted": 1,
+              "tier": "D",
+              "effort": 1,
+              "weight": 1,
+              "amount_usd": 194.24
+            }
+          ]
+        },
+        {
+          "payee": "origami74",
+          "display": "Arjen (Origami74)",
+          "weight": 24,
+          "amount_usd": 4790.32,
+          "sats": 5900862,
+          "status": "needs payout address (open question, schedule section 4)",
+          "allocations": [
+            {
+              "scope": "Rust TollGate implementation (subsystem lead)",
+              "repo": "tollgate-rs",
+              "commits": 145,
+              "added": 91661,
+              "deleted": 35437,
+              "tier": "A",
+              "effort": 3,
+              "weight": 15,
+              "amount_usd": 2993.95
+            },
+            {
+              "scope": "integration landings + large reverts",
+              "repo": "tollgate-module-basic-go",
+              "commits": 21,
+              "added": 24224,
+              "deleted": 21322,
+              "tier": "B",
+              "effort": 2,
+              "weight": 6,
+              "amount_usd": 1197.58
+            },
+            {
+              "scope": "release browser",
+              "repo": "tollgate-release-explorer-site",
+              "commits": 4,
+              "added": 1042,
+              "deleted": 477,
+              "tier": "C",
+              "effort": 1,
+              "weight": 2,
+              "amount_usd": 399.19
+            },
+            {
+              "scope": "spec + knowledgebase docs",
+              "repo": "tollgate / tollgate-knowledgebase",
+              "commits": 4,
+              "added": 969,
+              "deleted": 4072,
+              "tier": "D",
+              "effort": 1,
+              "weight": 1,
+              "amount_usd": 199.6
+            }
+          ]
+        },
+        {
+          "payee": "alexxie16",
+          "display": "Alex Xie (alexxie16)",
+          "weight": 2,
+          "amount_usd": 674.19,
+          "sats": 830487,
+          "status": "needs payout address + confirmation of contribution intent (open question, schedule section 4)",
+          "allocations": [
+            {
+              "scope": "feature patches",
+              "repo": "tollgate-module-basic-go / tollgate-captive-portal-site",
+              "commits": 5,
+              "added": 3899,
+              "deleted": 328,
+              "tier": "C",
+              "effort": 1,
+              "weight": 2,
+              "amount_usd": 674.19
+            }
+          ]
+        },
+        {
+          "payee": "mvanhorn",
+          "display": "mvanhorn",
+          "weight": 1,
+          "amount_usd": 487.1,
+          "sats": 600024,
+          "status": "human identity unverified; hold pending confirmation (open question, schedule section 4)",
+          "allocations": [
+            {
+              "scope": "one-line fix",
+              "repo": "tollgate-module-basic-go",
+              "commits": 1,
+              "added": 16,
+              "deleted": 0,
+              "tier": "D",
+              "effort": 1,
+              "weight": 1,
+              "amount_usd": 487.1
+            }
+          ]
+        },
+        {
+          "payee": "thomasbiebl",
+          "display": "thomasbiebl",
+          "weight": 1,
+          "amount_usd": 487.1,
+          "sats": 600024,
+          "status": "human identity unverified; hold pending confirmation (open question, schedule section 4)",
+          "allocations": [
+            {
+              "scope": "one small fix (co-committed with an agent account)",
+              "repo": "tollgate-release-explorer-site",
+              "commits": 1,
+              "added": 28,
+              "deleted": 5,
+              "tier": "D",
+              "effort": 1,
+              "weight": 1,
+              "amount_usd": 487.1
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "recommended": "A \u2014 recommended",
+  "open_questions": [
+    "Treasury balance confirmation ($25,000 is TBD in the source).",
+    "Scenario A vs B (Felix in/out).",
+    "Payout addresses for Amperstrand, Arjen, alexxie16.",
+    "Identity confirmation for mvanhorn and thomasbiebl; unclaimed amounts revert to the pool.",
+    "Charly and Andre have no in-window code evidence; need a vote-backed scope record.",
+    "No governance docs repository exists yet; decision record location to be created."
+  ]
+}
