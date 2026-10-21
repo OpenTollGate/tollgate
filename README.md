@@ -137,14 +137,6 @@ Feel free to add events via pull request.
 
 | Confirmed | Event | Dates | Where | Details |
 |-----------|-------|-------|-------|---------|
-| ✅ | [Wireless Community Weekend](https://forum.freifunk.net/t/wireless-community-weekend-2026/24552) | 15 may – 17 may | Germany, Berlin | c-base, Rungestr. 20 |
-| ✅ | [btc++ Nairobi](https://btcplusplus.dev/) | 17 jun – 20 jun | Kenya, Nairobi | Pride Inn Azure |
-| ✅ | [Adopting Bitcoin Nairobi](https://x.com/AdoptingBTC/status/2017621046598226329) | 23 jun – 24 jun | Kenya, Nairobi | Near Afribit Kibera |
-| ✅ | [DWeb Berlin](https://dwebcamp.org/) | 8 jul – 12 jul | Germany, Berlin | Kluckstraße 25 |
-| ✅ | [Battlemesh v18](https://battlemesh.org/BattleMeshV18/) | 7 sep – 13 sep | Croatia, Lika region | LikaNet project area |
-| ✅ | [btc++ Berlin](https://btcplusplus.dev/) | 1 oct – 3 oct | Germany, Berlin | w3 hub |
-| ✅ | [Dark Prague](https://darkprague.com/) | 2 oct – 4 oct | Czechia, Prague | Stará čistírna odpadních vod 1906, Bubeneč |
-| ✅ | [Nostr Hackday](https://primal.net/e/nevent1qqsgq3dyyea83am64u736lw0mm3fkm8jhctlqkr2au9rvf8sw5cn5hq3nkv4p) | 4 oct | Germany, Berlin | Probably c-base |
 | ❓ | [OsmoDevCon](https://osmocom.org/projects/osmo-dev-con/wiki/OsmoDevCon) | TBD | Germany, Berlin | Lehrter Str. 53 |
 | ✅ | [Exit & Build 6](https://courses.livefree.academy/exit-and-build-6) | 5 nov – 8 nov | USA, Texas | Sovereignty Ranch, Bandera |
 
@@ -156,6 +148,14 @@ Feel free to add events via pull request.
 | [TechFurMeet](https://www.techfurmeet.org/en/schedule) | 12 feb – 16 feb | Czechia, Horní Bradlo-Nasavrky | 538 25 |
 | [Handycon](https://2026.handycon.xyz/) | 4 mar – 6 mar | Remote | — |
 | [Madeira Bitcoin Meetup](https://www.satlantis.io/events/1692/FREE-Madeira-Bitcoin-Meetup) | 25 mar | Portugal, Funchal | Cowork Funchal, R. das Mercês 41 |
+| [Wireless Community Weekend](https://forum.freifunk.net/t/wireless-community-weekend-2026/24552) | 15 may – 17 may | Germany, Berlin | c-base, Rungestr. 20 |
+| [btc++ Nairobi](https://btcplusplus.dev/) | 17 jun – 20 jun | Kenya, Nairobi | Pride Inn Azure |
+| [Adopting Bitcoin Nairobi](https://x.com/AdoptingBTC/status/2017621046598226329) | 23 jun – 24 jun | Kenya, Nairobi | Near Afribit Kibera |
+| [DWeb Berlin](https://dwebcamp.org/) | 8 jul – 12 jul | Germany, Berlin | Kluckstraße 25 |
+| [Battlemesh v18](https://battlemesh.org/BattleMeshV18/) | 7 sep – 13 sep | Croatia, Lika region | LikaNet project area |
+| [btc++ Berlin](https://btcplusplus.dev/) | 1 oct – 3 oct | Germany, Berlin | w3 hub |
+| [Dark Prague](https://darkprague.com/) | 2 oct – 4 oct | Czechia, Prague | Stará čistírna odpadních vod 1906, Bubeneč |
+| [Nostr Hackday](https://primal.net/e/nevent1qqsgq3dyyea83am64u736lw0mm3fkm8jhctlqkr2au9rvf8sw5cn5hq3nkv4p) | 4 oct | Germany, Berlin | Probably c-base |
 
 <details>
 <summary><strong>Past (2025)</strong></summary>
