@@ -207,8 +207,9 @@ A->D while C->D, A->B and the A-B link stayed up, and the policy-block counter
 grew under A only (n=3). A single-client test could not distinguish a per-peer
 block from a node-wide one; this one can.
 
-The full lab logs and harness are available from the author on request; they
-are not part of this repository.
+The full lab logs and harness are public at
+https://github.com/c03rad0r/low-layer-tollgate-exploration (test ecash only;
+no upstream changes).
 
 ## Open questions
 
