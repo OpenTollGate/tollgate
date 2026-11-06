@@ -153,8 +153,9 @@ this TIP.
 | A fixed port is not needed for admission | Link admission used the npub and the transport address; the sidecar synthesised the dial target from `show transports` |
 | One node can expose several addresses | The lab node advertised both UDP and TCP addresses while keeping one npub |
 
-The full lab logs and harness are available from the author on request; they
-are not part of this repository.
+The full lab logs and harness are public at
+https://github.com/c03rad0r/low-layer-tollgate-exploration (test ecash only;
+no upstream changes).
 
 ## Open questions
 
