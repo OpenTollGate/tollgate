@@ -147,7 +147,8 @@ FIPS is the reference link transport.
 | The same identity can sell different transports | One npub carried UDP on `:2121` and TCP on `:443`; scope and transport were independent of the port |
 | Multiplexing is not double charging | Two clients behind one TollGate were metered and paused independently |
 
-The full lab logs and harness are available from the author on request.
+The full lab logs and harness are public at
+https://github.com/c03rad0r/low-layer-tollgate-exploration.
 
 ## Open questions
 
