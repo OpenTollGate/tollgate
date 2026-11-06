@@ -226,8 +226,9 @@ iproute2 6.9.0. Test frames only; no production traffic.
 | Set membership is not a verdict | The nft dynamic set holds an element for every sender seen, including under-rate A; only the drop counter distinguishes them |
 | A MAC is spoofable, so this is not authentication | No proof of identity is derived from the gate |
 
-The full lab logs and harness are available from the author on request; they
-are not part of this repository.
+The full lab logs and harness are public at
+https://github.com/c03rad0r/low-layer-tollgate-exploration (test ecash only;
+no upstream changes).
 
 ## Open questions
 
