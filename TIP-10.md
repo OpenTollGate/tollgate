@@ -210,7 +210,8 @@ funds, no upstream changes).
 | The measurement step sets the overshoot | A 40-packet batch overshot a 50 sat balance by 2.18x; per-frame metering held the overshoot to one frame |
 | Counters are aggregate | The reference node could not separate control frames from data frames; the offer therefore stated an all-frames rate |
 
-The full lab logs and harness are available from the author on request.
+The full lab logs and harness are public at
+https://github.com/c03rad0r/low-layer-tollgate-exploration.
 
 ## Open questions
 
